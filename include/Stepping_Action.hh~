@@ -1,0 +1,19 @@
+#ifndef Stepping_Action_h
+#define Stepping_Action_h 1
+
+#include "G4UserSteppingAction.hh"
+
+class Stepping_Action : public G4UserSteppingAction {
+  
+public:
+   
+  Stepping_Action();
+  ~Stepping_Action();
+
+  void UserSteppingAction(const G4Step* step);
+  
+private:
+
+};
+
+#endif

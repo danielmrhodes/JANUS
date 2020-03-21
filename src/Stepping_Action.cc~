@@ -1,0 +1,42 @@
+#include "Stepping_Action.hh"
+#include "G4SystemOfUnits.hh"
+
+Stepping_Action::Stepping_Action() {}
+Stepping_Action::~Stepping_Action() {}
+
+void Stepping_Action::UserSteppingAction(const G4Step* step) {
+
+  
+  if(step->GetTrack()->GetTrackStatus() == fAlive
+     && step->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Bambino2_DS") {
+
+    G4ThreeVector pos = step->GetPostStepPoint()->GetPosition();
+    G4ThreeVector dir = step->GetPostStepPoint()->GetMomentumDirection();
+
+    G4int det, ring, sec;
+    G4int id = step->GetPostStepPoint()->GetPhysicalVolume()->GetCopyNo();
+    if(id > 10000) {
+      det=1;
+      id-=10000;
+    }
+    else {
+      det=0;
+    }
+    sec = id%100;
+    ring = (id-sec)/100;
+
+    G4cout << "Point Info: Det " << det << ", Ring " << ring << ", Sector " << sec 
+	   << "\n\tPosition: (" << pos.x()/cm << "," << pos.y()/cm << "," << pos.z()/cm << ") ("
+	   << pos.r()/cm << "," << pos.theta()/deg << "," << pos.phi()/deg << ")\n\tDirection: (" << dir.x() << ","
+	   << dir.y() << "," << dir.z() << ") (Theta = " << dir.theta()/deg << " deg, Phi = " <<  dir.phi()/deg
+	   << " deg)\n\tKE: " << step->GetPostStepPoint()->GetKineticEnergy() << " MeV\n"
+	   << G4endl;
+    
+    //step->GetTrack()->SetTrackStatus(fStopAndKill);
+    
+  }
+  
+
+  return;
+
+}

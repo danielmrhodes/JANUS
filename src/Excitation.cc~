@@ -1,0 +1,130 @@
+#include "Excitation.hh"
+
+#inlcude "Gamma_Decay.hh"
+
+#include "G4IonTable.hh"
+#include "G4Decay.hh"
+#include "G4DecayTable.hh"
+
+#include "G4SystemOfUnits.hh"
+#include "G4UnitsTable.hh"
+#include "G4PhysicalConstants.hh"
+
+Excitation::Excitation() {}
+Excitation::~Excitation() {}
+
+void Excitation::BuildLevelScheme(G4String fn) {
+
+  G4IonTable* table = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
+  
+  std::ifstream file;
+  file.open(fn.c_str(),std::ios::in);
+  
+  if(!file.is_open()) {
+    G4cout << "Could not open level scheme file " << fn << "! No levels will be built!"  << G4endl;
+    return;
+  }
+
+  G4cout << "Building level scheme from " << fn << G4endl;
+
+  unsigned int state_index = 0;
+  G4double energy = -1.*MeV;
+  G4double lifetime = -1.*ps;
+  
+  std::string line, word;
+  while(std::getline(file,line)) {
+
+    G4ParticleDefinition* part;
+    int nbr = 0;
+    
+    std::stringstream linestream1(line);
+    G4int word_num = 0;
+    while(linestream1 >> word) {
+
+      G4double temp;
+      std::stringstream ss(word);
+      ss >> temp;
+
+      switch (word_num) {
+
+        case 0: { //Index
+	  state_index = (int)temp;
+	  break;
+        }
+
+        case 1: { //State energy
+	  energy = temp*keV;
+	  part = table->GetIon(reac->GetBeamZ(),reac->GetBeamA(),energy);
+	  break;
+        }
+
+        case 2: { //State lifetime
+	  lifetime = temp*ps;
+	  part->SetPDGStable(false);
+	  part->SetPDGLifeTime(lifetime);
+	  break;
+        }
+
+        case 3: { //Number of branches
+	  nbr = (int)temp;
+	  if(nbr == 0) {
+	    G4cout << "Probem reading level scheme file " << fn
+		   << "! No braches declared for state " << state_index << G4endl;
+	  }
+	  break;
+        }
+
+        default: {
+	  G4cout << "Probem reading level scheme file " << fn
+		 << "! Too many entries for state " <<
+		 state_index << G4endl;
+	  break;
+        }
+	
+      }
+
+      word_num++;
+    }
+
+    G4cout << state_index << " " << energy/keV << " " << lifetime/ps << " " << nbr << G4endl;
+
+    part->SetDecayTable(new G4DecayTable());
+    for(int i=0;i<nbr;i++) {
+
+      std::getline(file,line);
+      std::stringstream linestream2(line);
+      
+      linestream2 >> word;
+
+      int index;
+      std::stringstream ss1(word);
+      ss1 >> index;
+
+      linestream2 >> word;
+      
+      double BR;
+      std::stringstream ss2(word);
+      ss2 >> BR;
+
+      G4cout << " " << index << " " << BR << G4endl;
+
+      part->GetDecayTable()->Insert(new Gamma_Decay(part,projStates.at(index),BR));
+	
+    }
+
+    part->GetProcessManager()->SetParticleType(part);
+    part->GetProcessManager()->AddProcess(new G4Decay(),1,-1,4);
+
+    if(state_index != projStates.size()) {
+      G4cout << "Projectile states are out of order!" << G4endl;
+    }
+
+    projStates.push_back(part);
+    
+  }
+
+  G4cout << projStates.size()-1 << " projectile levels built!" << G4endl;
+
+  return;
+  
+}

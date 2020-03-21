@@ -1,0 +1,58 @@
+#ifndef DATAOUTPUTFORMAT
+#define DATAOUTPUTFORMAT 
+#include <cstring>
+
+enum Type {
+ Bambino2,
+ SeGA,
+ None,
+};
+
+struct Header {
+  
+  Type type;
+  int size, evtNum;
+
+  size_t bytes() {
+    return 2*(sizeof(int)) + sizeof(Type);
+  }
+  
+}__attribute__((__packed__));
+
+struct DataEntry {
+  
+  double E, x, y, z;
+  
+};
+
+struct bEntry {
+
+  int det, ring, sector;
+  double E, x, y, z;
+  
+};
+
+struct SegaData {
+
+  int num_entries;
+  DataEntry dataEntry[100];
+
+  size_t bytes() {
+    return sizeof(int) + num_entries*sizeof(DataEntry);
+  }
+  
+}__attribute__((__packed__));
+
+struct Bambino2Data {
+
+  int num_entries;
+  bEntry Entries[100];
+
+  size_t bytes() {
+    return sizeof(int) + num_entries*sizeof(bEntry);
+  }
+  
+}__attribute__((__packed__));
+
+
+#endif
