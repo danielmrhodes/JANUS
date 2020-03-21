@@ -1,0 +1,13 @@
+/Mode Source
+/Geometry/Bambino2/UpstreamOffset 3.6 cm
+/Geometry/Bambino2/DownstreamOffset 2.6 cm
+/Geometry/SeGA/Offset 3.1 cm
+/Geometry/Target/StandardTarget 208Pb
+/Geometry/Update
+#
+/Source/Energy 1.0 MeV
+#
+/Output/FileName source.dat
+#
+/tracking/verbose 0
+/run/beamOn 100000

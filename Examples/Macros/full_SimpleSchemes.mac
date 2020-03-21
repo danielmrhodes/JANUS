@@ -1,0 +1,26 @@
+/Mode Full
+/Geometry/Bambino2/UpstreamOffset 3.6 cm
+/Geometry/Bambino2/DownstreamOffset 2.6 cm
+/Geometry/SeGA/Offset 3.1 cm
+/Geometry/Target/StandardTarget 48Ti
+/Geometry/Update
+#
+/Reaction/ProjectileZ 48
+/Reaction/ProjectileA 106
+/Reaction/RecoilZ 22
+/Reaction/RecoilA 48
+/Reaction/SendToJanus
+#
+/Beam/Energy 318 MeV
+#
+/Excitation/Projectile/Simple
+/Excitation/Projectile/SimpleEnergy 0.6326 MeV
+/Excitation/Projectile/SimpleLifetime 1.0 ps
+/Excitation/Recoil/Simple
+/Excitation/Recoil/SimpleEnergy 0.9835 MeV
+/Excitation/Recoil/SimpleLifetime 1.0 ps
+#
+/Output/FileName fullS.dat
+#
+#/tracking/verbose 0
+/run/beamOn 100000
