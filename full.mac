@@ -1,0 +1,22 @@
+/Mode Full
+/Geometry/Bambino2/UpstreamOffset 3.6 cm
+/Geometry/Bambino2/DownstreamOffset 2.6 cm
+/Geometry/SeGA/Offset 3.1 cm
+/Geometry/Target/StandardTarget 208Pb
+/Geometry/Update
+#
+/Reaction/ProjectileZ 48
+/Reaction/ProjectileA 106
+/Reaction/RecoilZ 82
+/Reaction/RecoilA 208
+/Reaction/SendToJanus
+#
+/Beam/Energy 450 MeV
+#
+/Excitation/Projectile/LevelScheme proj.lvl
+/Excitation/Projectile/Probabilities proj.prb
+#
+/Output/FileName full.dat
+#
+#/tracking/verbose 0
+/run/beamOn 100000
