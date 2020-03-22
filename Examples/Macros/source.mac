@@ -9,5 +9,4 @@
 #
 /Output/FileName source.dat
 #
-/tracking/verbose 0
 /run/beamOn 100000

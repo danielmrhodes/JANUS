@@ -16,5 +16,4 @@
 #
 /Output/FileName scattering.dat
 #
-/tracking/verbose 0
 /run/beamOn 1

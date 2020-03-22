@@ -18,5 +18,4 @@
 #
 /Output/FileName full.dat
 #
-#/tracking/verbose 0
 /run/beamOn 100000
