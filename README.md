@@ -31,14 +31,12 @@ Macro Files and Commands
 The three simulation modes require different commands in their macro files. However all must contain the Mode command first, any modifications to the goemetry, then the update geometry command. 
 
 /Mode mode
+
 (optional geometry commands)
+
 /Geometry/Update
 
 Source Commands
 -----------------
 
-/Mode Source
-/Geometry/Update
 /Source/Energy 1.0 MeV
-/Output/FileName source.dat
-/run/beamOn 100000
