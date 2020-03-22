@@ -30,11 +30,9 @@ Macro Files and Commands
 -----------------
 The three simulation modes require different commands in their macro files. However all must contain the Mode command first, any modifications to the goemetry, then the update geometry command. 
 
-/Mode mode
-
-(optional geometry commands)
-
-/Geometry/Update
+/Mode mode__
+(optional geometry commands)__
+/Geometry/Update__
 
 Source Commands
 -----------------
