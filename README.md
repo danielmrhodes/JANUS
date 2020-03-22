@@ -39,9 +39,10 @@ The /Mode command must come first, and the parameter (mode) can be Source, Scatt
 
 Geometry Commands
 -----------------
-
-/Geometry/Bambino2/UpstreamOffset
+#
+/Geometry/Bambino2/UpstreamOffset\
 -Set (positive) z-offset of upstream detector (Default: 3 cm)
+#
 /Geometry/Bambino2/DownstreamOffset\
 /Geometry/SeGA/Offset\
 /Geometry/Target/Z\
