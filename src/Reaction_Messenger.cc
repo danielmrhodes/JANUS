@@ -2,7 +2,7 @@
 
 Reaction_Messenger::Reaction_Messenger(Reaction* reac) : reaction(reac) {
 
-  //All info about the scattering and excitation process accessed through this directory
+  //All info about the scattering process accessed through this directory
   reaction_dir = new G4UIdirectory("/Reaction/");
 
   //Projectile
