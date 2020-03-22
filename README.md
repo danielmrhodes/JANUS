@@ -5,7 +5,6 @@ A GEANT4 simulation of low-energy Coulomb Excitation experiments with the SeGA-J
 
 Requirements
 ------------------
-
 - JANUS requires GEANT4 v10.04.02. It has not been tested on any other version.
 - In order to unpack, correlate, and histogram the simulation output, a ROOT instatllation is required.
 
@@ -28,11 +27,24 @@ The JANUS simultation has three modes: source, scattering, and full. Each mode h
 
 Macro Files and Commands
 -----------------
-The three simulation modes require different commands in their macro files. However all must contain the Mode command first, any modifications to the goemetry, then the update geometry command. 
+The three simulation modes require different commands in their macro files. However all share a common structure 
 
 /Mode mode\
-(optional geometry commands)\
-/Geometry/Update
+*(optional geometry commands)*\
+/Geometry/Update\
+*(mode specific commands)*\
+/run/beamOn nEvents
+
+The /Mode command must come first, and the parameter (mode) can be Source, Scattering, or Full. The /Geometry commands must come next and are common across all modes. The /Geometry/Update command is mandatory. 
+
+Geometry Commands
+-----------------
+
+/Geometry/Bambino2/UpstreamOffset
+-Set (positive) z-offset of upstream detector (Default: 3 cm)
+/Geometry/Bambino2/DownstreamOffset\
+/Geometry/SeGA/Offset\
+/Geometry/Target/Z\
 
 Source Commands
 -----------------
