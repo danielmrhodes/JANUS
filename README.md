@@ -39,16 +39,29 @@ The /Mode command must come first, and the parameter (mode) can be Source, Scatt
 
 Geometry Commands
 -----------------
-- /Geometry/Bambino2/UpstreamOffset
+- /Geometry/Bambino2/UpstreamOffset *double unit*
   - Set (positive) z-offset of upstream detector (Default: 3 cm)
-- /Geometry/Bambino2/DownstreamOffset
+- /Geometry/Bambino2/DownstreamOffset *double unit*
   - Set (positive) z-offset of downstream detector (Default: 3 cm)
-- /Geometry/SeGA/Offset
+- /Geometry/SeGA/Offset *double unit*
   - Set z-offset of SeGA array (Default: 0 cm)
-- /Geometry/Target/Z
-  - Set target Z
+- /Geometry/Target/Z *int*
+  - Set Z of target nucleus (Default: 82)
+- /Geometry/Target/N *int*
+  - Set N of target nucleus (Default: 126)
+- /Geometry/Target/Density *double unit*
+  - Set (volume) density of target material (Default: 11.382 g/cm3)
+- /Geometry/Target/Mass *double unit*
+  - Set mass of target material (Default: 207.97665 g/mole)
+- /Geometry/Target/Thickness *double unit*
+  - Set (linear) thickness of target (Default: 882 nm)
+- /Geometry/Target/Radius *double unit*
+  - Set radius of target (Default: 0.5 cm)
+- /Geometry/Target/StandardTarget *string*
+  - Set parameters for a standard target: 208Pb, 48Ti, or 196Pt
 
 Source Commands
 -----------------
 
-/Source/Energy 1.0 MeV
+- /Source/Energy *double unit*
+  - Set energy of source gamma-rays
