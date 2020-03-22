@@ -100,11 +100,8 @@ int main(int argc, char** argv) {
 
   Header header;
   JANUSData data;
-  while(true) {
-       
-    if(!fread(&header,header.bytes(),1,input_file)) {
-      break;
-    }
+  while(fread(&header,header.bytes(),1,input_file)) {
+  
     const int nB = header.nBdata;
     const int nS = header.nSdata;
     const int nE = header.evtNum;

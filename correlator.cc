@@ -16,13 +16,13 @@ int beamZ = 48;
 int beamA = 106;
 double beam_mass = 98626.9;
   
-int targZ = 22;
-int targA = 48;
-//double targ_mass = 193688;
-double targ_mass = 44652.;
+int targZ = 82;
+int targA = 208;
+double targ_mass = 193688;
+//double targ_mass = 44652.;
 
-//double beam_en = 450.0;
-double beam_en = 291.5;
+double beam_en = 450.0;
+//double beam_en = 291.5;
 
 ////Kinematics////
 double Theta_CM_FP(double ThetaLAB, double Ep, bool sol2=false, double Ex=0.) {
@@ -93,6 +93,7 @@ double Theta_LAB(double thetaCM, double Ep, double Ex=0.) {
   else {
     return std::atan(tanTheta) + TMath::Pi();
   }
+  
 }
 
 double Recoil_Theta_LAB(double thetaCM, double Ep, double Ex=0.) {
@@ -523,8 +524,8 @@ int main(int argc, char** argv) {
   TH2* pReconPhCrtDS = new TH2D("ReconPhi_CrctDS","Recon Phi Correction",6000,0,3000,32,0,thing1);
 
   //Projectile US
-  TH2* sPidUS = new TH2D("SecPID_US","DS SectorEn PID",24,1,25,1000,0,1000);
-  TH2* rPidUS = new TH2D("RingPID_US","DS RingEn PID",24,1,25,1000,0,1000);
+  TH2* sPidUS = new TH2D("SecPID_US","DS SectorEn PID",24,1,25,500,0,500);
+  TH2* rPidUS = new TH2D("RingPID_US","DS RingEn PID",24,1,25,500,0,500);
   
   TH1* pCoreEnergyUS = new TH1D("Core_EnergyUS","SeGA Core Energy",3000,0,3000);
   TH2* pCoreSumUS = new TH2D("Core_SummaryUS","Core Energy Summary",16,1,17,3000,0,3000);
@@ -541,8 +542,8 @@ int main(int argc, char** argv) {
   TH2* pPhCrtUS = new TH2D("Phi_CrctUS","Phi Correction",6000,0,3000,32,0,thing1);
 
   //Recoil
-  TH2* sPidRec = new TH2D("SecPID_Rec","DS SectorEn PID",24,1,25,1000,0,1000);
-  TH2* rPidRec = new TH2D("RingPID_Rec","DS RingEn PID",24,1,25,1000,0,1000);
+  TH2* sPidRec = new TH2D("SecPID_Rec","DS SectorEn PID",24,1,25,500,0,500);
+  TH2* rPidRec = new TH2D("RingPID_Rec","DS RingEn PID",24,1,25,500,0,500);
   
   TH1* rCoreEnergy = new TH1D("Core_EnergyRec","SeGA Core Energy",3000,0,3000);
   TH2* rCoreSum = new TH2D("Core_SummaryRec","Core Energy Summary",16,1,17,3000,0,3000);
@@ -786,8 +787,8 @@ int main(int argc, char** argv) {
       double sec_en = data.bam2[i].sEn;
 
       TVector3 segPos = GetPos(det,ring,sec);
-      TVector3 ringPos = data.bam2[i].rPos;
-      TVector3 secPos = data.bam2[i].sPos;
+      //TVector3 ringPos = data.bam2[i].rPos;
+      //TVector3 secPos = data.bam2[i].sPos;
       
       if(!det) {
 
