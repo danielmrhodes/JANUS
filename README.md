@@ -19,7 +19,7 @@ The ROOT file hist_file.root now contains many histograms and can be opened with
 
 Functionality
 -----------------
-The JANUS simultation has three modes: source, scattering, and full. Each mode has different functionality and input requirements. 
+The JANUS simultation has three modes: Source, Scattering, and Full. Each mode has different functionality and input requirements. 
 
 - Source: Simulates a simple gamma-ray soure. No (massive) particles involved.
 - Scattering: Simulates two-body scattering events. No gamma-rays involved. 
@@ -35,14 +35,16 @@ The three simulation modes require different commands in their macro files. Howe
 *(mode specific commands)*\
 /run/beamOn nEvents
 
-The /Mode command must come first, and the parameter (mode) can be Source, Scattering, or Full. The /Geometry commands must come next and are common across all modes. The /Geometry/Update command is mandatory. 
+The /Mode command must come first, and the parameter (mode) can be Source, Scattering, or Full. The /Geometry/Update command is mandatory. 
 
 Geometry Commands
 -----------------
+The /Geometry commands are common across all modes. With the exception of /Geometry/Update, all /Geometry commands are optional. Note that the target material does **NOT** define the recoiling nucleus for the kinematics or excittion, it only defines "bulk" material properties of the target.
+
 - /Geometry/Bambino2/UpstreamOffset *double unit*
-  - Set (positive) z-offset of upstream detector (Default: 3 cm)
+  - Set (positive) z-offset of upstream silicon detector (Default: 3 cm)
 - /Geometry/Bambino2/DownstreamOffset *double unit*
-  - Set (positive) z-offset of downstream detector (Default: 3 cm)
+  - Set (positive) z-offset of downstream silicon detector (Default: 3 cm)
 - /Geometry/SeGA/Offset *double unit*
   - Set z-offset of SeGA array (Default: 0 cm)
 - /Geometry/Target/Z *int*
@@ -59,9 +61,29 @@ Geometry Commands
   - Set radius of target (Default: 0.5 cm)
 - /Geometry/Target/StandardTarget *string*
   - Set parameters for a standard target: 208Pb, 48Ti, or 196Pt
+- /Geometry/Update
+  - Update the simulation with your desired geometry
 
-Source Commands
+Source Mode Commands
 -----------------
+There is only one /Source command, and it is mandatory.
 
 - /Source/Energy *double unit*
   - Set energy of source gamma-rays
+
+Scattering Mode Commands
+-----------------
+The Scattering mode commands are divided into two categories: /Beam and /Reaction. The /Beam commands define the properties of the incoming beam. The /Reaction commands control the kinematics. Each have mandatory and optional commands for a Scattering mode simulation.
+
+##### Mandatory /Beam commands
+- /Beam/Energy *double unit*
+  - Set energy of incoming beam
+
+##### Mandatory /Reaction commands
+- /Reaction/ProjectileZ *int*
+  - Set Z of projectile nucleus
+- /Reaction/ProjectileA *int*
+  - Set A of projectile nucleus
+
+
+
