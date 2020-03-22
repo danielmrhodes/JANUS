@@ -49,11 +49,9 @@ G4bool IonSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
 
 void IonSD::EndOfEvent(G4HCofThisEvent* HCE) {
 
-  /*
   if(HC->entries() > 2) {
     ConsolidateHits();
   }
-  */
   
   if(HC->entries() > 3) {
     CombineRings();
