@@ -14,7 +14,7 @@ Reaction_Messenger::Reaction_Messenger(Reaction* reac) : reaction(reac) {
   beamA_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   beamA_cmd->SetGuidance("Set A of projectile nucleus");
 
-  onlyP_cmd = new G4UIcmdWithoutParameter("/Reaction/OnlyProjectile",this);
+  onlyP_cmd = new G4UIcmdWithoutParameter("/Reaction/OnlyProjectiles",this);
   onlyP_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   onlyP_cmd->SetGuidance("Only consider the projectile when defining desired LAB scattering angle ranges");
 
@@ -27,7 +27,7 @@ Reaction_Messenger::Reaction_Messenger(Reaction* reac) : reaction(reac) {
   recoilA_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   recoilA_cmd->SetGuidance("Set A of recoil nucleus");
 
-  onlyR_cmd = new G4UIcmdWithoutParameter("/Reaction/OnlyRecoil",this);
+  onlyR_cmd = new G4UIcmdWithoutParameter("/Reaction/OnlyRecoils",this);
   onlyR_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   onlyR_cmd->SetGuidance("Only consider the recoil when defining desired LAB scattering angle ranges");
 
