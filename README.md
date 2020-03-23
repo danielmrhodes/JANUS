@@ -17,11 +17,11 @@ JANUS takes an input macro file and writes the output to a data file. To run the
 
 The ROOT file hist_file.root now contains many histograms and can be opened with any standard ROOT installation.
 
-The correlator is essentially a stand-alone program compiled with ROOT libraries. To correctly sort the simulated data, the correlator.cc file needs to edited and recompiled. Directly after the inlcude statements, 5 variables need to be changed to match the simulation input: beamZ, beamA, beam_mass, targZ, targA, targ_mass. Energy in MeV and mass in MeV/c<sup>2</sup>. 
+The correlator is essentially a stand-alone program compiled with ROOT libraries. To correctly sort the simulated data, the correlator.cc file needs to edited and recompiled. Directly after the inlcude statements, 5 variables need to be changed to match the simulation input: beamZ, beamA, beam_mass, targZ, targA, and targ_mass. Energy in MeV and mass in MeV/c<sup>2</sup>. 
 
 To recompile the correlator, simply
 
-- ./make_correlator
+- ./make_correlator.sh
 
 Functionality
 -----------------
@@ -39,9 +39,10 @@ The three simulation modes require different commands in their macro files. Howe
 *(optional geometry commands)*\
 /Geometry/Update\
 *(mode specific commands)*\
+/Output/Filename output.dat
 /run/beamOn nEvents
 
-The /Mode command must come first, and the parameter (mode) can be Source, Scattering, or Full. The /Geometry/Update command is mandatory. Example macros for each mode are in the Examples/Macross folder.
+The /Mode command must come first, and the parameter (mode) can be Source, Scattering, or Full. The /Geometry/Update command is mandatory. The /Output/Filename commands sets the name of the output data file. Example macros for each mode are in the Examples/Macros folder.
 
 Geometry Commands
 -----------------
@@ -61,7 +62,7 @@ The /Geometry commands are common across all modes. With the exception of /Geome
 | /Geometry/Target/StandardTarget *string* | Set parameters for a standard target: 208Pb, 48Ti, or 196Pt. |
 | /Geometry/Update | Update the simulation with your desired geometry. |
 
-Note that the target does **NOT** define the recoiling nucleus for the kinematics or excittion, it only defines "bulk" material properties of the target.
+Note that the target does **NOT** define the recoiling nucleus for the kinematics or excitation, it only defines "bulk" material properties of the target.
 
 Source Mode Commands
 -----------------
