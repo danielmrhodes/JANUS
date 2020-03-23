@@ -115,7 +115,7 @@ This is condition is never satisified and will set entire Rutherford distribtion
 | /Beam/SigmaX *double unit* | Set Gaussian sigma of x position distribution of the incoming beam. (Default: 0 mm) |
 | /Beam/SigmaY *double unit* | Set Gaussian sigma of y position distribution of the incoming beam. (Default: 0 mm) |
 | /Beam/SigmaAX *double unit* | Set Gaussian sigma of angle distribution about the x-axis. (Default: 0 deg) |
-| /Beam/SigmaAY *double unit* | Set Gaussian sigma of angle distribution about the y-axis. (Default: 0 deg) |
+| eBeam/SigmaAY *double unit* | Set Gaussian sigma of angle distribution about the y-axis. (Default: 0 deg) |
 
 Full Mode Commands
 -----------------
@@ -135,20 +135,34 @@ To control the recoil nucleus level scheme and excitations, replace /Excitation/
 
 Level Scheme File Format
 -----------------
-The level scheme files are text files with the following format.
+The level scheme files are text files which describe the excited states of a nucleus. They have the following format.
 
 II<sub>1</sub> en<sub>1</sub> tau<sub>1</sub> nb<sub>1</sub> \
 &nbsp;IF<sup>(1)</sup><sub>1</sub> P<sup>(1)</sup><sub>1</sub>\
-&nbsp;...\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...\
 &nbsp;IF<sup>(1)</sup><sub>nb<sub>1</sub></sub> P<sup>(1)</sup><sub>nb<sub>1</sub></sub>\
 II<sub>2</sub> en<sub>2</sub> tau<sub>2</sub> nb<sub>2</sub> \
 &nbsp;IF<sup>(2)</sup><sub>1</sub> P<sup>(2)</sup><sub>1</sub>\
-&nbsp;...\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...\
 &nbsp;IF<sup>(2)</sup><sub>nb<sub>2</sub></sub> P<sup>(2)</sup><sub>nb<sub>2</sub></sub>\
 ...\
 II<sub>N</sub> en<sub>N</sub> tau<sub>N</sub> nb<sub>N</sub> \
 &nbsp;IF<sup>(N)</sup><sub>1</sub> P<sup>(N)</sup><sub>1</sub>\
-&nbsp;...\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...\
 &nbsp;IF<sup>(N)</sup><sub>nb<sub>N</sub></sub> P<sup>(N)</sup><sub>nb<sub>N</sub></sub>\
  
-II<sub>i</sub> is the index of the i-th level, en is its energy in MeV, tau is its mean-lifetime in ps, and nb is the number of gamma decays from this state. IF<sub>i</sub> is the 
+Here II<sub>i</sub> is the index of the i-th level, en<sub>i</sub> is its energy in MeV, tau<sub>i</sub> is its mean-lifetime in ps, and nb<sub>i</sub> is the number of gamma decays from this state. IF<sup>(i)</sup><sub>j</sub> is the index of the final state for the j-th gamma decay of the i-th state. P<sup>(i)</sup><sub>j</sub> is the probability of that decay.
+
+The states must be declared in order, i.e. II<sub>1</sub> = 1, II<sub>2</sub> = 2 and so on. This technically makes the initial state index redundant. The ground state has index 0. There is no limit on the number of states or decays from a state. An example level scheme file is in the Examples/LevelSchemes folder.
+
+Probability File Format
+-----------------
+The probability files are text files which describe the scattering-angle dependent excitation probabilitis of the excited states (defined in the level scheme file). They have the following format.
+
+
+Theta<sub>1</sub> P<sub>1</sub>(Theta<sub>1</sub>) P<sub>2</sub>(Theta<sub>1</sub>) ... P<sub>N</sub>(Theta<sub>1</sub>)
+Theta<sub>2</sub> P<sub>1</sub>(Theta<sub>2</sub>) P<sub>2</sub>(Theta<sub>2</sub>) ... P<sub>N</sub>(Theta<sub>2</sub>)
+...
+Theta<sub>K</sub> P<sub>1</sub>(Theta<sub>K</sub>) P<sub>2</sub>(Theta<sub>K</sub>) ... P<sub>N</sub>(Theta<sub>K</sub>)
+
+Here \( \theta \ \Theta \)
