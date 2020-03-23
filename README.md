@@ -75,15 +75,17 @@ Scattering Mode Commands
 -----------------
 The Scattering mode commands are divided into two categories: /Beam and /Reaction. The /Beam commands define the properties of the incoming beam. The /Reaction commands control the kinematics. Each have mandatory and optional commands for a Scattering mode simulation.
 
-##### Mandatory /Beam commands
+### Mandatory /Beam commands
 - /Beam/Energy *double unit*
   - Set energy of incoming beam
 
-##### Mandatory /Reaction commands
+### Mandatory /Reaction commands
 - /Reaction/ProjectileZ *int*
   - Set Z of projectile nucleus
 - /Reaction/ProjectileA *int*
   - Set A of projectile nucleus
-
-
+- /Reaction/RecoilZ *int*
+  - Set Z of recoil nucleus
+- /Reaction/RecoilA *int*
+  - Set A of recoil nucleus
 
