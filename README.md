@@ -138,17 +138,17 @@ Level Scheme File Format
 The level scheme files are text files with the following format.
 
 II<sub>1</sub> en tau nb\
-\ IF<sub>1</sub> P<sub>1</sub>\
-\ ...\
-\ IF<sub>nb</sub> P<sub>nb</sub>\
+  IF<sub>1</sub> P<sub>1</sub>\
+  ...\
+  IF<sub>nb</sub> P<sub>nb</sub>\
 II<sub>2</sub> en tau nb\
-\ IF<sub>1</sub> P<sub>1</sub>\
-\ ...\
-\ IF<sub>nb</sub> P<sub>nb</sub>\
+  IF<sub>1</sub> P<sub>1</sub>\
+  ...\
+  IF<sub>nb</sub> P<sub>nb</sub>\
 ...\
 II<sub>Nstates</sub> en tau nb\
-\ IF<sub>1</sub> P<sub>1</sub>\
-\ ...\
-\ IF<sub>nb</sub> P<sub>nb</sub>\
+  IF<sub>1</sub> P<sub>1</sub>\
+  ...\
+  IF<sub>nb</sub> P<sub>nb</sub>\
  
 Where ..
