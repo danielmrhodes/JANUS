@@ -93,7 +93,7 @@ The Scattering mode commands are divided into two categories: /Beam and /Reactio
 | /Reaction/OnlyRecoils | Only consider the recoil when defining the desired scattering angle ranges (above commands). |
 | /Reaction/DeltaE *double unit* | Set (positive) deltaE to simulate inelastic scattering. (Default: 0 MeV) |
 
-The use of optional \Reaction commands is highly encouraged. Without these commands, the entire scattering angle range will be sampled according the Rutheford scattering distribution. This means roughly 10^-4 of your simulated events will result in a particle entring the silicon detectors.
+The use of optional \Reaction commands is highly encouraged. Without these commands, the entire scattering angle range will be sampled according the Rutheford scattering distribution. This means roughly 10<sup>-4</sup> of your simulated events will result in a particle entring the silicon detectors.
 
 The optional \Reaction commands can be used together, so you can fully customize what scattering angles you simulate. The /Reaction/SendToX commands will overwrite any scattering angles defined via the /Reaction/AddThetaLAB command. To use these commands together, always call the /Reaction/SendToX command first.
 
@@ -135,7 +135,20 @@ To control the recoil nucleus level scheme and excitations, replace /Excitation/
 
 Level Scheme File Format
 -----------------
-The level scheme files are simple text files with the following format.
+The level scheme files are text files with the following format.
 
-
-
+* II<sub>1</sub> en tau nb *
+ * IF<sub>1</sub> P<sub>1</sub> *\
+ * ... *\
+ * IF<sub>nb</sub> P<sub>nb</sub> *\
+* II<sub>2</sub> en tau nb *\
+ * IF<sub>1</sub> P<sub>1</sub> *\
+  * ... *\
+  * IF<sub>nb</sub> P<sub>nb</sub> *\
+* ... *\
+* II<sub>Nstates</sub> en tau nb *\
+ * IF<sub>1</sub> P<sub>1</sub> *\
+   * ... *\
+  * IF<sub>nb</sub> P<sub>nb</sub> *\
+ 
+Where ..
