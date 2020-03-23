@@ -21,11 +21,11 @@ Functionality
 -----------------
 The JANUS simultation has three modes: Source, Scattering, and Full. Each mode has different functionality and input requirements. 
 
-- Source: Simulates a simple gamma-ray soure. No (massive) particles involved.
+- Source: Simulates a simple isotropic gamma-ray source. No (massive) particles involved.
 - Scattering: Simulates two-body scattering events. No gamma-rays involved. 
 - Full: Simulates Coulomb Excitation events with user-definable level schemes and scattering-angle dependent excitation probabilities.
 
-Macro Files and Commands
+Macro Files
 -----------------
 The three simulation modes require different commands in their macro files. However all share a common structure 
 
@@ -39,7 +39,7 @@ The /Mode command must come first, and the parameter (mode) can be Source, Scatt
 
 Geometry Commands
 -----------------
-The /Geometry commands are common across all modes. With the exception of /Geometry/Update, all /Geometry commands are optional. Note that the target material does **NOT** define the recoiling nucleus for the kinematics or excittion, it only defines "bulk" material properties of the target.
+The /Geometry commands are common across all modes. With the exception of /Geometry/Update, all /Geometry commands are optional.
 
 - /Geometry/Bambino2/UpstreamOffset *double unit*
   - Set (positive) z-offset of upstream silicon detector (Default: 3 cm)
@@ -64,6 +64,8 @@ The /Geometry commands are common across all modes. With the exception of /Geome
 - /Geometry/Update
   - Update the simulation with your desired geometry
 
+Note that the target does **NOT** define the recoiling nucleus for the kinematics or excittion, it only defines "bulk" material properties of the target.
+
 Source Mode Commands
 -----------------
 There is only one /Source command, and it is mandatory.
@@ -75,10 +77,6 @@ Scattering Mode Commands
 -----------------
 The Scattering mode commands are divided into two categories: /Beam and /Reaction. The /Beam commands define the properties of the incoming beam. The /Reaction commands control the kinematics. Each have mandatory and optional commands for a Scattering mode simulation.
 
-### Mandatory /Beam commands
-- /Beam/Energy *double unit*
-  - Set energy of incoming beam
-
 ### Mandatory /Reaction commands
 - /Reaction/ProjectileZ *int*
   - Set Z of projectile nucleus
@@ -88,4 +86,39 @@ The Scattering mode commands are divided into two categories: /Beam and /Reactio
   - Set Z of recoil nucleus
 - /Reaction/RecoilA *int*
   - Set A of recoil nucleus
+
+### Mandatory /Beam commands
+- /Beam/Energy *double unit*
+  - Set energy of incoming beam
+
+### Optional /Reaction commands
+- /Reaction/SendToJanus
+  - Only sample parts of the Rutherford scattering distribution which will result in a particle entering a silicon detector.
+- /Reaction/SendToUpstreamJanus
+  - Only sample parts of the Rutherford scattering distribution which will result in a particle entering the upstream silicon detector.
+- /Reaction/SendToDownstreamJanus
+  - Only sample parts of the Rutherford scattering distribution which will result in a particle entering the downstream silicon detector.
+- /Reaction/AddThetaLAB *double unit*
+  - Add an angle to desired LAB scattering angle ranges. This command must always be used two at a time, with the smaller angle coming first. Otherwise it doesn't work.
+- /Reaction/OnlyProjectiles
+  - Only consider the projectile when defining desired scattering angle ranges (above commands)
+- /Reaction/OnlyRecoils
+  - Only consider the recoil when defining the desired scattering angle ranges (above commands)
+- /Reaction/DeltaE *double unit*
+  - Set (positive) deltaE to simulate inelastic scattering (Default: 0 MeV)
+
+The use of optional \Reaction commands is highly encouraged. Without these commands, the entire scattering angle range will be sampled according the Rutheford scattering distribution. This means roughly 10^-4 of your simulated events will result in a particle entring the silicon detectors.
+
+The optional \Reaction commands can be used together, so you can fully customize what scattering angles you simulate. The /Reaction/SendToX commands will overwrite any scattering angles defined via the /Reaction/AddThetaLAB command. To use these commands together, always call the /Reaction/SendToX command first.
+
+There are no "safety checks" for these commands. For example, never do
+
+/Reaction/SendToUpstreamJanus\
+/Reaction/OnlyRecoils
+
+This is condition is never satisified and will set entire Rutherford distribtion to zero.
+
+### Optional /Beam commands
+- /Beam/PositionX *double unit*
+  - Set X position of incoming beam spot (Default: 0 mm)
 
