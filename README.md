@@ -22,6 +22,7 @@ The correlator is essentially a stand-alone program compiled with ROOT libraries
 To recompile the correlator, simply
 
 - ./make_correlator
+
 Functionality
 -----------------
 The JANUS simultation has three modes: Source, Scattering, and Full. Each mode has different functionality and input requirements. 
