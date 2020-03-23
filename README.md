@@ -67,7 +67,7 @@ There is only one /Source command, and it is mandatory.
 
 Scattering Mode Commands
 -----------------
-The Scattering mode commands are divided into two categories: /Beam and /Reaction. The /Beam commands define the properties of the incoming beam. The /Reaction commands control the kinematics. Each have mandatory and optional commands for a Scattering mode simulation.
+The Scattering mode commands are divided into two categories: /Beam and /Reaction. The /Beam commands define the properties of the incoming beam. The /Reaction commands control the kinematics. Each have mandatory and optional commands.
 
 ### Mandatory /Reaction commands
 | Command | Description |
@@ -78,9 +78,13 @@ The Scattering mode commands are divided into two categories: /Beam and /Reactio
 | /Reaction/RecoilA *int* | Set A of recoil nucleus. |
 
 ### Mandatory /Beam commands
+| Command | Description |
+| --- | --- |
 | /Beam/Energy *double unit* | Set energy of incoming beam |
 
 ### Optional /Reaction commands
+| Command | Description |
+| --- | --- |
 | /Reaction/SendToJanus | Only sample parts of the Rutherford scattering distribution which will result in a particle entering a silicon detector. |
 | /Reaction/SendToUpstreamJanus | Only sample parts of the Rutherford scattering distribution which will result in a particle entering the upstream silicon detector. |
 | /Reaction/SendToDownstreamJanus | Only sample parts of the Rutherford scattering distribution which will result in a particle entering the downstream silicon detector. |
@@ -101,6 +105,8 @@ There are no "safety checks" for these commands. For example, never do
 This is condition is never satisified and will set entire Rutherford distribtion to zero.
 
 ### Optional /Beam commands
+| Command | Description |
+| --- | --- |
 | /Beam/SigmaEn *double unit* | Set Gaussian sigma of the kinetic energy distribution of the incoming beam (Default: 0 MeV) |
 | /Beam/PositionX *double unit* | Set X position of incoming beam spot. (Default: 0 mm) |
 | /Beam/PositionY *double unit* | Set Y position of incoming beam spot. (Default: 0 mm) |
@@ -115,6 +121,8 @@ Full Mode Commands
 -----------------
 For the Full CoulEx simulation, all Scattering mode commands still apply (except /Reaction/DeltaE). Additionally, /Excitation commands must be called which determine the level scheme and excitation pattern in both the projectile and recoil nucleus. No /Excitation commands are strictly optional or mandatory.
 
+| Command | Description |
+| --- | --- |
 | /Excitation/Projectile/LevelScheme *string* | Name of the file to be read-in which defines the projectile level scheme. |
 | /Excitation/Projectile/Probabilities *string* | Name of the file to be read-in which defines the angle-dependent excitation probabilities for the projectile. |
 | /Excitation/Projectile/PopulateState *int* | Choose one state to populate in the projectile, irrespectie of scattering angle. This overrides /Excitation/Projectile/Probabilities. |
