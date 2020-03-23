@@ -37,8 +37,7 @@ The three simulation modes require different commands in their macro files. Howe
 
 The /Mode command must come first, and the parameter (mode) can be Source, Scattering, or Full. The /Geometry/Update command is mandatory. 
 
-Geometry Commands
------------------
+## Geometry Commands
 The /Geometry commands are common across all modes. With the exception of /Geometry/Update, all /Geometry commands are optional. Note that the target material does **NOT** define the recoiling nucleus for the kinematics or excittion, it only defines "bulk" material properties of the target.
 
 - /Geometry/Bambino2/UpstreamOffset *double unit*
