@@ -165,4 +165,4 @@ theta<sub>2</sub> P<sub>0</sub>(theta<sub>2</sub>) P<sub>1</sub>(theta<sub>2</su
 ...\
 theta<sub>K</sub> P<sub>0</sub>(theta<sub>K</sub>) P<sub>1</sub>(theta<sub>K</sub>) ... P<sub>N</sub>(theta<sub>K</sub>)
 
-Here theta<sub>k</sub> is the center-of-mass frame scattering angle in rads. P<sub>i</sub>(theta<sub>k</sub>) is the excitation probability of i-th state for the k-th scattering angle. Scattering angles msut be entered smallest to largest. The state indices are defined in the level scheme file. Note that the ground state probabilities (index 0) must be included here. An example probabilities file is in the Examples/Probabilities folder.
+Here theta<sub>k</sub> is the center-of-mass frame scattering angle in rads. P<sub>i</sub>(theta<sub>k</sub>) is the excitation probability of i-th state for the k-th scattering angle. Scattering angles must be entered smallest to largest, and there is no limit on the number of theta spline points. The state indices are defined by the level scheme file. Note that the ground state probabilities (index 0) must be included here. An example probabilities file is in the Examples/Probabilities folder.
