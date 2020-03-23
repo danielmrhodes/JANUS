@@ -6,7 +6,7 @@ A GEANT4 simulation of low-energy Coulomb Excitation experiments with the SeGA-J
 Requirements
 ------------------
 - JANUS requires GEANT4 v10.04.02. It has not been tested on any other version.
-- In order to unpack, correlate, and histogram the simulation output, a ROOT instatllation is required.
+- In order to unpack, correlate, and histogram the simulation output, a ROOT installation is required.
 
 Running JANUS
 -----------------
@@ -70,8 +70,10 @@ Source Mode Commands
 -----------------
 There is only one /Source command, and it is mandatory.
 
-- /Source/Energy *double unit*
-  - Set energy of source gamma-rays
+| Command | Description |
+| --- | --- |
+| /Source/Energy *double unit* |
+| Set energy of source gamma-rays |
 
 Scattering Mode Commands
 -----------------
@@ -140,4 +142,27 @@ This is condition is never satisified and will set entire Rutherford distribtion
 
 Full Mode Commands
 -----------------
+For the Full CoulEx simulation, all Scattering mode commands still apply (except /Reaction/DeltaE). Additionally, /Excitation commands must be called which determine the level scheme and excitation pattern in both the projectile and recoiling nucleus. No /Excitation commands are strictly optional or mandatory.
+
+- /Excitation/Projectile/LevelScheme *string*
+  - Name of the file to be read-in which defines the projectile level scheme.
+- /Excitation/Projectile/Probabilities *string*
+  - Name of the file to be read-in which defines the angle-dependent excitation probabilities for the projectile.
+- /Excitation/Projectile/PopulateState *int* 
+  - Choose one state to populate in the projectile, irrespectie of scattering angle. This overrides /Excitation/Projectile/Probabilities. 
+- /Excitation/Projectile/Simple
+  - Declare a "simple" level scheme and excitation pattern for the projectile. This means there is only one excited state in the projectile, and it will always be populated. This overrides the above three commands.
+- /Excitation/Projectile/SimpleEnergy *double unit*
+  - Set the energy of the simple state in the projectile
+- /Excitation/Projectile/SimpleLifetime *double unit*
+  - Set the lifetime of the simple state in the projectile
+
+To control the recoil nucleus level scheme and excitations, replace /Excitation/Projectile/ with 
+/Excitation/Recoil/. All commands are identically the same.
+
+Level Scheme File Format
+-----------------
+The level scheme files are simple text files with the following format.
+
+
 
