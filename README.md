@@ -41,12 +41,11 @@ Geometry Commands
 -----------------
 The /Geometry commands are common across all modes. With the exception of /Geometry/Update, all /Geometry commands are optional.
 
-- /Geometry/Bambino2/UpstreamOffset *double unit*
-  - Set (positive) z-offset of upstream silicon detector (Default: 3 cm)
-- /Geometry/Bambino2/DownstreamOffset *double unit*
-  - Set (positive) z-offset of downstream silicon detector (Default: 3 cm)
-- /Geometry/SeGA/Offset *double unit*
-  - Set z-offset of SeGA (Default: 0 cm)
+| Command | Description |
+| --- | --- |
+| /Geometry/Bambino2/UpstreamOffset *double unit* | Set (positive) z-offset of upstream silicon detector (Default: 3 cm) |
+| /Geometry/Bambino2/DownstreamOffset *double unit* | Set (positive) z-offset of downstream silicon detector (Default: 3 cm) |
+| /Geometry/SeGA/Offset *double unit* | Set z-offset of SeGA (Default: 0 cm) |
 - /Geometry/Target/Z *int*
   - Set Z of target nucleus (Default: 82)
 - /Geometry/Target/N *int*
@@ -72,22 +71,19 @@ There is only one /Source command, and it is mandatory.
 
 | Command | Description |
 | --- | --- |
-| /Source/Energy *double unit* |
-| Set energy of source gamma-rays |
+| /Source/Energy *double unit* | Set energy of source gamma-rays |
 
 Scattering Mode Commands
 -----------------
 The Scattering mode commands are divided into two categories: /Beam and /Reaction. The /Beam commands define the properties of the incoming beam. The /Reaction commands control the kinematics. Each have mandatory and optional commands for a Scattering mode simulation.
 
 ### Mandatory /Reaction commands
-- /Reaction/ProjectileZ *int*
-  - Set Z of projectile nucleus
-- /Reaction/ProjectileA *int*
-  - Set A of projectile nucleus
-- /Reaction/RecoilZ *int*
-  - Set Z of recoil nucleus
-- /Reaction/RecoilA *int*
-  - Set A of recoil nucleus
+| Command | Description |
+| --- | --- |
+| /Reaction/ProjectileZ *int* | Set Z of projectile nucleus |
+| /Reaction/ProjectileA *int* | Set A of projectile nucleus |
+| /Reaction/RecoilZ *int* | Set Z of recoil nucleus |
+| /Reaction/RecoilA *int* | Set A of recoil nucleus |
 
 ### Mandatory /Beam commands
 - /Beam/Energy *double unit*
