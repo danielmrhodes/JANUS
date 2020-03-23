@@ -160,9 +160,9 @@ Probability File Format
 The probability files are text files which describe the scattering-angle dependent excitation probabilitis of the excited states (defined in the level scheme file). They have the following format.
 
 
-Theta<sub>1</sub> P<sub>1</sub>(Theta<sub>1</sub>) P<sub>2</sub>(Theta<sub>1</sub>) ... P<sub>N</sub>(Theta<sub>1</sub>)\
-Theta<sub>2</sub> P<sub>1</sub>(Theta<sub>2</sub>) P<sub>2</sub>(Theta<sub>2</sub>) ... P<sub>N</sub>(Theta<sub>2</sub>)\
+theta<sub>1</sub> P<sub>0</sub>(theta<sub>1</sub>) P<sub>1</sub>(theta<sub>1</sub>) ... P<sub>N</sub>(theta<sub>1</sub>)\
+theta<sub>2</sub> P<sub>0</sub>(theta<sub>2</sub>) P<sub>1</sub>(theta<sub>2</sub>) ... P<sub>N</sub>(theta<sub>2</sub>)\
 ...\
-Theta<sub>K</sub> P<sub>1</sub>(Theta<sub>K</sub>) P<sub>2</sub>(Theta<sub>K</sub>) ... P<sub>N</sub>(Theta<sub>K</sub>)
+theta<sub>K</sub> P<sub>0</sub>(theta<sub>K</sub>) P<sub>1</sub>(theta<sub>K</sub>) ... P<sub>N</sub>(theta<sub>K</sub>)
 
-Here \( \theta \ \Theta \) &theta
+Here theta<sub>k</sub> is the center-of-mass frame scattering angle in rads. P<sub>i</sub>(theta<sub>k</sub>) is the excitation probability of i-th state for the k-th scattering angle. Scattering angles msut be entered smallest to largest. The state indices are defined in the level scheme file. Note that the ground state probabilities must be included here (index 0). 
