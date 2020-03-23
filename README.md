@@ -39,10 +39,10 @@ The three simulation modes require different commands in their macro files. Howe
 *(optional geometry commands)*\
 /Geometry/Update\
 *(mode specific commands)*\
-/Output/Filename output.dat
+/Output/Filename output.dat\
 /run/beamOn nEvents
 
-The /Mode command must come first, and the parameter (mode) can be Source, Scattering, or Full. The /Geometry/Update command is mandatory. The /Output/Filename commands sets the name of the output data file. Example macros for each mode are in the Examples/Macros folder.
+The /Mode command must come first, and the parameter (mode) can be Source, Scattering, or Full. The /Geometry/Update command is mandatory. The /Output/Filename command sets the name of the output data file. Example macros for each mode are in the Examples/Macros folder.
 
 Geometry Commands
 -----------------
