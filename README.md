@@ -35,7 +35,7 @@ The three simulation modes require different commands in their macro files. Howe
 *(mode specific commands)*\
 /run/beamOn nEvents
 
-The /Mode command must come first, and the parameter (mode) can be Source, Scattering, or Full. The /Geometry/Update command is mandatory. 
+The /Mode command must come first, and the parameter (mode) can be Source, Scattering, or Full. The /Geometry/Update command is mandatory. Example macros for each mode are in the Examples/Macross folder.
 
 Geometry Commands
 -----------------
