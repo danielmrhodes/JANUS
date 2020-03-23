@@ -46,7 +46,7 @@ The /Geometry commands are common across all modes. With the exception of /Geome
 - /Geometry/Bambino2/DownstreamOffset *double unit*
   - Set (positive) z-offset of downstream silicon detector (Default: 3 cm)
 - /Geometry/SeGA/Offset *double unit*
-  - Set z-offset of SeGA array (Default: 0 cm)
+  - Set z-offset of SeGA (Default: 0 cm)
 - /Geometry/Target/Z *int*
   - Set Z of target nucleus (Default: 82)
 - /Geometry/Target/N *int*
@@ -119,6 +119,25 @@ There are no "safety checks" for these commands. For example, never do
 This is condition is never satisified and will set entire Rutherford distribtion to zero.
 
 ### Optional /Beam commands
+- /Beam/SigmaEn *double unit*
+  - Set Gaussian sigma of the kinetic energy distribution of the incoming beam (Default: 0 MeV)
 - /Beam/PositionX *double unit*
   - Set X position of incoming beam spot (Default: 0 mm)
+- /Beam/PositionY *double unit*
+  - Set Y position of incoming beam spot (Default: 0 mm)
+- /Beam/AngleX" *double unit*
+  - Set angle about x-axis of incoming beam (Default: 0 deg)
+- /Beam/AngleY" *double unit*
+  - Set angle about y-axis of incoming beam (Default: 0 deg)
+- /Beam/SigmaX *double unit* 
+  - Set Gaussian sigma of x position distribution of the incoming beam (Default: 0 mm)
+- /Beam/SigmaY *double unit*
+  - Set Gaussian sigma of y position distribution of the incoming beam (Default: 0 mm)
+- /Beam/SigmaAX *double unit*
+  - Set Gaussian sigma of angle distribution about the x-axis (Default: 0 deg)
+- /Beam/SigmaAY *double unit*
+  - Set Gaussian sigma of angle distribution about the y-axis (Default: 0 deg)
+
+Full Mode Commands
+-----------------
 
