@@ -137,18 +137,18 @@ Level Scheme File Format
 -----------------
 The level scheme files are text files with the following format.
 
-II<sub>1</sub> en tau nb \
-&nbsp;IF<sub>1</sub> P<sub>1</sub>\
+II<sub>1</sub> en<sub>1</sub> tau<sub>1</sub> nb<sub>1</sub> \
+&nbsp;IF<sup>(1)</sup><sub>1</sub> P<sup>(1)</sup><sub>1</sub>\
 &nbsp;...\
-&nbsp;IF<sub>nb</sub> P<sub>nb</sub>\
-II<sub>2</sub> en tau nb \
-&nbsp;IF<sub>1</sub> P<sub>1</sub>\
+&nbsp;IF<sup>(1)</sup><sub>nb<sub>1</sub></sub> P<sup>(1)</sup><sub>nb<sub>1</sub></sub>\
+II<sub>2</sub> en<sub>2</sub> tau<sub>2</sub> nb<sub>2</sub> \
+&nbsp;IF<sup>(2)</sup><sub>1</sub> P<sup>(2)</sup><sub>1</sub>\
 &nbsp;...\
-&nbsp;IF<sub>nb</sub> P<sub>nb</sub>\
+&nbsp;IF<sup>(2)</sup><sub>nb<sub>2</sub></sub> P<sup>(2)</sup><sub>nb<sub>2</sub></sub>\
 ...\
-II<sub>Nstates</sub> en tau nb \
-&nbsp;IF<sub>1</sub> P<sub>1</sub>\
+II<sub>N</sub> en<sub>N</sub> tau<sub>N</sub> nb<sub>N</sub> \
+&nbsp;IF<sup>(N)</sup><sub>1</sub> P<sup>(N)</sup><sub>1</sub>\
 &nbsp;...\
-&nbsp;IF<sub>nb</sub> P<sub>nb</sub>\
+&nbsp;IF<sup>(N)</sup><sub>nb<sub>N</sub></sub> P<sup>(N)</sup><sub>nb<sub>N</sub></sub>\
  
-Where ..
+II<sub>i</sub> is the index of the i-th level, en is its energy in MeV, tau is its mean-lifetime in ps, and nb is the number of gamma decays from this state. IF<sub>i</sub> is the 
