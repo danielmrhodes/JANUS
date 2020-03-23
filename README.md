@@ -17,6 +17,11 @@ JANUS takes an input macro file and writes the output to a data file. To run the
 
 The ROOT file hist_file.root now contains many histograms and can be opened with any standard ROOT installation.
 
+The correlator is essentially a stand-alone program compiled with ROOT libraries. To correctly sort the simulated data, the correlator.cc file needs to edited and recompiled. Directly after the inlcude statements, 5 variables need to be changed to match the simulation input: beamZ, beamA, beam_mass, targZ, targA, targ_mass. Energy in MeV and mass in MeV/c<sup>2</sup>. 
+
+To recompile the correlator, simply
+
+- ./make_correlator
 Functionality
 -----------------
 The JANUS simultation has three modes: Source, Scattering, and Full. Each mode has different functionality and input requirements. 
