@@ -100,7 +100,7 @@ The Scattering mode commands are divided into two categories: /Beam and /Reactio
 | /Reaction/OnlyRecoils | Only consider the recoil when defining the desired scattering angle ranges (above commands). |
 | /Reaction/DeltaE *double unit* | Set (positive) deltaE to simulate inelastic scattering. (Default: 0 MeV) |
 
-The use of optional /Reaction commands is highly encouraged. Without these commands, the entire scattering angle range will be sampled according the Rutheford scattering distribution. This means roughly 10<sup>-4</sup> of your simulated events will result in a particle entring the silicon detectors.
+The use of optional /Reaction commands is highly encouraged. Without these commands, the entire scattering angle range will be sampled according the Rutheford scattering distribution. This means roughly 10<sup>-4</sup> of your simulated events will result in a particle entering the silicon detectors.
 
 The optional /Reaction commands can be used together, so you can fully customize what scattering angles you simulate. The /Reaction/SendToX commands will overwrite any scattering angles defined via the /Reaction/AddThetaLAB command. To use these commands together, always call the /Reaction/SendToX command first.
 
@@ -109,7 +109,9 @@ There are no "safety checks" for these commands. For example, never do
 /Reaction/SendToUpstreamJanus\
 /Reaction/OnlyRecoils
 
-This is condition is never satisified and will set entire Rutherford distribtion to zero.
+This is condition is never satisified and will set entire Rutherford distribution to zero.
+
+*In the cuurent version, you cannot simulate only the recoils entering the downstream detctor while also including the projectiles backscattering to the upstream detector. I'll work on a fix.*
 
 ### Optional /Beam commands
 | Command | Description |
