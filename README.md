@@ -160,7 +160,7 @@ II<sub>N</sub> en<sub>N</sub> tau<sub>N</sub> nb<sub>N</sub> \
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...\
 &nbsp;IF<sup>(N)</sup><sub>nb<sub>N</sub></sub> P<sup>(N)</sup><sub>nb<sub>N</sub></sub>
  
-Here II<sub>i</sub> is the index of state i, en<sub>i</sub> is its energy in MeV, tau<sub>i</sub> is its mean-lifetime in ps, and nb<sub>i</sub> is the number of gamma decays from this state. IF<sup>(i)</sup><sub>j</sub> is the index of the final state for gamma decay j of state i. P<sup>(i)</sup><sub>j</sub> is the probability of that decay.
+Here II<sub>i</sub> is the index of state i, en<sub>i</sub> is its energy in keV, tau<sub>i</sub> is its mean-lifetime in ps, and nb<sub>i</sub> is the number of gamma decays from this state. IF<sup>(i)</sup><sub>j</sub> is the index of the final state for gamma decay j of state i. P<sup>(i)</sup><sub>j</sub> is the probability of that decay.
 
 The states must be declared in order, i.e. II<sub>1</sub> = 1, II<sub>2</sub> = 2 and so on. This technically makes the initial state index redundant. The ground state (index 0) is not included in the level scheme file. There is no limit on the number of excited states or decays from a state. An example level scheme file is in the Examples/LevelSchemes folder.
 
