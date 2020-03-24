@@ -14,14 +14,14 @@
 //These should match the parameters defined in the simulation input
 int beamZ = 48;
 int beamA = 106;
-double beam_mass = 98626.9;
+double beam_mass = 98626.9; // MeV/c^2
   
 int targZ = 82;
 int targA = 208;
-double targ_mass = 193688;
+double targ_mass = 193688; // MeV/c^2
 //double targ_mass = 44652.;
 
-double beam_en = 450.0;
+double beam_en = 450.0; // MeV
 //double beam_en = 291.5;
 
 ////Kinematics////
