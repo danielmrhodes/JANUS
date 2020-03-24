@@ -1,7 +1,7 @@
 JANUS
-===========================================================================================
-A GEANT4 simulation of low-energy Coulomb Excitation experiments with the SeGA-JANUS setup.
-===========================================================================================
+=================================================================================
+A GEANT4 simulation of low-energy Coulomb Excitation experiments with SeGA-JANUS.
+=================================================================================
 
 Requirements
 ------------------
@@ -100,9 +100,9 @@ The Scattering mode commands are divided into two categories: /Beam and /Reactio
 | /Reaction/OnlyRecoils | Only consider the recoil when defining the desired scattering angle ranges (above commands). |
 | /Reaction/DeltaE *double unit* | Set (positive) deltaE to simulate inelastic scattering. (Default: 0 MeV) |
 
-The use of optional \Reaction commands is highly encouraged. Without these commands, the entire scattering angle range will be sampled according the Rutheford scattering distribution. This means roughly 10<sup>-4</sup> of your simulated events will result in a particle entring the silicon detectors.
+The use of optional /Reaction commands is highly encouraged. Without these commands, the entire scattering angle range will be sampled according the Rutheford scattering distribution. This means roughly 10<sup>-4</sup> of your simulated events will result in a particle entring the silicon detectors.
 
-The optional \Reaction commands can be used together, so you can fully customize what scattering angles you simulate. The /Reaction/SendToX commands will overwrite any scattering angles defined via the /Reaction/AddThetaLAB command. To use these commands together, always call the /Reaction/SendToX command first.
+The optional /Reaction commands can be used together, so you can fully customize what scattering angles you simulate. The /Reaction/SendToX commands will overwrite any scattering angles defined via the /Reaction/AddThetaLAB command. To use these commands together, always call the /Reaction/SendToX command first.
 
 There are no "safety checks" for these commands. For example, never do
 
@@ -122,7 +122,7 @@ This is condition is never satisified and will set entire Rutherford distribtion
 | /Beam/SigmaX *double unit* | Set Gaussian sigma of x position distribution of the incoming beam. (Default: 0 mm) |
 | /Beam/SigmaY *double unit* | Set Gaussian sigma of y position distribution of the incoming beam. (Default: 0 mm) |
 | /Beam/SigmaAX *double unit* | Set Gaussian sigma of angle distribution about the x-axis. (Default: 0 deg) |
-| eBeam/SigmaAY *double unit* | Set Gaussian sigma of angle distribution about the y-axis. (Default: 0 deg) |
+| /Beam/SigmaAY *double unit* | Set Gaussian sigma of angle distribution about the y-axis. (Default: 0 deg) |
 
 Full Mode Commands
 -----------------
@@ -172,4 +172,4 @@ theta<sub>2</sub> P<sub>0</sub>(theta<sub>2</sub>) P<sub>1</sub>(theta<sub>2</su
 ...\
 theta<sub>K</sub> P<sub>0</sub>(theta<sub>K</sub>) P<sub>1</sub>(theta<sub>K</sub>) ... P<sub>N</sub>(theta<sub>K</sub>)
 
-Here theta<sub>k</sub> is the center-of-mass frame scattering angle in rads. P<sub>i</sub>(theta<sub>k</sub>) is the excitation probability of i-th state for the k-th scattering angle. Scattering angles must be entered smallest to largest, and there is no limit on the number of theta spline points. The state indices are defined by the level scheme file. Note that the ground state probabilities (index 0) must be included here. An example probabilities file is in the Examples/Probabilities folder.
+Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. P<sub>i</sub>(theta<sub>k</sub>) is the excitation probability of i-th state for the CoM scattering angle theta<sub>k</sub>. The scattering angles must be entered smallest to largest, and there is no limit on the number of theta spline points. The state indices are defined by the level scheme file. Note that the ground state probabilities (index 0) must be included here. An example probabilities file is in the Examples/Probabilities folder.
