@@ -111,7 +111,7 @@ There are no "safety checks" for these commands. For example, never do
 
 This is condition is never satisified and will set entire Rutherford distribution to zero.
 
-*In the cuurent version, you cannot simulate only the recoils entering the downstream detector while also including the projectiles backscattering into the upstream detector. I'll work on a fix.*
+*In the current version of JANUS, you cannot simulate only the recoils entering the downstream detector while also including the projectiles backscattering into the upstream detector. I'll work on a fix.*
 
 ### Optional /Beam commands
 | Command | Description |
