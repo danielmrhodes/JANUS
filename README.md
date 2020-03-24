@@ -164,7 +164,7 @@ The states must be declared in order, i.e. II<sub>1</sub> = 1, II<sub>2</sub> = 
 
 Probability File Format
 -----------------
-The probability files are text files which describe the scattering-angle dependent excitation probabilitis of the excited states (defined in the level scheme file). They have the following format.
+The probability files are text files which describe the scattering-angle dependent excitation probabilities of the excited states (defined in the level scheme file). They have the following format.
 
 
 theta<sub>1</sub> P<sub>0</sub>(theta<sub>1</sub>) P<sub>1</sub>(theta<sub>1</sub>) ... P<sub>N</sub>(theta<sub>1</sub>)\
