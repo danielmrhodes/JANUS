@@ -16,13 +16,13 @@ int beamZ = 48;
 int beamA = 106;
 double beam_mass = 98626.9; // MeV/c^2
   
-int targZ = 82;
-int targA = 208;
-double targ_mass = 193688; // MeV/c^2
-//double targ_mass = 44652.;
+int targZ = 22;
+int targA = 48;
+//double targ_mass = 193688; // MeV/c^2
+double targ_mass = 44652.;
 
-double beam_en = 450.0; // MeV
-//double beam_en = 291.5;
+//double beam_en = 450.0; // MeV
+double beam_en = 291.5;
 
 ////Kinematics////
 double Theta_CM_FP(double ThetaLAB, double Ep, bool sol2=false, double Ex=0.) {
@@ -489,6 +489,7 @@ int main(int argc, char** argv) {
   TH1* segEnergy = new TH1D("Seg_Energy","SeGA Segment Energy",3000,0,3000);
 
   TH2* coreSum = new TH2D("Core_Summary","Core Energy Summary",16,1,17,3000,0,3000);
+  TH2* segSum = new TH2D("Seg_Summary","Segment Energy Summary",512,1,513,3000,0,3000);
 
   //Coincidences
   //Projectile DS
@@ -787,8 +788,6 @@ int main(int argc, char** argv) {
       double sec_en = data.bam2[i].sEn;
 
       TVector3 segPos = GetPos(det,ring,sec);
-      //TVector3 ringPos = data.bam2[i].rPos;
-      //TVector3 secPos = data.bam2[i].sPos;
       
       if(!det) {
 
@@ -822,8 +821,13 @@ int main(int argc, char** argv) {
       coreSum->Fill(det,core_en);
 
       for(int j=0;j<data.sega[i].nsegs;j++) {
+	
 	double seg_en = data.sega[i].sEn[j];
+	int num = data.sega[i].segs[j] + 32*(det-1);
+	
 	segEnergy->Fill(seg_en);
+	segSum->Fill(num,seg_en);
+	
       }
       
     } //End SeGA singles
@@ -1251,6 +1255,7 @@ int main(int argc, char** argv) {
   coreEnergy->Write();
   coreSum->Write();
   segEnergy->Write();
+  segSum->Write();
 
   outFile->cd("Coincidence/ProjectileDS");
 
