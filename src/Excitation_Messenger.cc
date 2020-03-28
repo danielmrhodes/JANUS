@@ -46,7 +46,7 @@ Excitation_Messenger::Excitation_Messenger(Excitation* exc) : excitation(exc) {
   rLS_cmd->SetGuidance("Set name of recoil level scheme file");
 
   //Probabilities file
-  rPF_cmd = new G4UIcmdWithAString("/Excitation/Recoil/Probabilites",this);
+  rPF_cmd = new G4UIcmdWithAString("/Excitation/Recoil/Probabilities",this);
   rPF_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   rPF_cmd->SetGuidance("Set name of recoil excitation probabilities file");
 
