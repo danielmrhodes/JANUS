@@ -33,7 +33,7 @@ The JANUS simultation has three modes: Source, Scattering, and Full. Each mode h
 
 Macro Files
 -----------------
-The three simulation modes require different commands in their macro files. However all share a common structure 
+The three simulation modes require different commands in their macro files. However all share a common structure: 
 
 /Mode mode\
 *(optional geometry commands)*\

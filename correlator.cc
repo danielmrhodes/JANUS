@@ -28,6 +28,7 @@ double beam_en = 291.5;
 double Theta_CM_FP(double ThetaLAB, double Ep, bool sol2=false, double Ex=0.) {
 
   double tau = (beam_mass/targ_mass)/std::sqrt(1 - (Ex/Ep)*(1 + beam_mass/targ_mass));
+  
   if(std::sin(ThetaLAB) > 1.0/tau) {
     ThetaLAB = std::asin(1.0/tau);
 
@@ -50,6 +51,7 @@ double Theta_CM_FP(double ThetaLAB, double Ep, bool sol2=false, double Ex=0.) {
 double Theta_CM_FR(double ThetaLAB, double Ep, bool sol2=false, double Ex=0.) {
 
   double tau = 1.0/std::sqrt(1 - (Ex/Ep)*(1 + beam_mass/targ_mass));
+  
   if(std::sin(ThetaLAB) > 1.0/tau) {
     ThetaLAB = std::asin(1.0/tau);
 
@@ -139,9 +141,8 @@ TVector3 GetPos(const int det, const int ring, const int sec) {
 
   const double PI = TMath::Pi();
   
-  double phi_offset = 0.5*PI; // Phi of sector 1 of downstream detector
-  //bool clockwise = true; // Winding direction of sectors.
-  bool clockwise;
+  double phi_offset = 0.5*PI; // Phi of sector 1 of downstream detector 
+  bool clockwise; // Winding direction of sectors.
   if(det==0) {
     clockwise = false;
   }
@@ -159,7 +160,6 @@ TVector3 GetPos(const int det, const int ring, const int sec) {
   pos.SetPerp((ring - 0.5)*rad_slope + rad_offset);
   
   double phi = phi_offset + (clockwise ? -1 : 1) * 2.*PI/32. * (sec - 1);
-  //double phi = phi_offset - (2.*PI*(sec - 1)/32.);
   pos.SetPhi(phi);
 
   double zoff;
@@ -402,12 +402,12 @@ BuiltData BuildData(const Header& head, const JANUSData& dat) {
       }
     }
   }
-  
+
+  //Organize SeGA data
   std::vector<bool> exists;
   exists.resize(16);
   std::fill(exists.begin(),exists.end(),false);
 
-  //Organize SeGA data
   int nS = 0;
   for(int i=0;i<nSch;i++) {
 
@@ -471,7 +471,7 @@ int main(int argc, char** argv) {
   const char* output_filename = argv[2];
 
   FILE* input_file = fopen(input_filename,"rb");
-
+  
   //Bambino2 singles
   TH2* bSum = new TH2D("Summary","Janus Summary",120,1,121,500,0,500);
   
@@ -480,9 +480,13 @@ int main(int argc, char** argv) {
   
   TH2* rPid0 = new TH2D("RingPID_Det0","US RingEn PID",24,1,25,500,0,500);
   TH2* rPid1 = new TH2D("RingPID_Det1","DS RingEn PID",24,1,25,500,0,500);
+  TH2* rPid1m1 = new TH2D("RingPID_Det1m1","DS RingEn PID Mult1",24,1,25,500,0,500);
+  TH2* rPid1m2 = new TH2D("RingPID_Det1m2","DS RingEn PID Mult2",24,1,25,500,0,500);
 
   TH2* sPid0 = new TH2D("SecPID_Det0","US SectorEn PID",24,1,25,500,0,500);
   TH2* sPid1 = new TH2D("SecPID_Det1","DS SectorEn PID",24,1,25,500,0,500);
+  TH2* sPid1m1 = new TH2D("SecPID_Det1m1","DS SectorEn PID Mult1",24,1,25,500,0,500);
+  TH2* sPid1m2 = new TH2D("SecPID_Det1m2","DS SectorEn PID Mult2",24,1,25,500,0,500);
   
   //SeGA singles
   TH1* coreEnergy = new TH1D("Core_Energy","SeGA Core Energy",3000,0,3000);
@@ -760,6 +764,8 @@ int main(int argc, char** argv) {
     rRingRecThCrt.push_back(new TH2D(Form("rRecThetaCrt_R%02i",i+1),Form("Ring%02i Recon Theta Correction",i+1),
 				     6000,0,3000,90,0,180));
   }
+
+  std::cout << "Correlating and histograming data..." << std::endl;
   
   TVector3 incBeam = TVector3(0.0,0.0,1.0);
   double Sol2_En = KE_LAB(Theta_CM_FP(Theta_LAB_Max(beam_en),beam_en),beam_en);
@@ -809,6 +815,16 @@ int main(int argc, char** argv) {
 	bSum->Fill(ring+96,ring_en);
 
       }
+
+      if(data.nBa == 1) {
+	rPid1m1->Fill(ring,ring_en);
+	sPid1m1->Fill(ring,sec_en);
+      }
+      else if(data.nBa == 2) {
+	rPid1m2->Fill(ring,ring_en);
+	sPid1m2->Fill(ring,sec_en);
+      }
+      
     } //End Bambino2 singles
 
     //SeGA singles
@@ -1189,6 +1205,8 @@ int main(int argc, char** argv) {
   } //End while loop
   fclose(input_file);
 
+  std::cout << "Writing histograms to file..." << std::endl;
+
   TFile* outFile = new TFile(output_filename,"RECREATE");
   outFile->mkdir("SeGA");
   outFile->mkdir("Bambino2");
@@ -1249,6 +1267,11 @@ int main(int argc, char** argv) {
   rPid1->Write();
   sPid1->Write();
   secD1->Write();
+
+  rPid1m1->Write();
+  sPid1m1->Write();
+  rPid1m2->Write();
+  sPid1m2->Write();
   
   outFile->cd("SeGA");
 
@@ -1491,6 +1514,8 @@ int main(int argc, char** argv) {
   */
 
   outFile->Close();
+
+  std::cout << "Done!" << std::endl;
 
   return 0;
 }
