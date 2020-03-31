@@ -49,7 +49,7 @@ G4VPhysicalVolume* Detector_Construction::Construct() {
 G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   
   //Target material (isotopically pure)
-  G4Material* target_mat = new G4Material("target_mat",target_density,1); //Bulk material (1 component)
+  target_mat = new G4Material("target_mat",target_density,1); //Bulk material (1 component)
   G4Element* target_ele = new G4Element("target_ele","target_symbol",1); //Element (1 isoptope)
   G4Isotope* target_iso = new G4Isotope("target_iso",target_Z,target_N,target_mass); //The isotope
   target_ele->AddIsotope(target_iso,1.0);
@@ -165,7 +165,7 @@ void Detector_Construction::SetTarget(G4String target) {
     target_N = 26;
     target_density = 4.515*g/cm3;
     target_mass = 47.9475*g/mole;
-    target_thickness = 1.107*um;
+    target_thickness = 2.20*um;
     target_radius = 0.5*cm;
   }
   else if(target == "208Pb" || target == "Pb208") {

@@ -8,6 +8,10 @@
 #include "G4UnitsTable.hh"
 #include "G4PhysicalConstants.hh"
 
+#include "G4RunManager.hh"
+#include "Detector_Construction.hh"
+#include "G4EmCalculator.hh"
+
 Primary_Generator::Primary_Generator() {
 
   messenger = new Primary_Generator_Messenger(this);
@@ -18,6 +22,9 @@ Primary_Generator::Primary_Generator() {
 
   projGS = NULL;
   recoilGS = NULL;
+
+  dedx = 0.0*(MeV/mm);
+  width = 0.0*mm;
 
   beam_X = 0.0*mm;
   beam_Y = 0.0*mm;
@@ -55,7 +62,6 @@ void Primary_Generator::GeneratePrimaries(G4Event* evt) {
       GenerateScatteringPrimaries(evt);
       
       break;
-  
     }
 
     case MODE::Source: {
@@ -79,67 +85,25 @@ void Primary_Generator::GeneratePrimaries(G4Event* evt) {
   
 }
 
-void Primary_Generator::Update() {
-
-  switch(mode) {
-
-    case MODE::Scattering: {
-  
-      G4IonTable* table = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
-      
-      projGS = table->GetIon(reac->GetBeamZ(),reac->GetBeamA(),0.0*MeV);
-      recoilGS = table->GetIon(reac->GetRecoilZ(),reac->GetRecoilA(),0.0*MeV);
-      projGS->SetPDGStable(true);
-      recoilGS->SetPDGStable(true);
-
-      reac->SetBeamMass(projGS->GetPDGMass());
-      reac->SetRecoilMass(recoilGS->GetPDGMass());
-      reac->ConstructRutherfordCM(beam_En);
-
-      break;
-    }
-
-    case MODE::Source: {
-      
-      gun->SetParticleDefinition(G4Gamma::Definition());
-      gun->SetParticlePosition(G4ThreeVector());
-      gun->SetParticleEnergy(source_En);
-      
-      break;
-    }
-
-    case MODE::Full: {
-
-      excite->BuildLevelSchemes(reac->GetBeamZ(),reac->GetBeamA(),reac->GetRecoilZ(),reac->GetRecoilA());
-      excite->BuildProbabilities();
-      
-      projGS = excite->GetProjectileState(0);
-      recoilGS = excite->GetRecoilState(0);
-      
-      reac->SetBeamMass(projGS->GetPDGMass());
-      reac->SetRecoilMass(recoilGS->GetPDGMass());
-      reac->ConstructRutherfordCM(beam_En);
-
-      break;
-    }
-  }
-  
-  return;
-  
-}
-
 void Primary_Generator::GenerateScatteringPrimaries(G4Event* evt) {
 
+  //Choose thetaCM 
   G4double th = reac->SampleRutherfordCM();
   
   //Randomize incoming beam energy using energy distribution
   G4double en = G4RandGauss::shoot(beam_En,sigma_En);
 
+  //Randomly choose reaction depth in target
+  G4double depth = G4RandFlat::shoot(width);
+
+  //Energy loss
+  en -= dedx*depth;
+  
   //Reaction position
-  //Randomize using X and Y distributions
+  //Randomize X and Y
   G4ThreeVector pos = G4ThreeVector(G4RandGauss::shoot(beam_X,sigma_X),
 				    G4RandGauss::shoot(beam_Y,sigma_Y),
-				    0*nm); //middle of target
+				    -(width/2.0) + depth); //reaction position
   
   //Outgoing vectors
   G4ThreeVector bdir = G4ThreeVector(0,0,1); //projectile direction
@@ -189,11 +153,17 @@ void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
   //Randomize incoming beam energy using energy distribution
   G4double en = G4RandGauss::shoot(beam_En,sigma_En);
 
+  //Randomly choose reaction depth in target
+  G4double depth = G4RandFlat::shoot(width);
+
+  //Energy loss
+  en -= dedx*depth;
+
   //Reaction position
-  //Randomize using X and Y distributions
+  //Randomize X and Y
   G4ThreeVector pos = G4ThreeVector(G4RandGauss::shoot(beam_X,sigma_X),
 				    G4RandGauss::shoot(beam_Y,sigma_Y),
-				    0*nm); //middle of target
+				    -(width/2.0) + depth); //reaction position
   
   //Outgoing vectors
   G4ThreeVector bdir = G4ThreeVector(0,0,1); //projectile direction
@@ -227,6 +197,68 @@ void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
   gun->SetParticleMomentumDirection(rdir);
   gun->GeneratePrimaryVertex(evt);
   
+}
+
+void Primary_Generator::Update() {
+
+  switch(mode) {
+
+    case MODE::Scattering: {
+  
+      G4IonTable* table = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
+      
+      projGS = table->GetIon(reac->GetBeamZ(),reac->GetBeamA(),0.0*MeV);
+      recoilGS = table->GetIon(reac->GetRecoilZ(),reac->GetRecoilA(),0.0*MeV);
+      projGS->SetPDGStable(true);
+      recoilGS->SetPDGStable(true);
+
+      UpdateReaction();
+      
+      break;
+    }
+
+    case MODE::Source: {
+      
+      gun->SetParticleDefinition(G4Gamma::Definition());
+      gun->SetParticlePosition(G4ThreeVector());
+      gun->SetParticleEnergy(source_En);
+      
+      break;
+    }
+
+    case MODE::Full: {
+
+      excite->BuildLevelSchemes(reac->GetBeamZ(),reac->GetBeamA(),reac->GetRecoilZ(),reac->GetRecoilA());
+      excite->BuildProbabilities();
+      
+      projGS = excite->GetProjectileState(0);
+      recoilGS = excite->GetRecoilState(0);
+
+      UpdateReaction();
+      
+      break;
+    }
+  }
+  
+  return;
+  
+}
+
+void Primary_Generator::UpdateReaction() {
+
+  reac->SetBeamMass(projGS->GetPDGMass());
+  reac->SetRecoilMass(recoilGS->GetPDGMass());
+  reac->ConstructRutherfordCM(beam_En);
+
+  Detector_Construction* con =
+    (Detector_Construction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
+      
+  G4EmCalculator* calc = new G4EmCalculator();
+  
+  dedx = calc->ComputeTotalDEDX(beam_En,projGS,con->GetTargetMaterial());
+  width = con->GetTargetThickness();
+  
+  return;
 }
 
 void Primary_Generator::SetMode(G4String md) {

@@ -50,6 +50,8 @@ private:
   inline void GenerateScatteringPrimaries(G4Event* event);
   inline void GenerateFullPrimaries(G4Event* event);
 
+  void UpdateReaction();
+  
   Primary_Generator_Messenger* messenger;
   MODE mode;
   G4ParticleGun* gun;
@@ -60,6 +62,10 @@ private:
   G4ParticleDefinition* projGS; //Projectile ground state
   G4ParticleDefinition* recoilGS; //Recoil ground state
 
+  //used for incoming energy loss in target
+  G4double dedx; 
+  G4double width;
+  
   G4double beam_X; //X position of beam
   G4double beam_Y; //Y position of beam
   G4double beam_AX; //X angle of beam

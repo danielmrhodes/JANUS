@@ -31,6 +31,9 @@ public:
   void SetTarget(G4String target);
   void PrintTarget();
 
+  G4Material* GetTargetMaterial() {return target_mat;}
+  G4double GetTargetThickness() {return target_thickness;}
+
   G4double GetUS_Offset() {return US_Offset;}
   G4double GetDS_Offset() {return DS_Offset;}
   G4double GetSeGA_Offset() {return SeGA_Offset;}
@@ -60,7 +63,8 @@ private:
   G4double target_mass;
   G4double target_thickness;
   G4double target_radius;
-  
+
+  G4Material* target_mat;
 
 };
 
