@@ -141,11 +141,14 @@ void Primary_Generator::GenerateScatteringPrimaries(G4Event* evt) {
 
 void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
 
+  //Choose thetaCM 
   G4double th = reac->SampleRutherfordCM();
-      
+
+  //Choose excited states
   G4int pI = excite->ChooseProjectileState(th);
   G4int rI = excite->ChooseRecoilState(th);
 
+  //DelatE for inelastic scattering
   G4double ex = 0.0*MeV;
   ex += excite->GetProjectileExcitation(pI);
   ex += excite->GetRecoilExcitation(rI);

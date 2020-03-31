@@ -8,6 +8,7 @@
 #include "G4Box.hh"
 #include "G4Color.hh"
 #include "G4VisAttributes.hh"
+#include "G4UserLimits.hh"
 
 Detector_Construction::Detector_Construction() {
 
@@ -54,10 +55,11 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   G4Isotope* target_iso = new G4Isotope("target_iso",target_Z,target_N,target_mass); //The isotope
   target_ele->AddIsotope(target_iso,1.0);
   target_mat->AddElement(target_ele,1.0);
-
+  
   //Make the target
   G4Tubs* solid_target = new G4Tubs("Target_Sol",0*cm,target_radius,target_thickness/2.0,0.0*deg,360.0*deg);
-  G4LogicalVolume* logic_target = new G4LogicalVolume(solid_target,target_mat,"Target_Logical");
+  G4LogicalVolume* logic_target = new G4LogicalVolume(solid_target,target_mat,"Target_Logical",0,0,
+						      new G4UserLimits(0.05*target_thickness));
   new G4PVPlacement(0,G4ThreeVector(),logic_target,"Target",logic_world,false,0,false);
   
   //Make Bambino2
@@ -75,14 +77,6 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   G4Tubs* solid_BT = new G4Tubs("BT_Sol",7.366*cm,7.62*cm,44*cm,0*deg,360*deg);
   G4LogicalVolume* logic_BT = new G4LogicalVolume(solid_BT,Al,"BT_Logical");
   new G4PVPlacement(0,G4ThreeVector(),logic_BT,"Beam_Tube",logic_world,false,0,false);
-
-  //Make frame
-  /*
-  G4Tubs* solid_frame = new G4Tubs("frame_Sol",47.6*cm,65.7*cm,0.635*cm,0*deg,360*deg);
-  G4LogicalVolume* logic_frame = new G4LogicalVolume(solid_frame,Al,"frame_Logical");
-  new G4PVPlacement(0,G4ThreeVector(0,0,16*cm),logic_frame,"frame1",logic_world,false,0,false);
-  new G4PVPlacement(0,G4ThreeVector(0,0,-16*cm),logic_frame,"frame2",logic_world,false,0,false);
-  */
   
   G4Box* solid_plate = new G4Box("plate_Sol",0.75*m,0.5*m,0.635*cm);
   G4Tubs* tub = new G4Tubs("tubs",0*cm,33*cm,1.0*cm,0*deg,360*deg);
