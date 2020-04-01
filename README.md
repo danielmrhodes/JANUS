@@ -55,7 +55,7 @@ The /Geometry commands are common across all modes. With the exception of /Geome
 | /Geometry/SeGA/Offset *double unit* | Set z-offset of SeGA. (Default: 0 cm) |
 | /Geometry/Target/Z *int* | Set Z of target nucleus. (Default: 82) |
 | /Geometry/Target/N *int* | Set N of target nucleus. (Default: 126) |
-| /Geometry/Target/Density *double unit* | Set (volume) density of target material. (Default: 11.382 g/cm3) |
+| /Geometry/Target/Density *double unit* | Set (volume) density of target material. (Default: 11.382 g/cm<sup>3</sup>) |
 | /Geometry/Target/Mass *double unit* | Set mass of target material. (Default: 207.97665 g/mole) |
 | /Geometry/Target/Thickness *double unit* | Set (linear) thickness of target. (Default: 882 nm) |
 | /Geometry/Target/Radius *double unit* | Set radius of target. (Default: 0.5 cm) |
