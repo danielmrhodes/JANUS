@@ -16,13 +16,13 @@ int beamZ = 48;
 int beamA = 106;
 double beam_mass = 98626.9; // MeV/c^2
   
-int targZ = 22;
-int targA = 48;
-//double targ_mass = 193688; // MeV/c^2
-double targ_mass = 44652.;
+int targZ = 82;
+int targA = 208;
+double targ_mass = 193688; // MeV/c^2
+//double targ_mass = 44652.;
 
-//double beam_en = 450.0; // MeV
-double beam_en = 291.5;
+double beam_en = 450.0; // MeV
+//double beam_en = 291.5;
 
 ////Kinematics////
 double Theta_CM_FP(double ThetaLAB, double Ep, bool sol2=false, double Ex=0.) {
@@ -487,6 +487,9 @@ int main(int argc, char** argv) {
   TH2* sPid1 = new TH2D("SecPID_Det1","DS SectorEn PID",24,1,25,500,0,500);
   TH2* sPid1m1 = new TH2D("SecPID_Det1m1","DS SectorEn PID Mult1",24,1,25,500,0,500);
   TH2* sPid1m2 = new TH2D("SecPID_Det1m2","DS SectorEn PID Mult2",24,1,25,500,0,500);
+
+  TH2* sPid1_p = new TH2D("SecPID_Det1_proj","DS SectorEn Projectile PID",24,1,25,500,0,500);
+  TH2* sPid1_r = new TH2D("SecPID_Det1_rec","DS SectorEn Recoil PID",24,1,25,500,0,500);
   
   //SeGA singles
   TH1* coreEnergy = new TH1D("Core_Energy","SeGA Core Energy",3000,0,3000);
@@ -814,15 +817,23 @@ int main(int argc, char** argv) {
 	bSum->Fill(sec+64,sec_en);
 	bSum->Fill(ring+96,ring_en);
 
-      }
+	if(data.bam2[i].rP && data.bam2[i].sP) {
+	  sPid1_p->Fill(ring,sec_en);
+	}
 
-      if(data.nBa == 1) {
-	rPid1m1->Fill(ring,ring_en);
-	sPid1m1->Fill(ring,sec_en);
-      }
-      else if(data.nBa == 2) {
-	rPid1m2->Fill(ring,ring_en);
-	sPid1m2->Fill(ring,sec_en);
+	if(data.bam2[i].rR && data.bam2[i].sR) {
+	  sPid1_r->Fill(ring,sec_en);
+	}
+
+	if(data.nBa == 1) {
+	  rPid1m1->Fill(ring,ring_en);
+	  sPid1m1->Fill(ring,sec_en);
+	}
+	else if(data.nBa == 2) {
+	  rPid1m2->Fill(ring,ring_en);
+	  sPid1m2->Fill(ring,sec_en);
+	}
+
       }
       
     } //End Bambino2 singles
@@ -1267,6 +1278,9 @@ int main(int argc, char** argv) {
   rPid1->Write();
   sPid1->Write();
   secD1->Write();
+
+  sPid1_p->Write();
+  sPid1_r->Write();
 
   rPid1m1->Write();
   sPid1m1->Write();
