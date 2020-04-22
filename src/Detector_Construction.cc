@@ -122,14 +122,19 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   vis->SetVisibility(true);
   vis->SetForceSolid(false);
   //vis->SetLineStyle(G4VisAttributes::LineStyle::unbroken);
-  
-  logic_target->SetVisAttributes(vis);
+ 
+  G4VisAttributes* vis1 = new G4VisAttributes(G4Colour::Cyan());
+  vis1->SetVisibility(true);
+  vis1->SetForceSolid(true);
+
+  logic_target->SetVisAttributes(vis1);
   logic_BT->SetVisAttributes(vis);
   logic_face->SetVisAttributes(vis);
   logic_GV->SetVisAttributes(vis);
   logic_plate->SetVisAttributes(vis);
   logic_arm->SetVisAttributes(vis);
-  
+  logic_top->SetVisAttributes(vis);
+
   return world;
 }
 
