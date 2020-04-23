@@ -845,7 +845,13 @@ int main(int argc, char** argv) {
       double core_en = data.sega[i].cEn;
       
       coreEnergy->Fill(core_en);
-      coreSum->Fill(det,core_en);
+      
+      if(det < 9) {
+        coreSum->Fill(det+8,core_en);
+      }
+      else {
+        coreSum->Fill(det-8,core_en);
+      }
 
       for(int j=0;j<data.sega[i].nsegs;j++) {
 	
@@ -958,7 +964,12 @@ int main(int argc, char** argv) {
 	    }
 	    
 	    pCoreEnergyDS->Fill(coreEn);
-	    pCoreSumDS->Fill(det,coreEn);
+	    if(det < 9) {
+	      pCoreSumDS->Fill(det+8,coreEn);
+	    }
+	    else {
+	      pCoreSumDS->Fill(det-8,coreEn);
+	    }
 	    
 	    pDopEnergyDS->Fill(dopEn);
 	    pDopSumDS->Fill(det,dopEn);
@@ -1051,7 +1062,12 @@ int main(int argc, char** argv) {
 	    }
 
 	    pCoreEnergyUS->Fill(coreEn);
-	    pCoreSumUS->Fill(det,coreEn);
+	    if(det < 9) {
+	      pCoreSumUS->Fill(det+8,coreEn);
+	    }
+	    else {
+	      pCoreSumUS->Fill(det-8,coreEn);
+	    }
 	    
 	    pDopEnergyUS->Fill(dopEn);
 	    pDopSumUS->Fill(det,dopEn);
@@ -1155,7 +1171,12 @@ int main(int argc, char** argv) {
 	    }
 	    
 	    rCoreEnergy->Fill(coreEn);
-	    rCoreSum->Fill(det,coreEn);
+	    if(det < 9) {
+	      rCoreSum->Fill(det+8,coreEn);
+	    }
+	    else {
+	      rCoreSum->Fill(det-8,coreEn);
+	    }
 	    
 	    rDopEnergy->Fill(dopEn);
 	    rDopSum->Fill(det,dopEn);
