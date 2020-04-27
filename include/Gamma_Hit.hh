@@ -22,13 +22,17 @@ public:
   inline void SetDet(G4int d) {det = d;}
   inline void SetSeg(G4int sg) {seg = sg;}
   
+  inline void SetFEP() {fep = true;}
+
   void SetDetSeg(G4int id);
-  
+
   G4double GetEdep() const {return edep;}
   G4ThreeVector GetPos() const {return pos;}
  
   G4int GetSegment() const {return seg;}
   G4int GetDetector() const {return det;}
+
+  G4bool IsFEP() const {return fep;}
   
 private:
   
@@ -36,6 +40,8 @@ private:
   G4ThreeVector pos;
 
   G4int det, seg;
+
+  G4bool fep;
   
 };
 

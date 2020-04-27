@@ -2,7 +2,6 @@
 #include "G4UImanager.hh"
 #include "G4UIterminal.hh"
 #include "G4UItcsh.hh"
-//#include "G4ios.hh"
 #include "G4VisManager.hh"
 #include "G4VisExecutive.hh"
 
@@ -11,6 +10,7 @@
 #include "Physics_List.hh"
 #include "Run_Action.hh"
 #include "Event_Action.hh"
+#include "Tracking_Action.hh"
 //#include "Stepping_Action.hh"
 
 int main(int argc, char** argv) {
@@ -26,6 +26,7 @@ int main(int argc, char** argv) {
   //Set optional classes
   runManager->SetUserAction(new Run_Action());
   runManager->SetUserAction(new Event_Action());
+  runManager->SetUserAction(new Tracking_Action());
   //runManager->SetUserAction(new Stepping_Action());
 
   //Initialize

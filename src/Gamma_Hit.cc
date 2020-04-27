@@ -2,7 +2,7 @@
 
 G4Allocator<Gamma_Hit>* Gamma_Hit_Allocator = 0;
 
-Gamma_Hit::Gamma_Hit() {}
+Gamma_Hit::Gamma_Hit() : fep(false) {}
 
 Gamma_Hit::~Gamma_Hit() {}
 

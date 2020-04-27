@@ -16,13 +16,13 @@ int beamZ = 48;
 int beamA = 106;
 double beam_mass = 98626.9; // MeV/c^2
   
-int targZ = 82;
-int targA = 208;
-double targ_mass = 193688; // MeV/c^2
-//double targ_mass = 44652.;
+int targZ = 22;
+int targA = 48;
+//double targ_mass = 193688; // MeV/c^2
+double targ_mass = 44652.;
 
-double beam_en = 450.0; // MeV
-//double beam_en = 291.5;
+//double beam_en = 450.0; // MeV
+double beam_en = 300.0;
 
 ////Kinematics////
 double Theta_CM_FP(double ThetaLAB, double Ep, bool sol2=false, double Ex=0.) {
@@ -252,6 +252,7 @@ struct SEGA {
 
   int det, nsegs, segs[32];
   double cEn, sEn[32];
+  bool fep;
 
   int MainSeg() {
     
@@ -414,6 +415,7 @@ BuiltData BuildData(const Header& head, const JANUSData& dat) {
     int detect = dat.sData[i].det;
     int segment = dat.sData[i].seg;
     double energy = dat.sData[i].en;
+    bool FEP = dat.sData[i].fep;
     
     if(!exists.at(detect-1)) {
       data.sega[nS].det = detect;
@@ -426,6 +428,7 @@ BuiltData BuildData(const Header& head, const JANUSData& dat) {
       else {
 	data.sega[nS].nsegs = 0;
 	data.sega[nS].cEn = energy;
+	data.sega[nS].fep = FEP;
       }
 
       nS++;
@@ -450,6 +453,7 @@ BuiltData BuildData(const Header& head, const JANUSData& dat) {
       }
       else {
 	data.sega[index].cEn = energy;
+	data.sega[index].fep = FEP;
       }
       
     }
@@ -498,6 +502,9 @@ int main(int argc, char** argv) {
   TH2* coreSum = new TH2D("Core_Summary","Core Energy Summary",16,1,17,3000,0,3000);
   TH2* segSum = new TH2D("Seg_Summary","Segment Energy Summary",512,1,513,3000,0,3000);
 
+  TH1* coreEn_Fep = new TH1D("FEP","SeGA FEP",3000,0,3000);
+  TH1* coreEn_NotFep = new TH1D("nFEP","SeGA Not FEP",3000,0,3000);
+
   //Coincidences
   //Projectile DS
   TH2* sPidDS = new TH2D("SecPID_DS","DS SectorEn PID",24,1,25,500,0,500);
@@ -505,9 +512,15 @@ int main(int argc, char** argv) {
   
   TH1* pCoreEnergyDS = new TH1D("Core_EnergyDS","SeGA Core Energy",3000,0,3000);
   TH2* pCoreSumDS = new TH2D("Core_SummaryDS","Core Energy Summary",16,1,17,3000,0,3000);
-  
+
   TH1* pDopEnergyDS = new TH1D("Dop_EnergyDS","Doppler Energy",6000,0,3000);
   TH2* pDopSumDS = new TH2D("Dop_SummaryDS","Doppler Energy Summary",16,1,17,6000,0,3000);
+
+  TH1* pCoreEnergyDS_fep = new TH1D("Core_EnergyDS_fep","SeGA Core Energy FEP",3000,0,3000);
+  TH1* pCoreEnergyDS_nfep = new TH1D("Core_EnergyDS_nfep","SeGA Core Energy Not FEP",3000,0,3000);
+
+  TH1* pDopEnergyDS_fep = new TH1D("Dop_EnergyDS_fep","Doppler Energy FEP",3000,0,3000);
+  TH1* pDopEnergyDS_nfep = new TH1D("Dop_EnergyDS_nfep","Doppler Energy Not FEP",3000,0,3000);
 
   TH2* pDopvPartDS = new TH2D("DopEn_v_PartEn_DS","Doppler Energy vs Particle Energy",3000,0,3000,500,0,500);
   TH2* pDopvPartNS2DS = new TH2D("DopEn_v_PartEn_NoS2_DS","Doppler Energy vs Particle Energy (No Sol2)",3000,0,3000,500,0,500);
@@ -521,6 +534,9 @@ int main(int argc, char** argv) {
 
   TH1* pReconEnergyDS = new TH1D("Recon_EnergyDS","Recon Energy",6000,0,3000);
   TH2* pReconSumDS = new TH2D("Recon_SummaryDS","Recon Energy Summary",16,1,17,6000,0,3000);
+
+  TH1* pReconEnergyDS_fep = new TH1D("Recon_EnergyDS_fep","Recon Energy FEP",3000,0,3000);
+  TH1* pReconEnergyDS_nfep = new TH1D("Recon_EnergyDS_nfep","Recon Energy Not FEP",3000,0,3000);
 
   TH2* pReconvPartDS = new TH2D("ReconEn_v_partEn_DS","Recon Energy vs Particle Energy",3000,0,3000,500,0,500);
   TH2* pReconvPartNS2DS = new TH2D("ReconEn_v_partEn_NoS2_DS","Recon Energy vs Particle Energy (No Sol2)",3000,0,3000,500,0,500);
@@ -541,6 +557,12 @@ int main(int argc, char** argv) {
   TH1* pDopEnergyUS = new TH1D("Dop_EnergyUS","Doppler Energy",6000,0,3000);
   TH2* pDopSumUS = new TH2D("Dop_SummaryUS","Doppler Energy Summary",16,1,17,6000,0,3000);
 
+  TH1* pCoreEnergyUS_fep = new TH1D("Core_EnergyUS_fep","SeGA Core Energy FEP",3000,0,3000);
+  TH1* pCoreEnergyUS_nfep = new TH1D("Core_EnergyUS_nfep","SeGA Core Energy Not FEP",3000,0,3000);
+
+  TH1* pDopEnergyUS_fep = new TH1D("Dop_EnergyUS_fep","Doppler Energy FEP",3000,0,3000);
+  TH1* pDopEnergyUS_nfep = new TH1D("Dop_EnergyUS_nfep","Doppler Energy Not FEP",3000,0,3000);
+
   TH2* pDopvPartUS = new TH2D("Dop_PartEn_US","Doppler Energy vs Particle Energy",3000,0,3000,500,0,500);
 
   TH2* pThCorUS = new TH2D("Theta_CorrUS","Theta Correlation",3000,0,3000,90,0,180);
@@ -559,6 +581,12 @@ int main(int argc, char** argv) {
   TH1* rDopEnergy = new TH1D("Dop_EnergyRec","Doppler Energy",6000,0,3000);
   TH2* rDopSum = new TH2D("Dop_SummaryRec","Doppler Energy Summary",16,1,17,6000,0,3000);
 
+  TH1* rCoreEnergy_fep = new TH1D("Core_EnergyRec_fep","SeGA Core Energy FEP",3000,0,3000);
+  TH1* rCoreEnergy_nfep = new TH1D("Core_EnergRec_nfep","SeGA Core Energy Not FEP",3000,0,3000);
+
+  TH1* rDopEnergy_fep = new TH1D("Dop_EnergyRec_fep","Doppler Energy FEP",3000,0,3000);
+  TH1* rDopEnergy_nfep = new TH1D("Dop_EnergyRec_nfep","Doppler Energy Not FEP",3000,0,3000);
+
   TH2* rDopvPart = new TH2D("DopEv_v_PartEn_Rec","Doppler Energy vs Particle Energy",3000,0,3000,500,0,500);
   //TH2* rDopvPartNS2 = new TH2D("DopEv_v_PartEn_NoS2_Rec","Doppler Energy vs Particle Energy (No Sol2)",3000,0,3000,500,0,500);
 
@@ -569,6 +597,9 @@ int main(int argc, char** argv) {
 
   TH1* rReconEnergy = new TH1D("Recon_EnergyRec","Recon Energy",6000,0,3000);
   TH2* rReconSum = new TH2D("Recon_SummaryRec","Recon Energy Summary",16,1,17,6000,0,3000);
+
+  TH1* rReconEnergy_fep = new TH1D("Recon_EnergyRec_fep","Recon Energy FEP",3000,0,3000);
+  TH1* rReconEnergy_nfep = new TH1D("Recon_EnergyRec_nfep","Recon Energy Not FEP",3000,0,3000);
 
   TH2* rReconvPart = new TH2D("ReconEn_v_PartEn_Rec","Recon Energy vs Particle Energy",3000,0,3000,500,0,500);
   //TH2* rReconvPartNS2 = new TH2D("ReconEv_v_PartEn_NoS2_Rec","Recon Energy vs Particle Energy (No Sol2)",3000,0,3000,500,0,500);
@@ -862,6 +893,13 @@ int main(int argc, char** argv) {
 	segSum->Fill(num,seg_en);
 	
       }
+
+      if(data.sega[i].fep) {
+	coreEn_Fep->Fill(core_en);
+      }
+      else {
+	coreEn_NotFep->Fill(core_en);
+      }
       
     } //End SeGA singles
 
@@ -920,6 +958,7 @@ int main(int argc, char** argv) {
 	    int det = data.sega[i].det;
 	    int seg = data.sega[i].MainSeg();
 	    double coreEn = data.sega[i].cEn;
+	    bool FEP = data.sega[i].fep;
 	  
 	    TVector3 sPos = GetPos(det,seg);
 
@@ -969,6 +1008,17 @@ int main(int argc, char** argv) {
 	    }
 	    else {
 	      pCoreSumDS->Fill(det-8,coreEn);
+	    }
+
+	    if(FEP) {
+	      pCoreEnergyDS_fep->Fill(coreEn);
+	      pDopEnergyDS_fep->Fill(dopEn);
+	      pReconEnergyDS_fep->Fill(recon_en);
+	    }
+	    else {
+	      pCoreEnergyDS_nfep->Fill(coreEn);
+	      pDopEnergyDS_nfep->Fill(dopEn);
+	      pReconEnergyDS_nfep->Fill(recon_en);
 	    }
 	    
 	    pDopEnergyDS->Fill(dopEn);
@@ -1037,6 +1087,7 @@ int main(int argc, char** argv) {
 	    int det = data.sega[i].det;
 	    int seg = data.sega[i].MainSeg();
 	    double coreEn = data.sega[i].cEn;
+	    bool FEP = data.sega[i].fep;
 	  
 	    TVector3 sPos = GetPos(det,seg);
 
@@ -1072,6 +1123,15 @@ int main(int argc, char** argv) {
 	    pDopEnergyUS->Fill(dopEn);
 	    pDopSumUS->Fill(det,dopEn);
 
+	    if(FEP) {
+	      pCoreEnergyUS_fep->Fill(coreEn);
+	      pDopEnergyUS_fep->Fill(dopEn);
+	    }
+	    else {
+	      pCoreEnergyUS_nfep->Fill(coreEn);
+	      pDopEnergyUS_nfep->Fill(dopEn);
+	    }
+	    
 	    pDopvPartUS->Fill(dopEn,sec_en);
 
 	    pThCorUS->Fill(coreEn,theta*TMath::RadToDeg());
@@ -1131,6 +1191,7 @@ int main(int argc, char** argv) {
 	    int det = data.sega[i].det;
 	    int seg = data.sega[i].MainSeg();
 	    double coreEn = data.sega[i].cEn;
+	    bool FEP = data.sega[i].fep;
 	  
 	    TVector3 sPos = GetPos(det,seg);
 
@@ -1180,6 +1241,17 @@ int main(int argc, char** argv) {
 	    
 	    rDopEnergy->Fill(dopEn);
 	    rDopSum->Fill(det,dopEn);
+
+	    if(FEP) {
+	      rCoreEnergy_fep->Fill(coreEn);
+	      rDopEnergy_fep->Fill(dopEn);
+	      rReconEnergy_fep->Fill(recon_en);
+	    }
+	    else {
+	      rCoreEnergy_nfep->Fill(coreEn);
+	      rDopEnergy_nfep->Fill(dopEn);
+	      rReconEnergy_nfep->Fill(recon_en);
+	    }
 
 	    rDopvPart->Fill(dopEn,sec_en);
 
@@ -1260,7 +1332,8 @@ int main(int argc, char** argv) {
   */
 
   outFile->mkdir("Coincidence/ProjectileUS");
-  outFile->mkdir("Coincidence/ProjectileUS/Rings");
+  outFile->mkdir("Coincidence/ProjectileUS/Doppler");
+  outFile->mkdir("Coincidence/ProjectileUS/Doppler/Rings");
   /*
   outFile->mkdir("Coincidence/ProjectileUS/Bambino2Rings");
   outFile->mkdir("Coincidence/ProjectileUS/Bambino2Rings/PhiCorr");
@@ -1315,6 +1388,9 @@ int main(int argc, char** argv) {
   segEnergy->Write();
   segSum->Write();
 
+  coreEn_Fep->Write();
+  coreEn_NotFep->Write();
+
   outFile->cd("Coincidence/ProjectileDS");
 
   sPidDS->Write();
@@ -1323,10 +1399,16 @@ int main(int argc, char** argv) {
   pCoreEnergyDS->Write();
   pCoreSumDS->Write();
 
+  pCoreEnergyDS_fep->Write();
+  pCoreEnergyDS_nfep->Write();
+
   outFile->cd("Coincidence/ProjectileDS/Doppler");
   
   pDopEnergyDS->Write();
   pDopSumDS->Write();
+
+  pDopEnergyDS_fep->Write();
+  pDopEnergyDS_nfep->Write();
 
   pDopvPartDS->Write();
   pDopvPartNS2DS->Write();
@@ -1348,6 +1430,9 @@ int main(int argc, char** argv) {
 
   pReconEnergyDS->Write();
   pReconSumDS->Write();
+
+  pReconEnergyDS_fep->Write();
+  pReconEnergyDS_nfep->Write();
 
   pReconvPartDS->Write();
   pReconvPartNS2DS->Write();
@@ -1408,9 +1493,17 @@ int main(int argc, char** argv) {
 
   pCoreEnergyUS->Write();
   pCoreSumUS->Write();
+
+  pCoreEnergyUS_fep->Write();
+  pCoreEnergyUS_nfep->Write();
+
+  outFile->cd("Coincidence/ProjectileUS/Doppler");
   
   pDopEnergyUS->Write();
   pDopSumUS->Write();
+
+  pDopEnergyUS_fep->Write();
+  pDopEnergyUS_nfep->Write();
 
   pDopvPartUS->Write();
 
@@ -1420,7 +1513,7 @@ int main(int argc, char** argv) {
   pPhCorUS->Write();
   pPhCrtUS->Write();
 
-  outFile->cd("Coincidence/ProjectileUS/Rings");
+  outFile->cd("Coincidence/ProjectileUS/Doppler/Rings");
 
   for(int i=0;i<24;i++) {
     pRingCoreEnUS.at(i)->Write();
@@ -1471,10 +1564,16 @@ int main(int argc, char** argv) {
   rCoreEnergy->Write();
   rCoreSum->Write();
 
+  rCoreEnergy_fep->Write();
+  rCoreEnergy_nfep->Write();
+
   outFile->cd("Coincidence/Recoil/Doppler");
   
   rDopEnergy->Write();
   rDopSum->Write();
+
+  rDopEnergy_fep->Write();
+  rDopEnergy_nfep->Write();
 
   rDopvPart->Write();
 
@@ -1495,6 +1594,9 @@ int main(int argc, char** argv) {
 
   rReconEnergy->Write();
   rReconSum->Write();
+
+  rReconEnergy_fep->Write();
+  rReconEnergy_nfep->Write();
 
   rReconvPart->Write();
 

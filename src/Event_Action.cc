@@ -6,11 +6,12 @@
 #include "Data_Format.hh"
 
 Event_Action::Event_Action() {}
-
 Event_Action::~Event_Action() {}
 
 void Event_Action::BeginOfEventAction(const G4Event* evt) {
 
+  trkAct->Clear();
+  
   int id = evt->GetEventID();
   if(!(id%perEvt)) {
     G4cout << "Event " << id << G4endl;
@@ -54,7 +55,7 @@ void Event_Action::EndOfEventAction(const G4Event* evt) {
         G4ThreeVector pos = hit->GetPos();
 
 	data.sData[nS] = {hit->GetDetector(),hit->GetSegment(),hit->GetEdep()/keV,
-			  pos.x()/cm,pos.y()/cm,pos.z()/cm};
+			  pos.x()/cm,pos.y()/cm,pos.z()/cm,hit->IsFEP()};
 
 	nS++;
 
