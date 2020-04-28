@@ -224,10 +224,10 @@ TVector3 GetPos(const int det, const int seg) {
     innerRadius = 0.5 + 0.03; //fingerRadius + DL thickness
   }
 
-  TVector3 origin(1,0,0);
-  origin.SetPerp(outerRadius - innerRadius);
-  origin.SetPhi((quad+0.5)*2*PI/4.);
-  origin.SetZ((length/8.0)*(2.0*slice - 7.0));
+  TVector3 pos(1,0,0);
+  pos.SetPerp((outerRadius - innerRadius)/2.0);
+  pos.SetPhi((quad+0.5)*2*PI/4.);
+  pos.SetZ((length/8.0)*(2.0*slice - 7.0));
 
   double rd = 12.975;
   double phid = (det-1)*(2.*PI/8.);
@@ -236,7 +236,7 @@ TVector3 GetPos(const int det, const int seg) {
     zd*=-1;
   }
   
-  TVector3 pos(rd*TMath::Cos(phid),rd*TMath::Sin(phid),zd+SeGA_Offset);
+  TVector3 origin(rd*TMath::Cos(phid),rd*TMath::Sin(phid),zd+SeGA_Offset);
 
   return origin+pos;
 
