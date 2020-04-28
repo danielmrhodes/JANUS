@@ -425,7 +425,7 @@ void Excitation::BuildProjectileSplines() {
   }
 
   if(pSplines.size() == pLevels.size()) {
-    G4cout << "All " << pSplines.size() << "  projectile probability splines successfully built!" << G4endl;
+    G4cout << "All " << pSplines.size() << " projectile probability splines successfully built!" << G4endl;
   }
   else {
     G4cout << "Created " << pSplines.size() << " projectile probability splines for " << pLevels.size()
@@ -511,7 +511,7 @@ void Excitation::BuildRecoilSplines() {
   }
 
   if(rSplines.size() == rLevels.size()) {
-    G4cout << "All " << rSplines.size() << "  recoil probability splines successfully built!" << G4endl;
+    G4cout << "All " << rSplines.size() << " recoil probability splines successfully built!" << G4endl;
   }
   else {
     G4cout << "Created " << rSplines.size() << " recoil probability splines for " << rLevels.size()
