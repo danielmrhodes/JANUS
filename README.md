@@ -127,19 +127,20 @@ This condition is never satisified and will set the entire Rutherford distributi
 
 Full Mode Commands
 -----------------
-For the Full CoulEx simulation, all Scattering mode commands still apply (except /Reaction/DeltaE). Additionally, /Excitation commands must be called which determine the level scheme and excitation pattern in both the projectile and recoil nucleus. No /Excitation commands are strictly optional or mandatory.
+For the Full CoulEx simulation, all Scattering mode commands still apply (except /Reaction/DeltaE). Additionally, /Excitation commands can be called which determine the level scheme and excitation pattern in both the projectile and recoil nucleus. All /Excitation commands are optional. Not calling any /Excitation commands will reduce the Full simulation to a Scattering simulation.
 
 | Command | Description |
 | --- | --- |
 | /Excitation/Projectile/LevelScheme *string* | Name of the file to be read-in which defines the projectile level scheme. |
 | /Excitation/Projectile/Probabilities *string* | Name of the file to be read-in which defines the angle-dependent excitation probabilities for the projectile. |
-| /Excitation/Projectile/PopulateState *int* | Choose one state to populate in the projectile, irrespectie of scattering angle. This overrides /Excitation/Projectile/Probabilities. |
+| /Excitation/Projectile/PopulateState *int* | Choose one state to populate in the projectile, irrespective of scattering angle. This overrides /Excitation/Projectile/Probabilities, but still requires a level scheme file. |
 | /Excitation/Projectile/Simple | Declare a "simple" level scheme and excitation pattern for the projectile. This means there is only one excited state in the projectile, and it will always be populated. This overrides the above three commands. |
 | /Excitation/Projectile/SimpleEnergy *double unit* | Set the energy of the simple state in the projectile. |
 | /Excitation/Projectile/SimpleLifetime *double unit* | Set the lifetime of the simple state in the projectile. |
 
-To control the recoil nucleus level scheme and excitations, replace /Excitation/Projectile/ with 
-/Excitation/Recoil/. All commands are identically the same.
+To control the level scheme and excitations in the recoil nucleus, replace /Excitation/Projectile/ with /Excitation/Recoil/. All commands are identically the same. 
+
+*If you input a level scheme, you must also input the probabilities or choose a state to populate. Otherwise the level scheme won't be used.*
 
 Level Scheme File Format
 -----------------
@@ -165,7 +166,7 @@ The states must be declared in order, i.e. II<sub>1</sub> = 1, II<sub>2</sub> = 
 
 Probability File Format
 -----------------
-The probability files are text files which describe the scattering-angle dependent excitation probabilities of the excited states (defined in the level scheme file). They have the following format.
+The probability files are text files which describe the scattering-angle dependent excitation probabilities of the excited states. They have the following format.
 
 
 theta<sub>1</sub> P<sub>0</sub>(theta<sub>1</sub>) P<sub>1</sub>(theta<sub>1</sub>) ... P<sub>N</sub>(theta<sub>1</sub>)\
