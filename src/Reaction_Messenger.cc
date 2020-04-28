@@ -68,6 +68,7 @@ Reaction_Messenger::~Reaction_Messenger() {
   delete toJanus_cmd;
   delete toUS_cmd;
   delete toDS_cmd;
+  delete rDSpUS_cmd;
   delete addTheta_cmd;
   
 }
