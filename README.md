@@ -98,7 +98,7 @@ The Scattering mode commands are divided into two categories: /Beam and /Reactio
 | /Reaction/AddThetaLAB *double unit* | Add an angle to desired LAB scattering angle ranges. This command must always be used two at a time, with the smaller angle coming first. Otherwise it doesn't work. |
 | /Reaction/OnlyProjectiles | Only consider the projectile when defining desired scattering angle ranges (above commands). |
 | /Reaction/OnlyRecoils | Only consider the recoil when defining the desired scattering angle ranges (above commands). |
-| /Reaction/RecDS_ProjUS | Send *only* the recoiling nucleus to the downstream silicon detector while also sendind the projecile nucleus to the upstream detector. This should not be used with any other optional /Reaction command. |
+| /Reaction/RecDS_ProjUS | Send *only* the recoiling nucleus to the downstream silicon detector while also sending the projectile nucleus to the upstream detector. This should not be used with any other optional /Reaction command (except \Reaction\DeltaE). |
 | /Reaction/DeltaE *double unit* | Set (positive) deltaE to simulate inelastic scattering. (Default: 0 MeV) |
 
 The use of optional /Reaction commands is highly encouraged. Without these commands, the entire scattering angle range [0,pi] will be sampled according the Rutheford scattering distribution. This means roughly 10<sup>-4</sup> of your simulated events will result in a particle entering the silicon detectors.
