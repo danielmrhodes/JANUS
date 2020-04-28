@@ -18,7 +18,7 @@ double beam_mass = 98626.9; // MeV/c^2
 
 //You should reduce this value by the energy loss in the target
 //double beam_en = 450.0; // MeV
-double beam_en = 300.0;
+double beam_en = 265.0;
   
 int targZ = 22;
 int targA = 48;
@@ -231,7 +231,7 @@ TVector3 GetPos(const int det, const int seg) {
 
   double rd = 12.975;
   double phid = (det-1)*(2.*PI/8.);
-  double zd = length + 2*0.05;
+  double zd = length + 2*0.05 + 0.6;
   if(det > 8) {
     zd*=-1;
   }
