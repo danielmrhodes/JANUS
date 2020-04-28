@@ -1,5 +1,5 @@
 /Mode Full
-/Geometry/Bambino2/UpstreamOffset 3.6 cm
+/Geometry/Bambino2/UpstreamOffset 3.4 cm
 /Geometry/Bambino2/DownstreamOffset 2.6 cm
 /Geometry/SeGA/Offset 3.1 cm
 /Geometry/Target/StandardTarget 208Pb
@@ -11,7 +11,7 @@
 /Reaction/RecoilA 208
 /Reaction/SendToJanus
 #
-/Beam/Energy 450 MeV
+/Beam/Energy 462 MeV
 #
 /Excitation/Projectile/LevelScheme proj.lvl
 /Excitation/Projectile/Probabilities proj.prb
