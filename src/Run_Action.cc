@@ -38,17 +38,20 @@ void Run_Action::BeginOfRunAction(const G4Run* run) {
   evtAct->SetOutputFile(output);
   evtAct->SetPerEvent(num);
   evtAct->SetTrackingAction(trkAct);
+
+  G4SDManager* SDman = G4SDManager::GetSDMpointer();
+      
+  IonSD* iSD = (IonSD*)SDman->FindSensitiveDetector("IonTracker");
+  iSD->SetProjectileName(gen->GetProjectileName());
+  iSD->SetRecoilName(gen->GetRecoilName());
+
+  GammaSD* gSD = (GammaSD*)SDman->FindSensitiveDetector("GammaTracker");
+  gSD->SetTrackingAction(trkAct);
   
   G4cout << "\nStarting run!" << G4endl; 
   switch(gen->GetMode()) {
 
     case Primary_Generator::MODE::Scattering: {
-
-      G4SDManager* SDman = G4SDManager::GetSDMpointer();
-      
-      IonSD* iSD = (IonSD*)SDman->FindSensitiveDetector("IonTracker");
-      iSD->SetProjectileName(gen->GetProjectileName());
-      iSD->SetRecoilName(gen->GetRecoilName());    
 
       G4cout << "Simulating " << num << " two-body scattering events" << G4endl;
       break;
@@ -57,10 +60,6 @@ void Run_Action::BeginOfRunAction(const G4Run* run) {
 
     case Primary_Generator::MODE::Source: {
 
-      G4SDManager* SDman = G4SDManager::GetSDMpointer();
-      GammaSD* gSD = (GammaSD*)SDman->FindSensitiveDetector("GammaTracker");
-      gSD->SetTrackingAction(trkAct);
-
       G4cout << "Simulating " << num << " source gamma-ray events" << G4endl;
       break;
 
@@ -68,17 +67,7 @@ void Run_Action::BeginOfRunAction(const G4Run* run) {
 
     case Primary_Generator::MODE::Full: {
 
-      G4SDManager* SDman = G4SDManager::GetSDMpointer();
-      
-      IonSD* iSD = (IonSD*)SDman->FindSensitiveDetector("IonTracker");
-      iSD->SetProjectileName(gen->GetProjectileName());
-      iSD->SetRecoilName(gen->GetRecoilName());
-
-      GammaSD* gSD = (GammaSD*)SDman->FindSensitiveDetector("GammaTracker");
-      gSD->SetTrackingAction(trkAct);
-
       G4cout << "Simulating " << num << " full excitation events" << G4endl;
-
       break;
 
     }
