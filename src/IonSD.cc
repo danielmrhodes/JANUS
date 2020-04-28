@@ -48,7 +48,7 @@ G4bool IonSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
 }
 
 void IonSD::EndOfEvent(G4HCofThisEvent* HCE) {
-
+  
   if(HC->entries() > 2) {
     ConsolidateHits();
   }
@@ -58,7 +58,6 @@ void IonSD::EndOfEvent(G4HCofThisEvent* HCE) {
   }
    
   HCE->AddHitsCollection(HCE->GetNumberOfCollections(),HC);
-  //HCE->AddHitsCollection(G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]),HC);
   
   return;
   

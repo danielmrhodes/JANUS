@@ -25,10 +25,9 @@ void Event_Action::EndOfEventAction(const G4Event* evt) {
   JANUSData data;
   int nB = 0;
   int nS = 0;
-
+  
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
   for(int i=0;i<HCE->GetNumberOfCollections();i++) {
-
     if(HCE->GetHC(i)->GetName() == "ionCollection") {
 
       Ion_Hit_Collection* iHC = (Ion_Hit_Collection*)HCE->GetHC(i);  
@@ -45,7 +44,6 @@ void Event_Action::EndOfEventAction(const G4Event* evt) {
 
       }
     }
-
     else if(HCE->GetHC(i)->GetName() == "gammaCollection") {
 
       Gamma_Hit_Collection* gHC = (Gamma_Hit_Collection*)HCE->GetHC(i);
@@ -61,7 +59,6 @@ void Event_Action::EndOfEventAction(const G4Event* evt) {
 
       }
     }
-   
   }
   
   if(nB > 0 || nS > 0) {
