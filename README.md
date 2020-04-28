@@ -110,7 +110,7 @@ There are no "safety checks" for these commands. For example, never do
 /Reaction/SendToUpstreamJanus\
 /Reaction/OnlyRecoils
 
-This is condition is never satisified and will set entire Rutherford distribution to zero.
+This condition is never satisified and will set the entire Rutherford distribution to zero.
 
 ### Optional /Beam commands
 | Command | Description |
