@@ -16,4 +16,4 @@
 #
 /Output/FileName scattering.dat
 #
-/run/beamOn 1
+/run/beamOn 100000
