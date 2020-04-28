@@ -3,14 +3,15 @@
 #include "G4RunManager.hh"
 #include "Detector_Construction.hh"
 
-Reaction::Reaction() : onlyP(false), onlyR(false) {
+Reaction::Reaction() : onlyP(false), onlyR(false), rDSpUS(false) {
 
   messenger = new Reaction_Messenger(this);
   
 }
 
 Reaction::Reaction(G4int bZ, G4int bA, G4double bM, G4int tZ, G4int tA, G4double tM)
-  : beamZ(bZ), beamA(bA), beam_mass(bM), targZ(tZ), targA(tA), targ_mass(tM), onlyP(false), onlyR(false) {
+  : beamZ(bZ), beamA(bA), beam_mass(bM), targZ(tZ), targA(tA), targ_mass(tM),
+    onlyP(false), onlyR(false), rDSpUS(false) {
 
   messenger = new Reaction_Messenger(this);
 
@@ -97,7 +98,8 @@ bool Reaction::KeepThetaCM(G4double thetaCM, G4double Ep, G4double Ex) {
     
     for(unsigned int i=0;i<good_LAB_thetas.size();i+=2) {
   
-      if(//Check if projectile will scatter into desired  range
+      if(
+	 //Check if projectile will scatter into desired  range
          ((Theta_LAB(thetaCM,Ep,Ex) > good_LAB_thetas.at(i)) &&
           (Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)))
         ) {
@@ -111,10 +113,10 @@ bool Reaction::KeepThetaCM(G4double thetaCM, G4double Ep, G4double Ex) {
 
     for(unsigned int i=0;i<good_LAB_thetas.size();i+=2) {
   
-      if(//Check if recoil will will scatter into desired  range
+      if(
+	 //Check if recoil will will scatter into desired  range
          ((Recoil_Theta_LAB(thetaCM,Ep,Ex) > good_LAB_thetas.at(i)) &&
           (Recoil_Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)))
-       
         ) {
       
         keep = true;
@@ -122,12 +124,35 @@ bool Reaction::KeepThetaCM(G4double thetaCM, G4double Ep, G4double Ex) {
     }
 
   }
+  else if(rDSpUS) { //Recoil downstream, projectile upstream
+
+    for(unsigned int i=0;i<good_LAB_thetas.size();i+=2) {
+  
+      if(!i && //DS thetas only for recoil
+	 //Check if recoil will will scatter into desired  range
+         ((Recoil_Theta_LAB(thetaCM,Ep,Ex) > good_LAB_thetas.at(i)) &&
+          (Recoil_Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)))
+        ) {
+      
+        keep = true;
+      }
+      else if(i && //US thetas only for projectile
+	      //Check if projectile will scatter into desired  range
+	      ((Theta_LAB(thetaCM,Ep,Ex) > good_LAB_thetas.at(i)) &&
+	       (Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)))
+	     ) {
+      
+        keep = true;
+      }
+    }
+    
+  }
   else { //Consider both
     
     for(unsigned int i=0;i<good_LAB_thetas.size();i+=2) {
   
       if(
-         //Check if projectile will scatter into desired  range
+	 //Check if projectile will scatter into desired  range
          ((Theta_LAB(thetaCM,Ep,Ex) > good_LAB_thetas.at(i)) &&
           (Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)))
        
@@ -190,8 +215,6 @@ void Reaction::UpstreamThetas() {
   good_LAB_thetas.erase(good_LAB_thetas.begin());
   good_LAB_thetas.erase(good_LAB_thetas.begin());
   
-  SetOnlyP();
-  
   return;
 }
 
@@ -246,7 +269,7 @@ G4double Reaction::SampleRutherfordCM() {
 
 //Everything below here come the GOSIA manual, chapter 5
 /*
-void Reaction::GetThetaPMax(G4double Ep, G4double Ex) {
+void Reaction::Theta_LAB_Max(G4double Ep, G4double Ex) {
 
   G4double tau = (beam_mass/targ_mass)/std::sqrt(1 - (Ex/Ep)*(1 + beam_mass/targ_mass));
 
@@ -259,7 +282,7 @@ void Reaction::GetThetaPMax(G4double Ep, G4double Ex) {
   
 }
 
-void Reaction::GetThetaTMax(G4double Ep, G4double Ex) {
+void Reaction::Recoil_Theta_LAB_Max(G4double Ep, G4double Ex) {
 
   G4double tau_t = 1.0/std::sqrt(1 - (Ex/Ep)*(1 + beam_mass/targ_mass));
 
@@ -321,3 +344,51 @@ G4double Reaction::Recoil_KE_LAB(G4double thetaCM, G4double Ep, G4double Ex) {
   
   return term1*term2*term3;
 }
+
+/*
+G4double Reaction::Theta_CM_FP(G4double ThetaLAB, G4double Ep, G4bool sol2, G4double Ex) {
+
+  G4double tau = (beam_mass/targ_mass)/std::sqrt(1 - (Ex/Ep)*(1 + beam_mass/targ_mass));
+  
+  if(std::sin(ThetaLAB) > 1.0/tau) {
+    ThetaLAB = std::asin(1.0/tau);
+
+    if(ThetaLAB < 0) {
+      ThetaLAB += pi;
+    }
+
+    return std::asin(tau*std::sin(ThetaLAB)) + ThetaLAB;
+  }
+
+  if(!sol2) {
+    return std::asin(tau*std::sin(ThetaLAB)) + ThetaLAB;
+  }
+  else {
+    return std::asin(tau*std::sin(-ThetaLAB)) + ThetaLAB + pi;
+  }
+  
+}
+
+G4double Reaction::Theta_CM_FR(G4double ThetaLAB, G4double Ep, G4bool sol2, G4double Ex) {
+
+  G4double tau = 1.0/std::sqrt(1 - (Ex/Ep)*(1 + beam_mass/targ_mass));
+  
+  if(std::sin(ThetaLAB) > 1.0/tau) {
+    ThetaLAB = std::asin(1.0/tau);
+
+    if(ThetaLAB < 0) {
+      ThetaLAB += pi;
+    }
+
+    return std::asin(tau*std::sin(ThetaLAB)) + ThetaLAB;
+  }
+
+  if(!sol2) {
+    return pi - (std::asin(tau*std::sin(ThetaLAB)) + ThetaLAB);
+  }
+  else {
+    return -std::asin(tau*std::sin(-ThetaLAB)) - ThetaLAB;
+  }
+  
+}
+*/

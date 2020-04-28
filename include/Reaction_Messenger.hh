@@ -39,6 +39,7 @@ private:
   G4UIcmdWithoutParameter* toJanus_cmd;
   G4UIcmdWithoutParameter* toUS_cmd;
   G4UIcmdWithoutParameter* toDS_cmd;
+  G4UIcmdWithoutParameter* rDSpUS_cmd;
   
   G4UIcmdWithADoubleAndUnit* addTheta_cmd;
   

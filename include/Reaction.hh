@@ -22,6 +22,12 @@ public:
   G4double KE_LAB(G4double thetaCM, G4double Ep, G4double Ex=0.0*MeV);
   G4double Recoil_KE_LAB(G4double thetaCM, G4double Ep, G4double Ex=0.0*MeV);
 
+  //G4double Theta_LAB_Max(G4double Ep, G4double Ex0.0*MeV);
+  //G4double Recoil_Theta_LAB_Max(G4double Ep, G4double Ex=0.0.*MeV);
+
+  //G4double Theta_CM_FP(G4double ThetaLAB, G4double Ep, G4bool sol2=false, G4double Ex=0.0*MeV);
+  //G4double Theta_CM_FR(G4double ThetaLAB, G4double Ep, G4bool sol2=false, G4double Ex=0.0*MeV);
+
   G4double RutherfordCM(G4double thetaCM, G4double Ep, G4double Ex=0.0*MeV);
   ////////////////////////////////////////
 
@@ -38,15 +44,13 @@ public:
   void Bambino2Thetas();
   void UpstreamThetas();
   void DownstreamThetas();
-
+  
   void SetOnlyP();
   void SetOnlyR();
+  void SetRecDS_ProjUS() {rDSpUS = true;}
   //////////////////////////////////////////////
   
   G4double SampleRutherfordCM();
-
-  //G4double GetThetaPMax();
-  //G4double GetThetaTMax();
 
   //Getters and setters//
   void SetBeamZ(G4int Z) {beamZ = Z;}
@@ -68,8 +72,6 @@ public:
   
 private:
 
-  //void SetThetaMax(G4double Ep, G4double Ex=0.0*MeV);
-
   bool KeepThetaCM(G4double thetaCM, G4double Ep, G4double Ex=0.0*MeV);
 
   Reaction_Messenger* messenger;
@@ -84,6 +86,7 @@ private:
 
   G4bool onlyP;
   G4bool onlyR;
+  G4bool rDSpUS;
 
   std::vector<G4double> good_LAB_thetas;
   

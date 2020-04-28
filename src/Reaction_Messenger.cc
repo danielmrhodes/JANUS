@@ -44,6 +44,10 @@ Reaction_Messenger::Reaction_Messenger(Reaction* reac) : reaction(reac) {
   toDS_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   toDS_cmd->SetGuidance("Only sample parts of the Rutherford distribution which result in a particle entering the downstream Bambino2 detector");
 
+  rDSpUS_cmd = new G4UIcmdWithoutParameter("/Reaction/RecDS_ProjUS",this);
+  rDSpUS_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  rDSpUS_cmd->SetGuidance("Only sample parts of the Rutherford distribution which result in the recoil entering the downstream Bambino2 detector and the projectile entering the upstream Bambino2 detector");
+
   addTheta_cmd = new G4UIcmdWithADoubleAndUnit("/Reaction/AddThetaLAB",this);
   addTheta_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   addTheta_cmd->SetGuidance("Add an angle to define desired LAB scattering angle range. This command must always be used two at a time, with the smaller angle coming first. Otherwise it doesn't work.");
@@ -113,6 +117,12 @@ void Reaction_Messenger::SetNewValue(G4UIcommand* command, G4String newValue) {
   else if(command == toDS_cmd) {
     reaction->DownstreamThetas();
     G4cout << "Ensuring a particle will always enter the downstream Bambino2 detector!" << G4endl;
+  }
+
+  else if(command == rDSpUS_cmd) {
+    reaction->Bambino2Thetas();
+    reaction->SetRecDS_ProjUS();
+    G4cout << "Sending the recoil to downstream Bambino2 and the projectile to upstream Bambino2!" << G4endl;
   }
 
   else if(command == addTheta_cmd) {
