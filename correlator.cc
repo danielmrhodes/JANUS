@@ -15,19 +15,21 @@
 int beamZ = 48;
 int beamA = 106;
 double beam_mass = 98626.9; // MeV/c^2
-  
-int targZ = 22;
-int targA = 48;
-//double targ_mass = 193688; // MeV/c^2
-double targ_mass = 44652.;
 
 //You should reduce this value by the energy loss in the target
 //double beam_en = 450.0; // MeV
 double beam_en = 300.0;
+  
+int targZ = 22;
+int targA = 48;
+//double targ_mass = 193688.0; // MeV/c^2
+double targ_mass = 44652.0;
 
-double DS_Offset = 2.6; //cm
-double US_Offset = 3.4; //cm
-double SeGA_Offset = 3.1; //cm
+//Silicon detector offsets (downstream and upstream)
+double DS_Offset = 2.6; // cm 
+double US_Offset = 3.4; // cm
+
+double SeGA_Offset = 3.1; // cm
 ///////////////////////////////////////////////////////////////////////////
 
 ////Kinematics////
