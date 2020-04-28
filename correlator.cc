@@ -11,7 +11,7 @@
 
 #include "Data_Format.hh"
 
-//These should match the parameters defined in the simulation input
+////These should match the parameters defined in the simulation input////
 int beamZ = 48;
 int beamA = 106;
 double beam_mass = 98626.9; // MeV/c^2
@@ -21,8 +21,14 @@ int targA = 48;
 //double targ_mass = 193688; // MeV/c^2
 double targ_mass = 44652.;
 
+//You should reduce this value by the energy loss in the target
 //double beam_en = 450.0; // MeV
 double beam_en = 300.0;
+
+double DS_Offset = 2.6; //cm
+double US_Offset = 3.4; //cm
+double SeGA_Offset = 3.1; //cm
+///////////////////////////////////////////////////////////////////////////
 
 ////Kinematics////
 double Theta_CM_FP(double ThetaLAB, double Ep, bool sol2=false, double Ex=0.) {
@@ -164,10 +170,10 @@ TVector3 GetPos(const int det, const int ring, const int sec) {
 
   double zoff;
   if(det == 1) {
-    zoff = 2.6;
+    zoff = DS_Offset;
   }
   else {
-    zoff = 3.4;
+    zoff = US_Offset;
   }
   pos.SetZ(zoff);
 
@@ -228,8 +234,7 @@ TVector3 GetPos(const int det, const int seg) {
     zd*=-1;
   }
   
-  double Zoffset = 3.1;
-  TVector3 pos(rd*TMath::Cos(phid),rd*TMath::Sin(phid),zd+Zoffset);
+  TVector3 pos(rd*TMath::Cos(phid),rd*TMath::Sin(phid),zd+SeGA_Offset);
 
   return origin+pos;
 
@@ -930,19 +935,19 @@ int main(int argc, char** argv) {
 	  double thetaCM_ns2 = Theta_CM_FP(bPos.Theta(),beam_en,false);
 	  
 	  double energy = KE_LAB(thetaCM,beam_en);
-	  double gam = (energy - 12.0)/beam_mass + 1.0;
+	  double gam = (energy)/beam_mass + 1.0;
 	  double beta = TMath::Sqrt(1.0 - 1.0/(gam*gam));
 
 	  double energy_ns2 = KE_LAB(thetaCM_ns2,beam_en);
-	  double gam_ns2 = (energy_ns2 - 12.0)/beam_mass + 1.0;
+	  double gam_ns2 = (energy_ns2)/beam_mass + 1.0;
 	  double beta_ns2 = TMath::Sqrt(1.0 - 1.0/(gam_ns2*gam_ns2));
 
 	  double recon_energy = Recoil_KE_LAB(thetaCM,beam_en);
-	  double recon_gam = (recon_energy - 12.0)/targ_mass + 1.0;
+	  double recon_gam = (recon_energy)/targ_mass + 1.0;
 	  double recon_beta = TMath::Sqrt(1.0 - 1.0/(recon_gam*recon_gam));
 
 	  double recon_energy_ns2 = Recoil_KE_LAB(thetaCM_ns2,beam_en);
-	  double recon_gam_ns2 = (recon_energy_ns2 - 12.0)/targ_mass + 1.0;
+	  double recon_gam_ns2 = (recon_energy_ns2)/targ_mass + 1.0;
 	  double recon_beta_ns2 = TMath::Sqrt(1.0 - 1.0/(recon_gam_ns2*recon_gam_ns2));
 	  
 	  TVector3 rPos(0,0,1);
@@ -1076,7 +1081,7 @@ int main(int argc, char** argv) {
 	else if(!bDet && data.bam2[i].rP && data.bam2[i].sP) { //Projectile US gate
 
 	  double energy = KE_LAB(Theta_CM_FP(bPos.Theta(),beam_en),beam_en);
-	  double gam = (energy - 12.0)/beam_mass + 1.0;
+	  double gam = (energy)/beam_mass + 1.0;
 	  double beta = TMath::Sqrt(1.0 - 1.0/(gam*gam));
 
 	  sPidUS->Fill(ring,sec_en);
@@ -1174,12 +1179,11 @@ int main(int argc, char** argv) {
 	  double thetaCM = Theta_CM_FR(bPos.Theta(),beam_en);
 	  
 	  double energy = Recoil_KE_LAB(thetaCM,beam_en);
-	  double gam = (energy - 12.0)/targ_mass + 1.0;
+	  double gam = (energy)/targ_mass + 1.0;
 	  double beta = TMath::Sqrt(1.0 - 1.0/(gam*gam));
 
-	  //double recon_theta = Theta_LAB(thetaCM,beam_en);
 	  double recon_energy = KE_LAB(thetaCM,beam_en);
-	  double recon_gam = (recon_energy - 12.0)/beam_mass + 1.0;
+	  double recon_gam = (recon_energy)/beam_mass + 1.0;
 	  double recon_beta = TMath::Sqrt(1.0 - 1.0/(recon_gam*recon_gam));
 
 	  TVector3 rPos(0,0,1);
