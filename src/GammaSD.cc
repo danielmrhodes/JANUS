@@ -70,6 +70,8 @@ void GammaSD::EndOfEvent(G4HCofThisEvent* HCE) {
 
   std::map<G4int,std::vector<G4int>> idMap = trkAct->GetIDMap();
   std::map<G4int,G4double> enMap = trkAct->GetEnergyMap();
+  trkAct->Clear(); //reset for next event
+  
   for(int i=0;i<16;i++) {
     if(cores[i] > 0) {
 

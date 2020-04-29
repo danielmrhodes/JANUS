@@ -10,8 +10,6 @@ Event_Action::~Event_Action() {}
 
 void Event_Action::BeginOfEventAction(const G4Event* evt) {
 
-  trkAct->Clear();
-  
   int id = evt->GetEventID();
   if(!(id%perEvt)) {
     G4cout << "Event " << id << G4endl;

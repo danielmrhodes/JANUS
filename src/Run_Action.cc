@@ -37,7 +37,6 @@ void Run_Action::BeginOfRunAction(const G4Run* run) {
   Event_Action* evtAct = (Event_Action*)Rman->GetUserEventAction();
   evtAct->SetOutputFile(output);
   evtAct->SetPerEvent(num);
-  evtAct->SetTrackingAction(trkAct);
 
   G4SDManager* SDman = G4SDManager::GetSDMpointer();
       
