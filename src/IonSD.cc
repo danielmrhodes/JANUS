@@ -9,7 +9,7 @@ IonSD::IonSD(G4String name) : G4VSensitiveDetector(name) {
 IonSD::~IonSD() {}
 
 void IonSD::Initialize(G4HCofThisEvent*) {
-
+  
   HC = new Ion_Hit_Collection(SensitiveDetectorName,collectionName[0]);
   
   return;

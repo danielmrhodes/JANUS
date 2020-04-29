@@ -19,7 +19,7 @@ void Event_Action::BeginOfEventAction(const G4Event* evt) {
 }
 
 void Event_Action::EndOfEventAction(const G4Event* evt) {
-
+  
   JANUSData data;
   int nB = 0;
   int nS = 0;

@@ -2,6 +2,8 @@
 #include "Detector_Construction_Messenger.hh"
 #include "Bambino2.hh"
 #include "SeGA.hh"
+#include "Primary_Generator.hh"
+
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4NistManager.hh"
@@ -49,6 +51,41 @@ G4VPhysicalVolume* Detector_Construction::Construct() {
 
 G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
 
+  G4RunManager* Rman = G4RunManager::GetRunManager();
+  Primary_Generator* gen = (Primary_Generator*)Rman->GetUserPrimaryGeneratorAction();
+
+  G4bool sens_SeGA = false;
+  G4bool sens_Bam2 = false;
+  switch(gen->GetMode()) {
+    case Primary_Generator::MODE::Scattering: {
+
+      sens_Bam2 = true;
+      break;
+  
+    }
+    case Primary_Generator::MODE::Source: {
+
+      sens_SeGA = true;
+      break;
+
+    }
+    case Primary_Generator::MODE::Full: {
+
+      sens_Bam2 = true;
+      sens_SeGA = true;
+      break;
+
+    }
+  }
+  
+  //Make Bambino2
+  Bambino2* bam = new Bambino2(sens_Bam2);
+  bam->Placement(logic_world,US_Offset,DS_Offset);
+
+  //Make SeGA
+  SeGA* seg = new SeGA(sens_SeGA);
+  seg->Placement(logic_world,SeGA_Offset);
+
   G4bool check = false;
   
   //Target material (isotopically pure)
@@ -64,14 +101,6 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
 						      new G4UserLimits(0.05*target_thickness));
   new G4PVPlacement(0,G4ThreeVector(),logic_target,"Target",logic_world,false,0,check);
   
-  //Make Bambino2
-  Bambino2* bam = new Bambino2();
-  bam->Placement(logic_world,US_Offset,DS_Offset);
-
-  //Make SeGA
-  SeGA* seg = new SeGA();
-  seg->Placement(logic_world,SeGA_Offset);
-
   //Beam tube and fram material (aluminium)
   G4Material* Al = new G4Material("Aluminum",13,26.98*g/mole,2.7*g/cm3);
 

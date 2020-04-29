@@ -5,7 +5,7 @@
 #include "G4UnitsTable.hh"
 #include "G4SDManager.hh"
 
-SeGA::SeGA() {
+SeGA::SeGA(G4bool make_sensitive) {
   
   HpGe = new G4Material("HpGe",32.0,72.61*g/mole,5.323*g/cm3);
   Al =   new G4Material("Al",13.0,26.982*g/mole,2.70*g/cm3); //LR
@@ -80,8 +80,11 @@ SeGA::SeGA() {
   Vis5->SetForceSolid(false);
 
   //Sensitive Detector
-  TrackerGamma = new GammaSD("GammaTracker");
-  G4SDManager::GetSDMpointer()->AddNewDetector(TrackerGamma);
+  TrackerGamma = NULL;
+  if(make_sensitive) {
+    TrackerGamma = new GammaSD("GammaTracker");
+    G4SDManager::GetSDMpointer()->AddNewDetector(TrackerGamma);
+  }
 
 }
 

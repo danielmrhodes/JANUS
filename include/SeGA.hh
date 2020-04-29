@@ -22,7 +22,7 @@ class SeGA {
 
 public:
 
-  SeGA();
+  SeGA(G4bool make_sensitive);
   ~SeGA();
   
   void Placement(G4LogicalVolume* world, G4double zoff);

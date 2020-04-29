@@ -3,10 +3,9 @@
 #include "G4PhysicalConstants.hh"
 #include "G4Color.hh"
 #include "G4VisAttributes.hh"
-#include "IonSD.hh"
 #include "G4SDManager.hh"
 
-Bambino2::Bambino2() {
+Bambino2::Bambino2(G4bool make_sensitive) {
 
   innerRadius=1.1*cm;
   outerRadius=3.5*cm;
@@ -14,6 +13,13 @@ Bambino2::Bambino2() {
 
   nRings=24;
   nSectors=32;
+
+  //Sensitive Detector
+  TrackerIon = NULL;
+  if(make_sensitive) {
+    TrackerIon = new IonSD("IonTracker");
+    G4SDManager::GetSDMpointer()->AddNewDetector(TrackerIon);
+  }
   
 }
 
@@ -26,10 +32,6 @@ void Bambino2::Placement(G4LogicalVolume* world, G4double USoff, G4double DSoff)
   vis1->SetForceSolid(true);
   vis2->SetVisibility(true);
   vis2->SetForceSolid(true);
-
-  //Sensitive Detector
-  IonSD* TrackerIon = new IonSD("IonTracker");
-  G4SDManager::GetSDMpointer()->AddNewDetector(TrackerIon);
 
   //Bambino2 material
   G4Material* mat = new G4Material("Si",14,28.0855*g/mole,2.329*g/cm3);
