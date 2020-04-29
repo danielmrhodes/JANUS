@@ -121,6 +121,8 @@ void SeGA::PlaceDetector(G4LogicalVolume* expHall_log, G4int detNum, G4double Zo
   if(detNum > 7) {
     zd*=-1;
   }
+
+  G4bool check = false;
   
   G4int seg = 1;
   for(G4int i=0;i<phisegs;i++) {
@@ -159,7 +161,7 @@ void SeGA::PlaceDetector(G4LogicalVolume* expHall_log, G4int detNum, G4double Zo
       G4double zshift = j*2*Length/zsegs - double(zsegs-1)/double(zsegs)*Length;
       G4ThreeVector vec(rd*cos(phid),rd*sin(phid),zd+zshift+Zoffset);
 
-      new G4PVPlacement(0,vec,seg_log,"SeGA",expHall_log,false,Copy,false);
+      new G4PVPlacement(0,vec,seg_log,"SeGA",expHall_log,false,Copy,check);
 
       seg++;
 	
@@ -172,7 +174,7 @@ void SeGA::PlaceDetector(G4LogicalVolume* expHall_log, G4int detNum, G4double Zo
     DL_log->SetVisAttributes(Vis3);
   
     G4ThreeVector vec1(rd*cos(phid),rd*sin(phid),zd - Length/double(zsegs) + Zoffset);
-    new G4PVPlacement(0,vec1,DL_log,"SeGA_DL",expHall_log,false,detNum,false);
+    new G4PVPlacement(0,vec1,DL_log,"SeGA_DL",expHall_log,false,detNum,check);
   }
   
   oCan_log->SetVisAttributes(Vis4);
@@ -213,7 +215,7 @@ void SeGA::PlaceDetector(G4LogicalVolume* expHall_log, G4int detNum, G4double Zo
   assmPos.setZ(zd+Zoffset);
   
   G4Transform3D SeGATrans = G4Transform3D(assmRot,assmPos);
-  SeGA_assembly->MakeImprint(expHall_log,SeGATrans,detNum,false);
+  SeGA_assembly->MakeImprint(expHall_log,SeGATrans,detNum,check);
 
 }
 

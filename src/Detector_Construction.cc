@@ -48,6 +48,8 @@ G4VPhysicalVolume* Detector_Construction::Construct() {
 }
 
 G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
+
+  G4bool check = false;
   
   //Target material (isotopically pure)
   target_mat = new G4Material("target_mat",target_density,1); //Bulk material (1 component)
@@ -60,7 +62,7 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   G4Tubs* solid_target = new G4Tubs("Target_Sol",0*cm,target_radius,target_thickness/2.0,0.0*deg,360.0*deg);
   G4LogicalVolume* logic_target = new G4LogicalVolume(solid_target,target_mat,"Target_Logical",0,0,
 						      new G4UserLimits(0.05*target_thickness));
-  new G4PVPlacement(0,G4ThreeVector(),logic_target,"Target",logic_world,false,0,false);
+  new G4PVPlacement(0,G4ThreeVector(),logic_target,"Target",logic_world,false,0,check);
   
   //Make Bambino2
   Bambino2* bam = new Bambino2();
@@ -76,32 +78,33 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   //Make the beam tube
   G4Tubs* solid_BT = new G4Tubs("BT_Sol",7.366*cm,7.62*cm,44*cm,0*deg,360*deg);
   G4LogicalVolume* logic_BT = new G4LogicalVolume(solid_BT,Al,"BT_Logical");
-  new G4PVPlacement(0,G4ThreeVector(),logic_BT,"Beam_Tube",logic_world,false,0,false);
-  
+  new G4PVPlacement(0,G4ThreeVector(),logic_BT,"Beam_Tube",logic_world,false,0,check);
+
+  //Make SeGA frame
   G4Box* solid_plate = new G4Box("plate_Sol",0.75*m,0.5*m,0.635*cm);
   G4Tubs* tub = new G4Tubs("tubs",0*cm,33*cm,1.0*cm,0*deg,360*deg);
   G4SubtractionSolid* solid_face = new G4SubtractionSolid("face_Sol",solid_plate,tub);
   G4LogicalVolume* logic_face = new G4LogicalVolume(solid_face,Al,"face_Logical");
-  new G4PVPlacement(0,G4ThreeVector(0,0,8*cm+SeGA_Offset),logic_face,"face1",logic_world,false,0,false);
-  new G4PVPlacement(0,G4ThreeVector(0,0,-8*cm+SeGA_Offset),logic_face,"face2",logic_world,false,0,false);
+  new G4PVPlacement(0,G4ThreeVector(0,0,8*cm+SeGA_Offset),logic_face,"face1",logic_world,false,0,check);
+  new G4PVPlacement(0,G4ThreeVector(0,0,-8*cm+SeGA_Offset),logic_face,"face2",logic_world,false,0,check);
 
   G4RotationMatrix* Rot = new G4RotationMatrix();
   Rot->rotateX(90*deg);
   
   G4LogicalVolume* logic_plate = new G4LogicalVolume(solid_plate,Al,"plate_Logical");
-  new G4PVPlacement(Rot,G4ThreeVector(0,-0.65*m,SeGA_Offset),logic_plate,"plate1",logic_world,false,0,false);
-  new G4PVPlacement(Rot,G4ThreeVector(0,-0.75*m,SeGA_Offset),logic_plate,"plate2",logic_world,false,0,false);
-  new G4PVPlacement(Rot,G4ThreeVector(0,-0.85*m,SeGA_Offset),logic_plate,"plate3",logic_world,false,0,false);
-  new G4PVPlacement(Rot,G4ThreeVector(0,-0.95*m,SeGA_Offset),logic_plate,"plate4",logic_world,false,0,false);
+  new G4PVPlacement(Rot,G4ThreeVector(0,-0.65*m,SeGA_Offset),logic_plate,"plate1",logic_world,false,0,check);
+  new G4PVPlacement(Rot,G4ThreeVector(0,-0.75*m,SeGA_Offset),logic_plate,"plate2",logic_world,false,0,check);
+  new G4PVPlacement(Rot,G4ThreeVector(0,-0.85*m,SeGA_Offset),logic_plate,"plate3",logic_world,false,0,check);
+  new G4PVPlacement(Rot,G4ThreeVector(0,-0.95*m,SeGA_Offset),logic_plate,"plate4",logic_world,false,0,check);
 
   G4Box* solid_arm = new G4Box("arm_Sol",0.635*cm,0.65*m,4*cm);
   G4LogicalVolume* logic_arm = new G4LogicalVolume(solid_arm,Al,"arm_Logical");
-  new G4PVPlacement(0,G4ThreeVector(0.75*m,0,SeGA_Offset),logic_arm,"arm1",logic_world,false,0,false);
-  new G4PVPlacement(0,G4ThreeVector(-0.75*m,0,SeGA_Offset),logic_arm,"arm2",logic_world,false,0,false);
+  new G4PVPlacement(0,G4ThreeVector(0.75*m,0,SeGA_Offset),logic_arm,"arm1",logic_world,false,0,check);
+  new G4PVPlacement(0,G4ThreeVector(-0.75*m,0,SeGA_Offset),logic_arm,"arm2",logic_world,false,0,check);
 
   G4Box* solid_top = new G4Box("top_Sol",0.75*m,0.635*cm,4*cm);
   G4LogicalVolume* logic_top = new G4LogicalVolume(solid_top,Al,"top_Logical");
-  new G4PVPlacement(0,G4ThreeVector(0,0.65*m,SeGA_Offset),logic_top,"top1",logic_world,false,0,false);
+  new G4PVPlacement(0,G4ThreeVector(0,0.65*m,SeGA_Offset),logic_top,"top1",logic_world,false,0,check);
   
   //Gate valve material
   G4Element* C  = new G4Element("Carbon","C",6,12.011*g/mole);
@@ -112,10 +115,10 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   GV_mat->AddElement(Fe,0.88);
   GV_mat->AddElement(Co,0.08);
 
-  //Make gate valve
+  //Make the gate valve
   G4Tubs* solid_GV = new G4Tubs("GV_Sol",9.3*cm,17*cm,5.9*cm,0*deg,360*deg);
   G4LogicalVolume* logic_GV = new G4LogicalVolume(solid_GV,GV_mat,"GV_Logical");
-  new G4PVPlacement(0,G4ThreeVector(0,0,50*cm),logic_GV,"GV",logic_world,false,0,false);
+  new G4PVPlacement(0,G4ThreeVector(0,0,50*cm),logic_GV,"GV",logic_world,false,0,check);
 
   //Visualization
   G4VisAttributes* vis = new G4VisAttributes(G4Colour::Grey());
