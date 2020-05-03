@@ -17,7 +17,9 @@ public:
 
   void Clear();
   void SetMode(Primary_Generator::MODE md) {mode = md;}
+  void SetProjectileName(G4String name) {projName = name;} 
 
+  std::vector<G4int> GetProjGammas() {return projGammas;}
   std::map<G4int,std::vector<G4int>> GetIDMap() {return idMap;}
   std::map<G4int,G4double> GetEnergyMap() {return enMap;}
   
@@ -27,6 +29,11 @@ private:
   
   //List of projectile or recoil track IDs
   std::vector<G4int> ionIDs;
+
+  //Keep track of the projectile
+  G4String projName;
+  std::vector<G4int> projIDs;
+  std::vector<G4int> projGammas;
 
   //Map a gamma id to list of secondary ids
   std::map<G4int,std::vector<G4int>> idMap;

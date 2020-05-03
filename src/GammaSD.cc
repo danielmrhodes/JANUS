@@ -70,6 +70,7 @@ void GammaSD::EndOfEvent(G4HCofThisEvent* HCE) {
 
   std::map<G4int,std::vector<G4int>> idMap = trkAct->GetIDMap();
   std::map<G4int,G4double> enMap = trkAct->GetEnergyMap();
+  std::vector<G4int> projGams = trkAct->GetProjGammas();
   trkAct->Clear(); //reset for next event
   
   for(int i=0;i<16;i++) {
@@ -94,20 +95,19 @@ void GammaSD::EndOfEvent(G4HCofThisEvent* HCE) {
 	    break;
 	  }
 	}
-
 	if(broken) {
 	  break;
 	}
 
 	G4double diff = enMap[it->first] - cores[i];
 	if(diff*diff < (0.01*keV)*(0.01*keV)) {
-	  hit->SetFEP();
-	}
 	  
-      }
-      if(broken) {
-	HC->insert(hit);
-	continue;
+	  hit->SetFEP();
+	  if(std::find(projGams.begin(),projGams.end(),it->first) != projGams.end()) {
+	    hit->SetProjFEP();
+	  }
+	  
+	}  
       }
       
       HC->insert(hit);

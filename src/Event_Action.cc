@@ -51,7 +51,7 @@ void Event_Action::EndOfEventAction(const G4Event* evt) {
         G4ThreeVector pos = hit->GetPos();
 
 	data.sData[nS] = {hit->GetDetector(),hit->GetSegment(),hit->GetEdep()/keV,
-			  pos.x()/cm,pos.y()/cm,pos.z()/cm,hit->IsFEP()};
+			  pos.x()/cm,pos.y()/cm,pos.z()/cm,hit->IsFEP(),hit->IsProjFEP()};
 
 	nS++;
 

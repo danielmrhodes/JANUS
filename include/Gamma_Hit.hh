@@ -23,6 +23,7 @@ public:
   inline void SetSeg(G4int sg) {seg = sg;}
   
   inline void SetFEP() {fep = true;}
+  inline void SetProjFEP() {pfep = true;}
 
   void SetDetSeg(G4int id);
 
@@ -33,6 +34,7 @@ public:
   G4int GetDetector() const {return det;}
 
   G4bool IsFEP() const {return fep;}
+  G4bool IsProjFEP() const {return pfep;}
   
 private:
   
@@ -41,7 +43,7 @@ private:
 
   G4int det, seg;
 
-  G4bool fep;
+  G4bool fep, pfep;
   
 };
 

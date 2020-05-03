@@ -69,6 +69,8 @@ void Run_Action::BeginOfRunAction(const G4Run* run) {
       
       GammaSD* gSD = (GammaSD*)SDman->FindSensitiveDetector("GammaTracker");
       gSD->SetTrackingAction(trkAct);
+
+      trkAct->SetProjectileName(gen->GetProjectileName());
       
       G4cout << "Simulating " << num << " full excitation events" << G4endl;
       break;

@@ -45,13 +45,23 @@ void Tracking_Action::PreUserTrackingAction(const G4Track* track) {
      
       if(track->GetDefinition()->GetParticleType() == "nucleus") {
 	ionIDs.push_back(TID);
+
+	if(track->GetDefinition()->GetParticleName().find(projName) != std::string::npos) {
+	  projIDs.push_back(TID);
+	}
+	
 	break;
       }
       
       if((std::find(ionIDs.begin(),ionIDs.end(),PID) != ionIDs.end()) &&
 	 (track->GetDefinition()->GetParticleName() == "gamma")) {
+	
 	enMap[TID] = track->GetKineticEnergy();
 	idMap[TID].push_back(TID);
+
+	if(std::find(projIDs.begin(),projIDs.end(),PID) != projIDs.end()) {
+	  projGammas.push_back(TID);
+	}
       }
       else  {
 	if(idMap.count(PID)) {
@@ -78,6 +88,9 @@ void Tracking_Action::PreUserTrackingAction(const G4Track* track) {
 void Tracking_Action::Clear() {
 
   ionIDs.clear();
+  projIDs.clear();
+  projGammas.clear();
+  
   idMap.clear();
   enMap.clear();
 

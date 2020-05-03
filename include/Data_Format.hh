@@ -15,7 +15,7 @@ struct SegaData {
 
   int det, seg;
   double en, x, y, z;
-  bool fep;
+  bool fep, pfep;
   
 };
 
