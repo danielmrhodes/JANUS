@@ -98,8 +98,9 @@ The Scattering mode commands are divided into two categories: /Beam and /Reactio
 | /Reaction/AddThetaLAB *double unit* | Add an angle to desired LAB scattering angle ranges. This command must always be used two at a time, with the smaller angle coming first. Otherwise it doesn't work. |
 | /Reaction/OnlyProjectiles | Only consider the projectile when defining desired scattering angle ranges (above commands). |
 | /Reaction/OnlyRecoils | Only consider the recoil when defining the desired scattering angle ranges (above commands). |
-| /Reaction/RecDS_ProjUS | Send *only* the recoiling nucleus to the downstream silicon detector while also sending the projectile nucleus to the upstream detector. This should not be used with any other optional /Reaction command (except \Reaction\DeltaE). |
+| /Reaction/RecDS_ProjUS | Send *only* the recoiling nucleus to the downstream silicon detector while also sending the projectile nucleus to the upstream detector. This should not be used with any of the above optional /Reaction commands. |
 | /Reaction/DeltaE *double unit* | Set (positive) deltaE to simulate inelastic scattering. (Default: 0 MeV) |
+| /Reaction/RecoilThreshold *double unit* | Set recoil energy detection threshold. Removes very low energy recoils, which scatter into the silicon detector, that occur during inelastic scattering. (Default: 0 MeV) |
 
 The use of optional /Reaction commands is highly encouraged. Without these commands, the entire scattering angle range [0,pi] will be sampled according the Rutheford scattering distribution. This means roughly 10<sup>-4</sup> of your simulated events will result in a particle entering the silicon detectors.
 
@@ -127,7 +128,7 @@ This condition is never satisified and will set the entire Rutherford distributi
 
 Full Mode Commands
 -----------------
-For the Full CoulEx simulation, all Scattering mode commands still apply (except /Reaction/DeltaE). Additionally, /Excitation commands can be called which determine the level scheme and excitation pattern in both the projectile and recoil nucleus. All /Excitation commands are optional. Not calling any /Excitation commands will reduce the Full simulation to a Scattering simulation.
+For the Full CoulEx simulation, all Scattering mode commands still apply. Additionally, /Excitation commands can be called which determine the level scheme and excitation pattern in both the projectile and recoil nucleus. All /Excitation commands are optional. Not calling any /Excitation commands will reduce the Full simulation to a Scattering simulation.
 
 | Command | Description |
 | --- | --- |
@@ -141,6 +142,8 @@ For the Full CoulEx simulation, all Scattering mode commands still apply (except
 To control the level scheme and excitations in the recoil nucleus, replace /Excitation/Projectile/ with /Excitation/Recoil/. All commands are identically the same. 
 
 *If you input a level scheme, you must also input the probabilities or choose a state to populate. Otherwise the level scheme won't be used.*
+
+*In a Full simulation, the /Reaction/DeltaE command only affects what CM angles will be sampled. The Q-value, and corresponding LAB anlges, for each scattering event are calculated based on which excited states get populated.*
 
 Level Scheme File Format
 -----------------
