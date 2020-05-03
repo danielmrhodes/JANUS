@@ -31,6 +31,10 @@ Reaction_Messenger::Reaction_Messenger(Reaction* reac) : reaction(reac) {
   onlyR_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   onlyR_cmd->SetGuidance("Only consider the recoil when defining desired LAB scattering angle ranges");
 
+  recoilThresh_cmd = new G4UIcmdWithADoubleAndUnit("/Reaction/RecoilThreshold",this);
+  recoilThresh_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  recoilThresh_cmd->SetGuidance("Set energy threshold for recoil detection.");
+
   //Scattering angle commands
   toJanus_cmd = new G4UIcmdWithoutParameter("/Reaction/SendToJanus",this);
   toJanus_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
@@ -64,6 +68,7 @@ Reaction_Messenger::~Reaction_Messenger() {
   delete recoilZ_cmd;
   delete recoilA_cmd;
   delete onlyR_cmd;
+  delete recoilThresh_cmd;
 
   delete toJanus_cmd;
   delete toUS_cmd;
@@ -103,6 +108,11 @@ void Reaction_Messenger::SetNewValue(G4UIcommand* command, G4String newValue) {
   else if(command == onlyR_cmd) {
     reaction->SetOnlyR();
     G4cout << "Only considering the recoil nucleus when determining the desired scattering angle ranges!" << G4endl;
+  }
+
+  else if(command == recoilThresh_cmd) {
+    reaction->SetRecoilThreshold(recoilThresh_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting recoil detection threshold to " << newValue << G4endl;
   }
 
   else if(command == toJanus_cmd) {

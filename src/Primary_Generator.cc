@@ -38,9 +38,8 @@ Primary_Generator::Primary_Generator() {
   sigma_AY = 0.0*rad;
   sigma_En = 0.0*MeV;
 
-  source_En = 0.0*MeV;
-
   deltaE = 0.0*MeV;
+  source_En = 0.0*MeV;
   
 }
 
@@ -251,7 +250,7 @@ void Primary_Generator::UpdateReaction() {
 
   reac->SetBeamMass(projGS->GetPDGMass());
   reac->SetRecoilMass(recoilGS->GetPDGMass());
-  reac->ConstructRutherfordCM(beam_En);
+  reac->ConstructRutherfordCM(beam_En,deltaE);
 
   Detector_Construction* con =
     (Detector_Construction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();

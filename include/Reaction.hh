@@ -60,6 +60,7 @@ public:
   void SetRecoilZ(G4int Z) {targZ = Z;}
   void SetRecoilA(G4int A) {targA = A;}
   void SetRecoilMass(G4double M) {targ_mass = M;}
+  void SetRecoilThreshold(G4double thresh) {recThresh = thresh;}
 
   G4int GetBeamZ() {return beamZ;}
   G4int GetBeamA() {return beamA;}
@@ -87,6 +88,8 @@ private:
   G4bool onlyP;
   G4bool onlyR;
   G4bool rDSpUS;
+
+  G4double recThresh;
 
   std::vector<G4double> good_LAB_thetas;
   

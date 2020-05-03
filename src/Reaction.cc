@@ -6,6 +6,8 @@
 Reaction::Reaction() : onlyP(false), onlyR(false), rDSpUS(false) {
 
   messenger = new Reaction_Messenger(this);
+
+  recThresh = 0.0*MeV;
   
 }
 
@@ -14,6 +16,8 @@ Reaction::Reaction(G4int bZ, G4int bA, G4double bM, G4int tZ, G4int tA, G4double
     onlyP(false), onlyR(false), rDSpUS(false) {
 
   messenger = new Reaction_Messenger(this);
+
+  recThresh = 0.0*MeV;
 
 }
 
@@ -25,7 +29,7 @@ Reaction::~Reaction() {
 
 void Reaction::ConstructRutherfordCM(G4double Ep, G4double Ex) {
 
-  G4cout << "\nBuilding Rutherford scattering distribution!" << G4endl;
+  G4cout << "\nBuilding Rutherford scattering distribution!\n" << G4endl;
   
   if(good_LAB_thetas.size()) {
     
@@ -116,7 +120,8 @@ bool Reaction::KeepThetaCM(G4double thetaCM, G4double Ep, G4double Ex) {
       if(
 	 //Check if recoil will will scatter into desired  range
          ((Recoil_Theta_LAB(thetaCM,Ep,Ex) > good_LAB_thetas.at(i)) &&
-          (Recoil_Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)))
+          (Recoil_Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)) &&
+	  (Recoil_KE_LAB(thetaCM,Ep,Ex) > recThresh))
         ) {
       
         keep = true;
@@ -131,7 +136,8 @@ bool Reaction::KeepThetaCM(G4double thetaCM, G4double Ep, G4double Ex) {
       if(!i && //DS thetas only for recoil
 	 //Check if recoil will will scatter into desired  range
          ((Recoil_Theta_LAB(thetaCM,Ep,Ex) > good_LAB_thetas.at(i)) &&
-          (Recoil_Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)))
+          (Recoil_Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)) &&
+	  (Recoil_KE_LAB(thetaCM,Ep,Ex) > recThresh))
         ) {
       
         keep = true;
@@ -160,9 +166,10 @@ bool Reaction::KeepThetaCM(G4double thetaCM, G4double Ep, G4double Ex) {
 	 
          //Check if recoil will will scatter into desired  range
          ((Recoil_Theta_LAB(thetaCM,Ep,Ex) > good_LAB_thetas.at(i)) &&
-          (Recoil_Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)))
+          (Recoil_Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)) &&
+	  (Recoil_KE_LAB(thetaCM,Ep,Ex) > recThresh))
        
-        ) {
+        ) {	
       
         keep = true;
       }
@@ -269,7 +276,7 @@ G4double Reaction::SampleRutherfordCM() {
 
 //Everything below here come the GOSIA manual, chapter 5
 /*
-void Reaction::Theta_LAB_Max(G4double Ep, G4double Ex) {
+G4double Reaction::Theta_LAB_Max(G4double Ep, G4double Ex) {
 
   G4double tau = (beam_mass/targ_mass)/std::sqrt(1 - (Ex/Ep)*(1 + beam_mass/targ_mass));
 
@@ -282,7 +289,7 @@ void Reaction::Theta_LAB_Max(G4double Ep, G4double Ex) {
   
 }
 
-void Reaction::Recoil_Theta_LAB_Max(G4double Ep, G4double Ex) {
+G4double Reaction::Recoil_Theta_LAB_Max(G4double Ep, G4double Ex) {
 
   G4double tau_t = 1.0/std::sqrt(1 - (Ex/Ep)*(1 + beam_mass/targ_mass));
 

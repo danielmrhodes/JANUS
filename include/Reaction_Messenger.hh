@@ -34,6 +34,7 @@ private:
   G4UIcmdWithAnInteger* recoilZ_cmd;
   G4UIcmdWithAnInteger* recoilA_cmd;
   G4UIcmdWithoutParameter* onlyR_cmd;
+  G4UIcmdWithADoubleAndUnit* recoilThresh_cmd;
 
   //Scattering angle commands
   G4UIcmdWithoutParameter* toJanus_cmd;
