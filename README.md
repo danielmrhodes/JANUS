@@ -100,7 +100,7 @@ The Scattering mode commands are divided into two categories: /Beam and /Reactio
 | /Reaction/OnlyRecoils | Only consider the recoil when defining the desired scattering angle ranges (above commands). |
 | /Reaction/RecDS_ProjUS | Send *only* the recoiling nucleus to the downstream silicon detector while also sending the projectile nucleus to the upstream detector. This should not be used with any of the above optional /Reaction commands. |
 | /Reaction/DeltaE *double unit* | Set (positive) deltaE to simulate inelastic scattering. (Default: 0 MeV) |
-| /Reaction/RecoilThreshold *double unit* | Set recoil energy detection threshold. Removes very low energy recoils, which scatter into the silicon detector, that occur during inelastic scattering. (Default: 0 MeV) |
+ /Reaction/RecoilThreshold *double unit* | Set recoil energy detection threshold. Removes very low energy recoils, which scatter into the silicon detector, that occur at small CM angles during inelastic scattering. (Default: 0 MeV) |
 
 The use of optional /Reaction commands is highly encouraged. Without these commands, the entire scattering angle range [0,pi] will be sampled according the Rutheford scattering distribution. This means roughly 10<sup>-4</sup> of your simulated events will result in a particle entering the silicon detectors.
 
