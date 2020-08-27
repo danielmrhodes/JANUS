@@ -9,17 +9,6 @@
 #include "G4UnitsTable.hh"
 #include "G4HadronicException.hh"
 
-/*
-Gamma_Decay::Gamma_Decay(const G4ParticleDefinition* Parent, const G4ParticleDefinition* daughter,
-			 G4double BR) : G4GeneralPhaseSpaceDecay(Parent->GetParticleName(),BR,2,
-								 daughter->GetParticleName(),"gamma") {
-
-    SetParent(Parent);
-    SetParentMass(Parent->GetPDGMass());
- 
-}
-*/
-
 Gamma_Decay::Gamma_Decay(const G4ParticleDefinition* Parent, const G4ParticleDefinition* daughter,
 			 G4double BR) : G4VDecayChannel("Phase Space",Parent->GetParticleName(),BR,2,
 							daughter->GetParticleName(),"gamma"),
@@ -35,7 +24,6 @@ Gamma_Decay::Gamma_Decay(const G4ParticleDefinition* Parent, const G4ParticleDef
 }
 
 Gamma_Decay::~Gamma_Decay() {}
-
 
 G4DecayProducts* Gamma_Decay::DecayIt(G4double) {
   
@@ -58,8 +46,6 @@ G4DecayProducts* Gamma_Decay::TwoBodyDecayIt() {
     daughtermass[0] = G4MT_daughters[0]->GetPDGMass();
     daughtermass[1] = G4MT_daughters[1]->GetPDGMass();
   }
-  
-  //  G4double sumofdaughtermass =  daughtermass[0] + daughtermass[1];
 
   //create parent G4DynamicParticle at rest
   G4ParticleMomentum dummy;

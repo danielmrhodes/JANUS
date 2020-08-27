@@ -1,10 +1,8 @@
 #ifndef Gamma_Decay_h
 #define Gamma_Decay_h 1
 
-//#include "G4GeneralPhaseSpaceDecay.hh"
 #include "G4VDecayChannel.hh"
 
-//class Gamma_Decay : public G4GeneralPhaseSpaceDecay {
 class Gamma_Decay : public G4VDecayChannel {
 
 public:
