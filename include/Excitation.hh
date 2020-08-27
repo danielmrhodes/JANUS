@@ -2,6 +2,7 @@
 #define Excitation_h 1
 
 #include "G4ParticleDefinition.hh"
+#include "Polarized_Particle.hh"
 #include "Excitation_Messenger.hh"
 #include "G4DataInterpolation.hh"
 
@@ -19,8 +20,11 @@ public:
   G4int ChooseProjectileState(const G4double thetaCM);
   G4int ChooseRecoilState(const G4double thetaCM);
 
-  G4ParticleDefinition* GetProjectileState(int index) {return pLevels.at(index);}
-  G4ParticleDefinition* GetRecoilState(int index) {return rLevels.at(index);}
+  G4ParticleDefinition* GetProjectileState(int index) {return pLevels.at(index)->GetDefinition();}
+  G4ParticleDefinition* GetRecoilState(int index) {return rLevels.at(index)->GetDefinition();}
+
+  std::vector<Polarized_Particle*> GetProjectileLevels() {return pLevels;}
+  std::vector<Polarized_Particle*> GetRecoilLevels() {return rLevels;}
 
   G4double GetProjectileExcitation(int index);
   G4double GetRecoilExcitation(int index);
@@ -57,7 +61,7 @@ private:
   G4String pPF; //Projectile probabilities file name
   G4String rPF; //Recoil probabilities file name
 
-  std::vector<G4ParticleDefinition*> pLevels; //projectile states
+  std::vector<Polarized_Particle*> pLevels; //projectile states
   std::vector<G4DataInterpolation*> pSplines; //projectile probability splines
 
   G4bool pSimple;
@@ -65,7 +69,7 @@ private:
   G4double pSimpleLt;
   G4int pSelected;
 
-  std::vector<G4ParticleDefinition*> rLevels; //recoil states
+  std::vector<Polarized_Particle*> rLevels; //recoil states
   std::vector<G4DataInterpolation*> rSplines; //recoil probability splines
   
   G4bool rSimple;

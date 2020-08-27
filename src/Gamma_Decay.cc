@@ -9,7 +9,17 @@
 #include "G4UnitsTable.hh"
 #include "G4HadronicException.hh"
 
-Gamma_Decay::Gamma_Decay(const G4ParticleDefinition* Parent, const G4ParticleDefinition* daughter,
+Gamma_Decay::Gamma_Decay(Polarized_Particle* Parent, Polarized_Particle* daughter,
+			 G4double BR) : Gamma_Decay(Parent->GetDefinition(),
+						    daughter->GetDefinition(),BR) {
+
+  trans = new G4PolarizationTransition();
+  pParent = Parent;
+  pDaughter = daughter;
+  
+}
+
+Gamma_Decay::Gamma_Decay(G4ParticleDefinition* Parent, G4ParticleDefinition* daughter,
 			 G4double BR) : G4VDecayChannel("Phase Space",Parent->GetParticleName(),BR,2,
 							daughter->GetParticleName(),"gamma"),
 					theDaughterMasses(0) {
@@ -19,19 +29,12 @@ Gamma_Decay::Gamma_Decay(const G4ParticleDefinition* Parent, const G4ParticleDef
 
   SetDaughter(0,daughter);
   SetDaughter(1,"gamma");
-  G4cout << "New gamma decay" << G4endl;
   
 }
 
 Gamma_Decay::~Gamma_Decay() {}
 
 G4DecayProducts* Gamma_Decay::DecayIt(G4double) {
-  
-  return TwoBodyDecayIt();
-
-}
-
-G4DecayProducts* Gamma_Decay::TwoBodyDecayIt() {
 
   if (GetVerboseLevel()>1) G4cout << "G4GeneralPhaseSpaceDecay::TwoBodyDecayIt()"<<G4endl;
   
@@ -57,11 +60,19 @@ G4DecayProducts* Gamma_Decay::TwoBodyDecayIt() {
 
   //calculate daughter momentum
   daughtermomentum = Pmx(parentmass,daughtermass[0],daughtermass[1]);
-   
-  G4double costheta = 2.*G4UniformRand()-1.0;
+
+
+  G4double costheta;
+  G4double phi;
+  trans->SampleGammaTransition(pParent->GetNuclearPolarization(),pParent->GetSpin()*2,
+			       pDaughter->GetSpin(),2,1,0,costheta,phi);
+
+  pDaughter->SetPolarization(pParent->GetPolarization());
+  
+  //G4double costheta = 2.*G4UniformRand()-1.0;
   G4double sintheta = std::sqrt((1.0 - costheta)*(1.0 + costheta));
   //G4double theta = theAngDis.GetRandomAngle();
-  G4double phi  = twopi*G4UniformRand()*rad;
+  //G4double phi  = twopi*G4UniformRand()*rad;
   //G4ParticleMomentum direction(std::sin(theta)*std::cos(phi),std::sin(theta)*std::sin(phi),std::cos(theta));
   G4ParticleMomentum direction(sintheta*std::cos(phi),sintheta*std::sin(phi),costheta);
 
@@ -80,7 +91,7 @@ G4DecayProducts* Gamma_Decay::TwoBodyDecayIt() {
       products->DumpInfo();
     }
   return products;
-  
+
 }
 
 inline G4double Gamma_Decay::Pmx(G4double e, G4double p1, G4double p2) {

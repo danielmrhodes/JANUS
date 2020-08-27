@@ -175,6 +175,14 @@ void Primary_Generator::GenerateScatteringPrimaries(G4Event* evt) {
 
 void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
 
+  for(auto p : excite->GetProjectileLevels()) {
+    p->GetNuclearPolarization()->Unpolarize();
+  }
+
+  for(auto r : excite->GetRecoilLevels()) {
+    r->GetNuclearPolarization()->Unpolarize();
+  }
+  
   //Choose thetaCM 
   G4double th = reac->SampleRutherfordCM();
 

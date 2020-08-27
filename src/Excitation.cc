@@ -56,12 +56,16 @@ void Excitation::BuildProbabilities() {
 }
 
 void Excitation::BuildProjectileLS(int Z, int A) {
+
+  G4int J = 2;
   
   G4IonTable* table = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
 
   G4ParticleDefinition* projGS = table->GetIon(Z,A,0.0*MeV);
   projGS->SetPDGStable(true);
-  pLevels.push_back(projGS);
+
+  Polarized_Particle* polGS = new Polarized_Particle(projGS,Z,A,0,0.0*MeV);
+  pLevels.push_back(polGS);
 
   if(pSimple) {
 
@@ -72,12 +76,13 @@ void Excitation::BuildProjectileLS(int Z, int A) {
     part->SetPDGLifeTime(pSimpleLt);
 
     part->SetDecayTable(new G4DecayTable());
-    part->GetDecayTable()->Insert(new Gamma_Decay(part,pLevels.at(0),1));
-
     part->GetProcessManager()->SetParticleType(part);
     part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
 
-    pLevels.push_back(part);
+    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,J,pSimpleEn);
+    part->GetDecayTable()->Insert(new Gamma_Decay(ppart,pLevels.at(0),1));
+
+    pLevels.push_back(ppart);
 
     G4cout << " 1 " << pSimpleEn/keV << " " << pSimpleLt/ps << " 1\n  0 1\nSuccess!" << G4endl;  
 
@@ -163,6 +168,10 @@ void Excitation::BuildProjectileLS(int Z, int A) {
     G4cout << " " << state_index << " " << energy/keV << " " << lifetime/ps << " " << nbr << G4endl;
 
     part->SetDecayTable(new G4DecayTable());
+    part->GetProcessManager()->SetParticleType(part);
+    part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
+
+    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,J,energy);
     for(int i=0;i<nbr;i++) {
 
       std::getline(file,line);
@@ -182,17 +191,15 @@ void Excitation::BuildProjectileLS(int Z, int A) {
 
       G4cout << "  " << index << " " << BR << G4endl;
 
-      part->GetDecayTable()->Insert(new Gamma_Decay(part,pLevels.at(index),BR));
+      part->GetDecayTable()->Insert(new Gamma_Decay(ppart,pLevels.at(index),BR));
 	
     }
-    part->GetProcessManager()->SetParticleType(part);
-    part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
 
     if(state_index != pLevels.size()) {
       G4cout << "States are out of order in projectile level scheme file " << pFN << "!" << G4endl;
     }
 
-    pLevels.push_back(part);
+    pLevels.push_back(ppart);
     
   }
 
@@ -203,12 +210,16 @@ void Excitation::BuildProjectileLS(int Z, int A) {
 }
 
 void Excitation::BuildRecoilLS(int Z, int A) {
+
+  G4int J = 2;
   
   G4IonTable* table = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
 
   G4ParticleDefinition* recGS = table->GetIon(Z,A,0.0*MeV);
   recGS->SetPDGStable(true);
-  rLevels.push_back(recGS);
+
+  Polarized_Particle* polGS = new Polarized_Particle(recGS,Z,A,0,0.0*MeV);
+  rLevels.push_back(polGS);
 
   if(rSimple) {
 
@@ -219,12 +230,13 @@ void Excitation::BuildRecoilLS(int Z, int A) {
     part->SetPDGLifeTime(rSimpleLt);
 
     part->SetDecayTable(new G4DecayTable());
-    part->GetDecayTable()->Insert(new Gamma_Decay(part,rLevels.at(0),1));
-
     part->GetProcessManager()->SetParticleType(part);
     part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
 
-    rLevels.push_back(part);
+    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,J,rSimpleEn);
+    part->GetDecayTable()->Insert(new Gamma_Decay(ppart,rLevels.at(0),1));
+    
+    rLevels.push_back(ppart);
 
     G4cout << " 1 " << rSimpleEn/keV << " " << rSimpleLt/ps << " 1\n  0 1\nSuccess!" << G4endl;  
 
@@ -310,6 +322,10 @@ void Excitation::BuildRecoilLS(int Z, int A) {
     G4cout << " " << state_index << " " << energy/keV << " " << lifetime/ps << " " << nbr << G4endl;
 
     part->SetDecayTable(new G4DecayTable());
+    part->GetProcessManager()->SetParticleType(part);
+    part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
+
+    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,J,energy);
     for(int i=0;i<nbr;i++) {
 
       std::getline(file,line);
@@ -329,18 +345,15 @@ void Excitation::BuildRecoilLS(int Z, int A) {
 
       G4cout << "  " << index << " " << BR << G4endl;
 
-      part->GetDecayTable()->Insert(new Gamma_Decay(part,rLevels.at(index),BR));
+      part->GetDecayTable()->Insert(new Gamma_Decay(ppart,rLevels.at(index),BR));
 	
     }
-
-    part->GetProcessManager()->SetParticleType(part);
-    part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
 
     if(state_index != rLevels.size()) {
       G4cout << "States are out of order in recoil level scheme file " << rFN << "!" << G4endl;
     }
 
-    rLevels.push_back(part);
+    rLevels.push_back(ppart);
     
   }
 
@@ -623,7 +636,7 @@ G4double Excitation::GetProjectileExcitation(int index) {
     return 0.0*MeV;
   }
 
-  return pLevels.at(index)->GetPDGMass() - pLevels.at(0)->GetPDGMass();
+  return pLevels.at(index)->GetDefinition()->GetPDGMass() - pLevels.at(0)->GetDefinition()->GetPDGMass();
   
 }
 
@@ -637,6 +650,6 @@ G4double Excitation::GetRecoilExcitation(int index) {
     return 0.0*MeV;
   }
 
-  return rLevels.at(index)->GetPDGMass() - rLevels.at(0)->GetPDGMass();
+  return rLevels.at(index)->GetDefinition()->GetPDGMass() - rLevels.at(0)->GetDefinition()->GetPDGMass();
   
 }
