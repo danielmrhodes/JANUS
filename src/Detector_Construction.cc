@@ -56,6 +56,7 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
 
   G4bool sens_SeGA = false;
   G4bool sens_Bam2 = false;
+  G4UserLimits* uLim = NULL;
   switch(gen->GetMode()) {
     case Primary_Generator::MODE::Scattering: {
 
@@ -71,6 +72,8 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
     }
     case Primary_Generator::MODE::Full: {
 
+      uLim = new G4UserLimits(0.05*target_thickness);
+      
       sens_Bam2 = true;
       sens_SeGA = true;
       break;
@@ -97,8 +100,8 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   
   //Make the target
   G4Tubs* solid_target = new G4Tubs("Target_Sol",0*cm,target_radius,target_thickness/2.0,0.0*deg,360.0*deg);
-  G4LogicalVolume* logic_target = new G4LogicalVolume(solid_target,target_mat,"Target_Logical",0,0,
-						      new G4UserLimits(0.05*target_thickness));
+  G4LogicalVolume* logic_target = new G4LogicalVolume(solid_target,target_mat,"Target_Logical",0,0,uLim);
+						      
   new G4PVPlacement(0,G4ThreeVector(),logic_target,"Target",logic_world,false,0,check);
   
   //Beam tube and fram material (aluminium)
@@ -148,7 +151,7 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   G4Tubs* solid_GV = new G4Tubs("GV_Sol",9.3*cm,17*cm,5.9*cm,0*deg,360*deg);
   G4LogicalVolume* logic_GV = new G4LogicalVolume(solid_GV,GV_mat,"GV_Logical");
   new G4PVPlacement(0,G4ThreeVector(0,0,50*cm),logic_GV,"GV",logic_world,false,0,check);
-
+  
   //Visualization
   G4VisAttributes* vis = new G4VisAttributes(G4Colour::Grey());
   vis->SetVisibility(true);
