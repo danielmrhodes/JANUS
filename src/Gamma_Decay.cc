@@ -30,6 +30,7 @@ Gamma_Decay::Gamma_Decay(const G4ParticleDefinition* Parent, const G4ParticleDef
 
   SetDaughter(0,daughter);
   SetDaughter(1,"gamma");
+  G4cout << "New gamma decay" << G4endl;
   
 }
 
