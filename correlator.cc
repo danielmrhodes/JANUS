@@ -17,8 +17,8 @@ int beamA = 106;
 double beam_mass = 98626.9; // MeV/c^2
 
 //You should reduce this value by the energy loss in the target
-double beam_en = 440.0; // MeV
-//double beam_en = 265.0;
+//double beam_en = 434.0; // MeV
+double beam_en = 265.0;
   
 int targZ = 82;
 int targA = 208;
@@ -28,9 +28,17 @@ double targ_mass = 193688.0; // MeV/c^2
 //Silicon detector offsets (downstream and upstream)
 double DS_Offset = 2.6; // cm 
 double US_Offset = 3.4; // cm
+//TVector3 XY_DS(-0.03,-0.063,0.0); // cm
+TVector3 XY_DS(0.0,0.0,0.0);
 
 double SeGA_Offset = 3.1; // cm
-///////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
+////SeGA Resolution////
+double Sigma(double en) {
+  return 1.03753 + en*0.000274797;
+}
+///////////////////////
 
 ////Kinematics////
 double Theta_CM_FP(double ThetaLAB, double Ep, bool sol2=false, double Ex=0.) {
@@ -225,7 +233,7 @@ TVector3 GetPos(const int det, const int seg) {
   }
 
   TVector3 pos(1,0,0);
-  pos.SetPerp((outerRadius - innerRadius)/2.0);
+  pos.SetPerp((outerRadius + innerRadius)/2.0);
   pos.SetPhi((quad+0.5)*2*PI/4.);
   pos.SetZ((length/8.0)*(2.0*slice - 7.0));
 
@@ -488,9 +496,38 @@ int main(int argc, char** argv) {
   
   //Bambino2 singles
   TH2* bSum = new TH2D("Summary","Janus Summary",120,1,121,500,0,500);
+  TH2* pSum = new TH2D("pSummary","Janus Projectile Summary",120,1,121,500,0,500);
+  TH2* rSum = new TH2D("rSummary","Janus Recoil Summary",120,1,121,500,0,500);
+
+  double shift = 0.5*TMath::TwoPi()/32.0;
+  TH2* pPvPDS = new TH2D("pPerpvPhiDS","Projectile Perp_v_Phi",32,-TMath::Pi()-shift,TMath::Pi()-shift,
+			 24,1.1,3.5);
+  TH2* rPvP = new TH2D("rPerpvPhi","Janus Recoil Summary",32,-TMath::Pi()-shift,TMath::Pi()-shift,
+		       24,1.1,3.5);
+
+  TH2* pThvPhDS = new TH2D("pThvPhDS","Projectile #phi-#theta surface",1000,0,90,1000,-200,200);
+  TH2* pThvPhDS1 = new TH2D("pThvPhDS1","Projectile #phi-#theta surface",1000,0,90,1000,-200,200);
+  TH2* pThvPhDS2 = new TH2D("pThvPhDS2","Projectile #phi-#theta surface",1000,0,90,1000,-200,200);
+
+  TH2* rThvPh = new TH2D("rThvPh","Recoil #phi-#theta surface",1000,0,90,1000,-200,200);
   
   TH1* secD0 = new TH1D("Sectors_Det0","US Sectors",32,1,33);
   TH1* secD1 = new TH1D("Sectors_Det1","DS Sectors",32,1,33);
+
+  TH1* pSecDS = new TH1D("pSecDS","DS Projectile Sectors",32,1,33);
+  TH1* rSec = new TH1D("rSec","Recoil Sectors",32,1,33);
+
+  TH1* pSecDS_m1 = new TH1D("pSecDS_m1","DS Projectile Sectors Mult1",32,1,33);
+  TH1* rSec_m1 = new TH1D("rSec_m1","Recoil Sectors Mult1",32,1,33);
+  
+  TH1* pSecDS_m2 = new TH1D("pSecDS_m2","DS Projectile Sectors Mult2",32,1,33);
+  TH1* rSec_m2 = new TH1D("rSec_m2","Recoil Sectors Mult2",32,1,33);
+
+  TH1* pPhiDS = new TH1D("pPhiDS","DS Projectile Phi",34,-191.25,191.25);
+  TH1* rPhi = new TH1D("rPhi","Recoil Phi",34,-191.25,191.25);
+
+  TH1* pRecPhiDS = new TH1D("pRecPhiDS","DS Projectile Recon Phi",34,-11.25,371.25);
+  TH1* rRecPhi = new TH1D("rRecPhi","Recoil Recon Phi",34,-11.25,371.25);
   
   TH2* rPid0 = new TH2D("RingPID_Det0","US RingEn PID",24,1,25,500,0,500);
   TH2* rPid1 = new TH2D("RingPID_Det1","DS RingEn PID",24,1,25,500,0,500);
@@ -523,26 +560,33 @@ int main(int argc, char** argv) {
   TH1* pCoreEnergyDS = new TH1D("Core_EnergyDS","SeGA Core Energy",3000,0,3000);
   TH2* pCoreSumDS = new TH2D("Core_SummaryDS","Core Energy Summary",16,1,17,3000,0,3000);
 
-  TH1* pDopEnergyDS = new TH1D("Dop_EnergyDS","Doppler Energy",6000,0,3000);
+  TH1* pDopEnergyDS = new TH1D("Dop_EnergyDS","Doppler Energy",12000,0,4000);
   TH2* pDopSumDS = new TH2D("Dop_SummaryDS","Doppler Energy Summary",16,1,17,6000,0,3000);
 
   TH1* pCoreEnergyDS_fep = new TH1D("Core_EnergyDS_fep","SeGA Core Energy FEP",3000,0,3000);
   TH1* pCoreEnergyDS_nfep = new TH1D("Core_EnergyDS_nfep","SeGA Core Energy Not FEP",3000,0,3000);
 
-  TH1* pDopEnergyDS_fep = new TH1D("Dop_EnergyDS_fep","Doppler Energy FEP",3000,0,3000);
-  TH1* pDopEnergyDS_pfep = new TH1D("Dop_EnergyDS_pfep","Doppler Energy Projectile FEP",3000,0,3000);
-  TH1* pDopEnergyDS_rfep = new TH1D("Dop_EnergyDS_rfep","Doppler Energy Recoil FEP",3000,0,3000);
-  TH1* pDopEnergyDS_nfep = new TH1D("Dop_EnergyDS_nfep","Doppler Energy Not FEP",3000,0,3000);
+  TH1* pDopEnergyDS_fep = new TH1D("Dop_EnergyDS_fep","Doppler Energy FEP",12000,0,4000);
+  TH1* pDopEnergyDS_pfep = new TH1D("Dop_EnergyDS_pfep","Doppler Energy Projectile FEP",12000,0,4000);
+  TH1* pDopEnergyDS_rfep = new TH1D("Dop_EnergyDS_rfep","Doppler Energy Recoil FEP",12000,0,4000);
+  TH1* pDopEnergyDS_nfep = new TH1D("Dop_EnergyDS_nfep","Doppler Energy Not FEP",12000,0,4000);
 
-  TH2* pDopvPartDS = new TH2D("DopEn_v_PartEn_DS","Doppler Energy vs Particle Energy",3000,0,3000,500,0,500);
-  TH2* pDopvPartNS2DS = new TH2D("DopEn_v_PartEn_NoS2_DS","Doppler Energy vs Particle Energy (No Sol2)",3000,0,3000,500,0,500);
+  TH2* pDopvPartDS = new TH2D("DopEn_v_PartEn_DS","Doppler Energy vs Particle Energy",
+			      3000,0,3000,500,0,500);
+  TH2* pDopvPartNS2DS = new TH2D("DopEn_v_PartEn_NoS2_DS","Doppler Energy vs Particle Energy (No Sol2)",
+				 3000,0,3000,500,0,500);
 
   TH2* pThCorDS = new TH2D("Theta_CorrDS","Theta Correlation",3000,0,3000,90,0,180);
   TH2* pThCrtDS = new TH2D("Theta_CrctDS","Theta Correction",6000,0,3000,90,0,180);
 
+  TH2* pcThCrtDS = new TH2D("cosTheta_CrctDS","CosTheta Correction",6000,0,3000,200,-1.1,1.1);
+
   double thing1 = 65.*180./32.0;
   TH2* pPhCorDS = new TH2D("Phi_CorrDS","Phi Correlation",3000,0,3000,32,0,thing1);
   TH2* pPhCrtDS = new TH2D("Phi_CrctDS","Phi Correction",6000,0,3000,32,0,thing1);
+
+  TH2* pEnScanDS = new TH2D("EnScan_DS","Energy Scan",60,249.75,279.75,12000,0,3000);
+  //TH2* pEnScanDS = new TH2D("EnScan_DS","Energy Scan",60,419.75,449.75,12000,0,3000);
 
   TH1* pReconEnergyDS = new TH1D("Recon_EnergyDS","Recon Energy",6000,0,3000);
   TH2* pReconSumDS = new TH2D("Recon_SummaryDS","Recon Energy Summary",16,1,17,6000,0,3000);
@@ -552,14 +596,18 @@ int main(int argc, char** argv) {
   TH1* pReconEnergyDS_rfep = new TH1D("Recon_EnergyDS_rfep","Recon Energy Recoil FEP",3000,0,3000);
   TH1* pReconEnergyDS_nfep = new TH1D("Recon_EnergyDS_nfep","Recon Energy Not FEP",3000,0,3000);
 
-  TH2* pReconvPartDS = new TH2D("ReconEn_v_partEn_DS","Recon Energy vs Particle Energy",3000,0,3000,500,0,500);
-  TH2* pReconvPartNS2DS = new TH2D("ReconEn_v_partEn_NoS2_DS","Recon Energy vs Particle Energy (No Sol2)",3000,0,3000,500,0,500);
+  TH2* pReconvPartDS = new TH2D("ReconEn_v_partEn_DS","Recon Energy vs Particle Energy",
+				3000,0,3000,500,0,500);
+  TH2* pReconvPartNS2DS = new TH2D("ReconEn_v_partEn_NoS2_DS","Recon Energy vs Particle Energy (No Sol2)",
+				   3000,0,3000,500,0,500);
 
   TH2* pReconThCorDS = new TH2D("ReconTheta_CorrDS","Recon Theta Correlation",3000,0,3000,90,0,180);
   TH2* pReconThCrtDS = new TH2D("ReconTheta_CrctDS","Recon Theta Correction",6000,0,3000,90,0,180);
 
   TH2* pReconPhCorDS = new TH2D("ReconPhi_CorrDS","Recon Phi Correlation",3000,0,3000,32,0,thing1);
   TH2* pReconPhCrtDS = new TH2D("ReconPhi_CrctDS","Recon Phi Correction",6000,0,3000,32,0,thing1);
+
+  TH2* pReconEnScanDS = new TH2D("ReconEnScan_DS","Recon Energy Scan",60,249.75,279.75,12000,0,3000);
 
   //Projectile US
   TH2* sPidUS = new TH2D("SecPID_US","DS SectorEn PID",24,1,25,500,0,500);
@@ -612,6 +660,9 @@ int main(int argc, char** argv) {
   TH2* rThCrt = new TH2D("Theta_CrctRec","Theta Correction",6000,0,3000,90,0,180);;
   TH2* rPhCor = new TH2D("Phi_CorrRec","Phi Correlation",3000,0,3000,32,0,thing1);
   TH2* rPhCrt = new TH2D("Phi_CrctRec","Phi Correction",6000,0,3000,32,0,thing1);
+
+  TH2* rcThCrt = new TH2D("cosTheta_CrctRec","CosTheta Correction",6000,0,3000,200,-1.1,1.1);
+  TH2* rcReconThCrt = new TH2D("cosRecTheta_CrctRec","CosTheta Correction",6000,0,3000,200,-1.1,1.1);
 
   TH1* rReconEnergy = new TH1D("Recon_EnergyRec","Recon Energy",6000,0,3000);
   TH2* rReconSum = new TH2D("Recon_SummaryRec","Recon Energy Summary",16,1,17,6000,0,3000);
@@ -716,9 +767,11 @@ int main(int argc, char** argv) {
   */
 
   //Bambino2 rings
+  std::vector<TH1*> pRingSecDS;
   std::vector<TH1*> pRingCoreEnDS;
   std::vector<TH1*> pRingDopEnDS;
   std::vector<TH1*> pRingRecEnDS;
+  std::vector<TH2*> pRingThvPhDS;
   //std::vector<TH2*> pRingPhCorDS;
   //std::vector<TH2*> pRingPhCrtDS;
   //std::vector<TH2*> pRingThCorDS;
@@ -731,9 +784,11 @@ int main(int argc, char** argv) {
   //std::vector<TH2*> pRingThCorUS;
   //std::vector<TH2*> pRingThCrtUS;
 
+  std::vector<TH1*> rRingSec;
   std::vector<TH1*> rRingCoreEn;
   std::vector<TH1*> rRingDopEn;
   std::vector<TH1*> rRingRecEn;
+  std::vector<TH2*> rRingThvPh;
   //std::vector<TH2*> rRingPhCor;
   //std::vector<TH2*> rRingPhCrt;
   //std::vector<TH2*> rRingThCor;
@@ -744,6 +799,8 @@ int main(int argc, char** argv) {
   for(int i=0;i<24;i++) {
 
     //Downstream
+    pRingSecDS.push_back(new TH1D(Form("pSecDS_R%02i",i+1),Form("Ring%02i Sectors",i+1),32,1,33));
+    
     pRingCoreEnDS.push_back(new TH1D(Form("Core_EnergyDS_R%02i",i+1),Form("Ring%02i Core Energy",i+1),
 				     3000,0,3000));
 
@@ -752,6 +809,10 @@ int main(int argc, char** argv) {
 
     pRingRecEnDS.push_back(new TH1D(Form("Rec_EnergyDS_R%02i",i+1),Form("Ring%02i Recon Energy",i+1),
 				    6000,0,3000));
+
+    pRingThvPhDS.push_back(new TH2D(Form("pThvPhDS_R%02i",i+1),
+				    Form("Projectile Ring%02i #phi-#theta surface",i+1),
+				    1000,0,90,1000,-200,200));
 
     /*
     pRingPhCorDS.push_back(new TH2D(Form("PhiCorDS_R%02i",i+1),Form("Det%02i Phi Correlation",i+1),
@@ -789,6 +850,8 @@ int main(int argc, char** argv) {
     */
 
     //Recoil
+    rRingSec.push_back(new TH1D(Form("rSec_R%02i",i+1),Form("Ring%02i Sectors",i+1),32,1,33));
+    
     rRingCoreEn.push_back(new TH1D(Form("Core_EnergyRec_R%02i",i+1),Form("Ring%02i Core Energy",i+1),
 				   3000,0,3000));
 
@@ -797,6 +860,9 @@ int main(int argc, char** argv) {
 
     rRingRecEn.push_back(new TH1D(Form("Rec_EnergyRec_R%02i",i+1),Form("Ring%02i Recon Energy",i+1),
 				  6000,0,3000));
+
+    rRingThvPh.push_back(new TH2D(Form("rThvPh_R%02i",i+1),Form("Recoil Ring%02i #phi-#theta surface",i+1),
+				  1000,0,90,1000,-200,200));
 
     /*
     rRingPhCor.push_back(new TH2D(Form("PhiCorRec_R%02i",i+1),Form("Det%02i Phi Correlation",i+1),
@@ -823,6 +889,9 @@ int main(int argc, char** argv) {
   
   TVector3 incBeam = TVector3(0.0,0.0,1.0);
   double Sol2_En = KE_LAB(Theta_CM_FP(Theta_LAB_Max(beam_en),beam_en),beam_en);
+
+  TRandom* rand = new TRandom(50747227);
+  double r2d = TMath::RadToDeg();
   
   Header header;
   JANUSData jData;
@@ -848,8 +917,9 @@ int main(int argc, char** argv) {
       double sec_en = data.bam2[i].sEn;
 
       TVector3 segPos = GetPos(det,ring,sec);
+      TVector3 pos = data.bam2[i].sPos + XY_DS;
       
-      if(!det) {
+      if(!det) { //Upstream
 
 	bSum->Fill(sec,sec_en);
 	bSum->Fill(ring+32,ring_en);
@@ -858,8 +928,16 @@ int main(int argc, char** argv) {
 	sPid0->Fill(ring,sec_en);
 	secD0->Fill(sec);
 
+	if(data.bam2[i].rP && data.bam2[i].sP) {
+	  pSum->Fill(sec,sec_en);
+	  pSum->Fill(ring+32,ring_en);
+	}
+	if(data.bam2[i].rR && data.bam2[i].sR) {
+	  rSum->Fill(sec,sec_en);
+	  rSum->Fill(ring+32,ring_en);
+	}
       }
-      else {
+      else { //Downstream
 	
 	rPid1->Fill(ring,ring_en);
 	sPid1->Fill(ring,sec_en);
@@ -868,17 +946,78 @@ int main(int argc, char** argv) {
 	bSum->Fill(sec+64,sec_en);
 	bSum->Fill(ring+96,ring_en);
 
-	if(data.bam2[i].rP && data.bam2[i].sP) {
+	if(data.bam2[i].rP && data.bam2[i].sP) { //Projectile
 	  sPid1_p->Fill(ring,sec_en);
+
+	  pSum->Fill(sec+64,sec_en);
+	  pSum->Fill(ring+96,ring_en);
+
+	  pPvPDS->Fill(segPos.Phi(),segPos.Perp());
+	  pThvPhDS->Fill(pos.Theta()*r2d,pos.Phi()*r2d);
+	  
+	  if(ring%2) {
+	    if(sec%2) {
+	      pThvPhDS1->Fill(pos.Theta()*r2d,pos.Phi()*r2d);
+	    }
+	    else {
+	      pThvPhDS2->Fill(pos.Theta()*r2d,pos.Phi()*r2d);
+	    }
+	  }
+	  else {
+	    if(sec%2) {
+	      pThvPhDS2->Fill(pos.Theta()*r2d,pos.Phi()*r2d);
+	    }
+	    else {
+	      pThvPhDS1->Fill(pos.Theta()*r2d,pos.Phi()*r2d);
+	    }
+	  }  
+
+	  pSecDS->Fill(sec);
+	  pRingSecDS.at(ring-1)->Fill(sec);
+	  pRingThvPhDS.at(ring-1)->Fill(pos.Theta()*r2d,pos.Phi()*r2d);
+
+	  if(data.nBa == 1) {
+	    pSecDS_m1->Fill(sec);
+	  }
+	  else if(data.nBa == 2) {
+	    pSecDS_m2->Fill(sec);
+	  }
+	  
+	  pPhiDS->Fill(segPos.Phi()*r2d);
+	  pRecPhiDS->Fill((segPos.Phi() + TMath::Pi())*r2d);
+	  
 	}
 
-	if(data.bam2[i].rR && data.bam2[i].sR) {
+	if(data.bam2[i].rR && data.bam2[i].sR) { //Recoil
 	  sPid1_r->Fill(ring,sec_en);
+
+	  rSum->Fill(sec+64,sec_en);
+	  rSum->Fill(ring+96,ring_en);
+
+	  rPvP->Fill(segPos.Phi(),segPos.Perp());
+
+	  rThvPh->Fill(pos.Theta()*r2d,pos.Phi()*r2d);
+	  rRingThvPh.at(ring-1)->Fill(pos.Theta()*r2d,pos.Phi()*r2d);
+	  
+	  rSec->Fill(sec);
+	  rRingSec.at(ring-1)->Fill(sec);
+
+	  if(data.nBa == 1) {
+	    rSec_m1->Fill(sec);
+	  }
+	  else if(data.nBa == 2) {
+	    rSec_m2->Fill(sec);
+	  }
+
+	  rPhi->Fill(segPos.Phi()*r2d);
+	  rRecPhi->Fill((segPos.Phi() + TMath::Pi())*r2d);
+	  
 	}
 
 	if(data.nBa == 1) {
 	  rPid1m1->Fill(ring,ring_en);
 	  sPid1m1->Fill(ring,sec_en);
+	  
 	}
 	else if(data.nBa == 2) {
 	  rPid1m2->Fill(ring,ring_en);
@@ -893,7 +1032,8 @@ int main(int argc, char** argv) {
     for(int i=0;i<data.nSe;i++) {
 
       int det = data.sega[i].det;
-      double core_en = data.sega[i].cEn;
+      double en = data.sega[i].cEn;
+      double core_en = rand->Gaus(en,Sigma(en));
       
       coreEnergy->Fill(core_en);
       
@@ -951,7 +1091,7 @@ int main(int argc, char** argv) {
 	  double thetaCM_ns2 = Theta_CM_FP(bPos.Theta(),beam_en,false);
 	  
 	  double energy = KE_LAB(thetaCM,beam_en);
-	  double gam = (energy)/beam_mass + 1.0;
+	  double gam = (energy/beam_mass) + 1.0;
 	  double beta = TMath::Sqrt(1.0 - 1.0/(gam*gam));
 
 	  double energy_ns2 = KE_LAB(thetaCM_ns2,beam_en);
@@ -978,7 +1118,9 @@ int main(int argc, char** argv) {
 
 	    int det = data.sega[i].det;
 	    int seg = data.sega[i].MainSeg();
-	    double coreEn = data.sega[i].cEn;
+	    //double coreEn = data.sega[i].cEn;
+	    double en = data.sega[i].cEn;
+	    double coreEn = rand->Gaus(en,Sigma(en));
 	    bool FEP = data.sega[i].fep;
 	    bool PFEP = data.sega[i].pfep;
 	  
@@ -1058,32 +1200,58 @@ int main(int argc, char** argv) {
 	    pDopvPartDS->Fill(dopEn,sec_en);
 	    pDopvPartNS2DS->Fill(dopEn_ns2,sec_en);
 	    
-	    pThCorDS->Fill(coreEn,theta*TMath::RadToDeg());
-	    pThCrtDS->Fill(dopEn,theta*TMath::RadToDeg());
+	    pThCorDS->Fill(coreEn,theta*r2d);
+	    pThCrtDS->Fill(dopEn,theta*r2d);
 
-	    pPhCorDS->Fill(coreEn,planeAng*TMath::RadToDeg());
-	    pPhCrtDS->Fill(dopEn,planeAng*TMath::RadToDeg());  
+	    pcThCrtDS->Fill(dopEn,TMath::Cos(theta));
+
+	    pPhCorDS->Fill(coreEn,planeAng*r2d);
+	    pPhCrtDS->Fill(dopEn,planeAng*r2d);
 
 	    /*
+	    for(int i=0;i<60;i++) {
+
+	      double tmp_beam_en = 250.0 + 0.5*i;
+	      //double tmp_beam_en = 420.0 + 0.5*i;
+	      double tmp_thetaCM = Theta_CM_FP(bPos.Theta(),tmp_beam_en,sol2);
+
+	      double tmp_energy = KE_LAB(tmp_thetaCM,tmp_beam_en);
+	      double tmp_gam = (tmp_energy)/beam_mass + 1.0;
+	      double tmp_beta = TMath::Sqrt(1.0 - 1.0/(tmp_gam*tmp_gam));
+
+	      double tmp_dopEn = tmp_gam*(1 - tmp_beta*TMath::Cos(theta))*coreEn;
+	      
+	      pEnScanDS->Fill(tmp_beam_en,tmp_dopEn);
+
+	      double tmp_recon_energy = Recoil_KE_LAB(tmp_thetaCM,tmp_beam_en);
+	      double tmp_recon_gam = (tmp_recon_energy)/targ_mass + 1.0;
+	      double tmp_recon_beta = TMath::Sqrt(1.0 - 1.0/(tmp_recon_gam*tmp_recon_gam));
+
+	      double tmp_recon_en = tmp_recon_gam*(1 - tmp_recon_beta*TMath::Cos(recon_theta))*coreEn;
+	  
+	      pReconEnScanDS->Fill(tmp_beam_en,tmp_recon_en);
+	    }
+
+	    
 	    pDetDopEnDS.at(det-1)->Fill(dopEn);
 	    pDetDopSumDS.at(det-1)->Fill(seg,dopEn);
 
-	    pDetThCorDS.at(det-1)->Fill(coreEn,theta*TMath::RadToDeg());
-	    pDetThCrtDS.at(det-1)->Fill(dopEn,theta*TMath::RadToDeg());
+	    pDetThCorDS.at(det-1)->Fill(coreEn,theta*r2d);
+	    pDetThCrtDS.at(det-1)->Fill(dopEn,theta*r2d);
 
-	    pDetPhCorDS.at(det-1)->Fill(coreEn,planeAng*TMath::RadToDeg());
-	    pDetPhCrtDS.at(det-1)->Fill(dopEn,planeAng*TMath::RadToDeg());
+	    pDetPhCorDS.at(det-1)->Fill(coreEn,planeAng*r2d);
+	    pDetPhCrtDS.at(det-1)->Fill(dopEn,planeAng*r2d);
 	    */
 
 	    pRingCoreEnDS.at(ring-1)->Fill(coreEn);
 	    pRingDopEnDS.at(ring-1)->Fill(dopEn);
 
 	    /*
-	    pRingThCorDS.at(ring-1)->Fill(coreEn,theta*TMath::RadToDeg());
-	    pRingThCrtDS.at(ring-1)->Fill(dopEn,theta*TMath::RadToDeg());
+	    pRingThCorDS.at(ring-1)->Fill(coreEn,theta*r2d);
+	    pRingThCrtDS.at(ring-1)->Fill(dopEn,theta*r2d);
 
-	    pRingPhCorDS.at(ring-1)->Fill(coreEn,planeAng*TMath::RadToDeg());
-	    pRingPhCrtDS.at(ring-1)->Fill(dopEn,planeAng*TMath::RadToDeg());
+	    pRingPhCorDS.at(ring-1)->Fill(coreEn,planeAng*r2d);
+	    pRingPhCrtDS.at(ring-1)->Fill(dopEn,planeAng*r2d);
 	    */
 	    
 
@@ -1093,11 +1261,11 @@ int main(int argc, char** argv) {
 	    pReconvPartDS->Fill(recon_en,sec_en);
 	    pReconvPartNS2DS->Fill(recon_en_ns2,sec_en);
 
-	    pReconThCorDS->Fill(coreEn,recon_theta*TMath::RadToDeg());
-	    pReconThCrtDS->Fill(recon_en,recon_theta*TMath::RadToDeg());
+	    pReconThCorDS->Fill(coreEn,recon_theta*r2d);
+	    pReconThCrtDS->Fill(recon_en,recon_theta*r2d);
 
-	    pReconPhCorDS->Fill(coreEn,reconAng*TMath::RadToDeg());
-	    pReconPhCrtDS->Fill(recon_en,reconAng*TMath::RadToDeg());
+	    pReconPhCorDS->Fill(coreEn,reconAng*r2d);
+	    pReconPhCrtDS->Fill(recon_en,reconAng*r2d);
 
 	    pRingRecEnDS.at(ring-1)->Fill(recon_en);
 	    
@@ -1117,7 +1285,8 @@ int main(int argc, char** argv) {
 
 	    int det = data.sega[i].det;
 	    int seg = data.sega[i].MainSeg();
-	    double coreEn = data.sega[i].cEn;
+	    double en = data.sega[i].cEn;
+	    double coreEn = rand->Gaus(en,Sigma(en));
 	    bool FEP = data.sega[i].fep;
 	    bool PFEP = data.sega[i].pfep;
 	  
@@ -1173,32 +1342,32 @@ int main(int argc, char** argv) {
 	    
 	    pDopvPartUS->Fill(dopEn,sec_en);
 
-	    pThCorUS->Fill(coreEn,theta*TMath::RadToDeg());
-	    pThCrtUS->Fill(dopEn,theta*TMath::RadToDeg());
+	    pThCorUS->Fill(coreEn,theta*r2d);
+	    pThCrtUS->Fill(dopEn,theta*r2d);
 
-	    pPhCorUS->Fill(coreEn,planeAng*TMath::RadToDeg());
-	    pPhCrtUS->Fill(dopEn,planeAng*TMath::RadToDeg());  
+	    pPhCorUS->Fill(coreEn,planeAng*r2d);
+	    pPhCrtUS->Fill(dopEn,planeAng*r2d);  
 
 	    /*
 	    pDetDopEnUS.at(det-1)->Fill(dopEn);
 	    pDetDopSumUS.at(det-1)->Fill(seg,dopEn);
 
-	    pDetThCorUS.at(det-1)->Fill(coreEn,theta*TMath::RadToDeg());
-	    pDetThCrtUS.at(det-1)->Fill(dopEn,theta*TMath::RadToDeg());
+	    pDetThCorUS.at(det-1)->Fill(coreEn,theta*r2d);
+	    pDetThCrtUS.at(det-1)->Fill(dopEn,theta*r2d);
 
-	    pDetPhCorUS.at(det-1)->Fill(coreEn,planeAng*TMath::RadToDeg());
-	    pDetPhCrtUS.at(det-1)->Fill(dopEn,planeAng*TMath::RadToDeg());
+	    pDetPhCorUS.at(det-1)->Fill(coreEn,planeAng*r2d);
+	    pDetPhCrtUS.at(det-1)->Fill(dopEn,planeAng*r2d);
 	    */
 
 	    pRingCoreEnUS.at(ring-1)->Fill(coreEn);
 	    pRingDopEnUS.at(ring-1)->Fill(dopEn);
 
 	    /*
-	    pRingThCorUS.at(ring-1)->Fill(coreEn,theta*TMath::RadToDeg());
-	    pRingThCrtUS.at(ring-1)->Fill(dopEn,theta*TMath::RadToDeg());
+	    pRingThCorUS.at(ring-1)->Fill(coreEn,theta*r2d);
+	    pRingThCrtUS.at(ring-1)->Fill(dopEn,theta*r2d);
 
-	    pRingPhCorUS.at(ring-1)->Fill(coreEn,planeAng*TMath::RadToDeg());
-	    pRingPhCrtUS.at(ring-1)->Fill(dopEn,planeAng*TMath::RadToDeg());
+	    pRingPhCorUS.at(ring-1)->Fill(coreEn,planeAng*r2d);
+	    pRingPhCrtUS.at(ring-1)->Fill(dopEn,planeAng*r2d);
 	    */
 	    
 	  
@@ -1228,7 +1397,8 @@ int main(int argc, char** argv) {
 
 	    int det = data.sega[i].det;
 	    int seg = data.sega[i].MainSeg();
-	    double coreEn = data.sega[i].cEn;
+	    double en = data.sega[i].cEn;
+	    double coreEn = rand->Gaus(en,Sigma(en));
 	    bool FEP = data.sega[i].fep;
 	    bool PFEP = data.sega[i].pfep;
 	  
@@ -1303,32 +1473,34 @@ int main(int argc, char** argv) {
 
 	    rDopvPart->Fill(dopEn,sec_en);
 
-	    rThCor->Fill(coreEn,theta*TMath::RadToDeg());
-	    rThCrt->Fill(dopEn,theta*TMath::RadToDeg());
+	    rThCor->Fill(coreEn,theta*r2d);
+	    rThCrt->Fill(dopEn,theta*r2d);
 
-	    rPhCor->Fill(coreEn,planeAng*TMath::RadToDeg());
-	    rPhCrt->Fill(dopEn,planeAng*TMath::RadToDeg());
+	    rcThCrt->Fill(dopEn,TMath::Cos(theta));
+	    
+	    rPhCor->Fill(coreEn,planeAng*r2d);
+	    rPhCrt->Fill(dopEn,planeAng*r2d);
 
 	    /*
 	    rDetDopEn.at(det-1)->Fill(dopEn);
 	    rDetDopSum.at(det-1)->Fill(seg,dopEn);
 
-	    rDetThCor.at(det-1)->Fill(coreEn,theta*TMath::RadToDeg());
-	    rDetThCrt.at(det-1)->Fill(dopEn,theta*TMath::RadToDeg());
+	    rDetThCor.at(det-1)->Fill(coreEn,theta*r2d);
+	    rDetThCrt.at(det-1)->Fill(dopEn,theta*r2d);
 
-	    rDetPhCor.at(det-1)->Fill(coreEn,planeAng*TMath::RadToDeg());
-	    rDetPhCrt.at(det-1)->Fill(dopEn,planeAng*TMath::RadToDeg());
+	    rDetPhCor.at(det-1)->Fill(coreEn,planeAng*r2d);
+	    rDetPhCrt.at(det-1)->Fill(dopEn,planeAng*r2d);
 	    */
 
 	    rRingCoreEn.at(ring-1)->Fill(coreEn);
 	    rRingDopEn.at(ring-1)->Fill(dopEn);
 
 	    /*
-	    rRingThCor.at(ring-1)->Fill(coreEn,theta*TMath::RadToDeg());
-	    rRingThCrt.at(ring-1)->Fill(dopEn,theta*TMath::RadToDeg());
+	    rRingThCor.at(ring-1)->Fill(coreEn,theta*r2d);
+	    rRingThCrt.at(ring-1)->Fill(dopEn,theta*r2d);
 
-	    rRingPhCor.at(ring-1)->Fill(coreEn,planeAng*TMath::RadToDeg());
-	    rRingPhCrt.at(ring-1)->Fill(dopEn,planeAng*TMath::RadToDeg());
+	    rRingPhCor.at(ring-1)->Fill(coreEn,planeAng*r2d);
+	    rRingPhCrt.at(ring-1)->Fill(dopEn,planeAng*r2d);
 	    */
 
 	    rReconEnergy->Fill(recon_en);
@@ -1336,16 +1508,18 @@ int main(int argc, char** argv) {
 
 	    rReconvPart->Fill(recon_en,sec_en);
 
-	    rReconThCor->Fill(coreEn,recon_theta*TMath::RadToDeg());
-	    rReconThCrt->Fill(recon_en,recon_theta*TMath::RadToDeg());
+	    rReconThCor->Fill(coreEn,recon_theta*r2d);
+	    rReconThCrt->Fill(recon_en,recon_theta*r2d);
 
-	    rReconPhCor->Fill(coreEn,reconAng*TMath::RadToDeg());
-	    rReconPhCrt->Fill(recon_en,reconAng*TMath::RadToDeg());
+	    rcReconThCrt->Fill(recon_en,TMath::Cos(recon_theta));
+
+	    rReconPhCor->Fill(coreEn,reconAng*r2d);
+	    rReconPhCrt->Fill(recon_en,reconAng*r2d);
 
 	    rRingRecEn.at(ring-1)->Fill(recon_en);
 
-	    rRingRecThCor.at(ring-1)->Fill(coreEn,recon_theta*TMath::RadToDeg());
-	    rRingRecThCrt.at(ring-1)->Fill(recon_en,recon_theta*TMath::RadToDeg());
+	    rRingRecThCor.at(ring-1)->Fill(coreEn,recon_theta*r2d);
+	    rRingRecThCrt.at(ring-1)->Fill(recon_en,recon_theta*r2d);
 	    
 	  } //End SeGA loop  
 	} //End recoil gate
@@ -1362,12 +1536,15 @@ int main(int argc, char** argv) {
   TFile* outFile = new TFile(output_filename,"RECREATE");
   outFile->mkdir("SeGA");
   outFile->mkdir("Bambino2");
+  outFile->mkdir("Bambino2/Rings");
+  outFile->mkdir("Bambino2/Rings2D");
   
   outFile->mkdir("Coincidence/ProjectileDS");
   outFile->mkdir("Coincidence/ProjectileDS/Doppler");
   outFile->mkdir("Coincidence/ProjectileDS/Doppler/Rings");
   outFile->mkdir("Coincidence/ProjectileDS/Recon");
   outFile->mkdir("Coincidence/ProjectileDS/Recon/Rings");
+  
   /*
   outFile->mkdir("Coincidence/ProjectileDS/Bambino2Rings");
   outFile->mkdir("Coincidence/ProjectileDS/Bambino2Rings/PhiCorr");
@@ -1382,6 +1559,7 @@ int main(int argc, char** argv) {
   outFile->mkdir("Coincidence/ProjectileUS");
   outFile->mkdir("Coincidence/ProjectileUS/Doppler");
   outFile->mkdir("Coincidence/ProjectileUS/Doppler/Rings");
+  
   /*
   outFile->mkdir("Coincidence/ProjectileUS/Bambino2Rings");
   outFile->mkdir("Coincidence/ProjectileUS/Bambino2Rings/PhiCorr");
@@ -1398,6 +1576,7 @@ int main(int argc, char** argv) {
   outFile->mkdir("Coincidence/Recoil/Doppler/Rings");
   outFile->mkdir("Coincidence/Recoil/Recon");
   outFile->mkdir("Coincidence/Recoil/Recon/Rings");
+  
   /*
   outFile->mkdir("Coincidence/Recoil/Bambino2Rings");
   outFile->mkdir("Coincidence/Recoil/Bambino2Rings/PhiCorr");
@@ -1412,7 +1591,18 @@ int main(int argc, char** argv) {
   outFile->cd("Bambino2");
 
   bSum->Write();
+  pSum->Write();
+  rSum->Write();
+
+  pPvPDS->Write();
   
+  pThvPhDS->Write();
+  pThvPhDS1->Write();
+  pThvPhDS2->Write();
+
+  rPvP->Write();
+  rThvPh->Write();
+     
   rPid0->Write();
   sPid0->Write();
   secD0->Write();
@@ -1421,6 +1611,20 @@ int main(int argc, char** argv) {
   sPid1->Write();
   secD1->Write();
 
+  pSecDS->Write();
+  pSecDS_m1->Write();
+  pSecDS_m2->Write();
+  
+  rSec->Write();
+  rSec_m1->Write();
+  rSec_m2->Write();
+
+  pPhiDS->Write();
+  pRecPhiDS->Write();
+
+  rPhi->Write();
+  rRecPhi->Write();
+
   sPid1_p->Write();
   sPid1_r->Write();
 
@@ -1428,6 +1632,18 @@ int main(int argc, char** argv) {
   sPid1m1->Write();
   rPid1m2->Write();
   sPid1m2->Write();
+
+  outFile->cd("Bambino2/Rings");
+  for(int i=0;i<24;i++) {
+    pRingSecDS.at(i)->Write();
+    rRingSec.at(i)->Write();
+  }
+
+  outFile->cd("Bambino2/Rings2D");
+  for(int i=0;i<24;i++) {
+    pRingThvPhDS.at(i)->Write();
+    rRingThvPh.at(i)->Write();
+  }
   
   outFile->cd("SeGA");
 
@@ -1466,9 +1682,13 @@ int main(int argc, char** argv) {
   pThCorDS->Write();
   pThCrtDS->Write();
 
+  pcThCrtDS->Write();
+
   pPhCorDS->Write();
   pPhCrtDS->Write();
 
+  pEnScanDS->Write();
+  
   outFile->cd("Coincidence/ProjectileDS/Doppler/Rings");
 
   for(int i=0;i<24;i++) {
@@ -1495,6 +1715,8 @@ int main(int argc, char** argv) {
   pReconPhCorDS->Write();
   pReconPhCrtDS->Write();
 
+  pReconEnScanDS->Write();
+
   outFile->cd("Coincidence/ProjectileDS/Recon/Rings");
 
   for(int i=0;i<24;i++) {
@@ -1502,7 +1724,6 @@ int main(int argc, char** argv) {
   }
 
   /*
-
   outFile->cd("Coincidence/ProjectileDS/Bambino2Rings/PhiCorr");
   for(int i=0;i<24;i++) {
     pRingPhCorDS.at(i)->Write();
@@ -1636,6 +1857,8 @@ int main(int argc, char** argv) {
   rThCor->Write();
   rThCrt->Write();
 
+  rcThCrt->Write();
+
   rPhCor->Write();
   rPhCrt->Write();
 
@@ -1663,6 +1886,8 @@ int main(int argc, char** argv) {
 
   rReconPhCor->Write();
   rReconPhCrt->Write();
+
+  rcReconThCrt->Write();
 
   outFile->cd("Coincidence/Recoil/Recon/Rings");
   for(int i=0;i<24;i++) {

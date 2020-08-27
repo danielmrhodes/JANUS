@@ -198,10 +198,12 @@ void Reaction::Bambino2Thetas() {
 
   //Downstream inner edge
   v.setRhoPhiZ(1.1*cm,0.0*rad,dso+(th/2.0));
+  //v.setRhoPhiZ(1.1*cm - 2.2*mm,0.0*rad,dso+(th/2.0));
   good_LAB_thetas.push_back(v.theta());
 
   //Downstream outer edge
   v.setRhoPhiZ(3.5*cm,0.0*rad,dso-(th/2.0));
+  //v.setRhoPhiZ(3.5*cm + 2.2*mm,0.0*rad,dso-(th/2.0));
   good_LAB_thetas.push_back(v.theta());
 
   //Upstream outer edge

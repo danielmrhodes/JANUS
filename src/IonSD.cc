@@ -56,7 +56,7 @@ void IonSD::EndOfEvent(G4HCofThisEvent* HCE) {
   if(HC->entries() > 3) {
     CombineRings();
   }
-   
+  
   HCE->AddHitsCollection(HCE->GetNumberOfCollections(),HC);
   
   return;
@@ -105,7 +105,8 @@ void IonSD::CombineRings() {
       Ion_Hit* hit1 = (Ion_Hit*)HC->GetHit(i);
       Ion_Hit* hit2 = (Ion_Hit*)HC->GetHit(j);
 
-      if(hit1->IsRing() && hit2->IsRing() && hit1->GetRing() == hit2->GetRing()) {
+      if(hit1->IsRing() && hit2->IsRing() && hit1->GetRing() == hit2->GetRing()
+	 && hit1->GetDetector() == hit2->GetDetector()) {
 	
 	hit1->SetEdep(hit1->GetEdep()+hit2->GetEdep());
 	
