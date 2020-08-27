@@ -16,7 +16,7 @@ public:
   }
   
   ~Gamma_Decay() {}
-  
+
 };
 
 #endif
