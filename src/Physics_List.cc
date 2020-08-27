@@ -10,15 +10,17 @@
 #include "G4StepLimiter.hh"
 
 #include "G4ionIonisation.hh"
+//#include "G4hMultipleScattering.hh"
 
 #include "G4eIonisation.hh"
 #include "G4eMultipleScattering.hh"
 #include "G4eBremsstrahlung.hh"
+#include "G4eplusAnnihilation.hh"
 
 #include "G4ComptonScattering.hh"
 #include "G4GammaConversion.hh"
 #include "G4PhotoElectricEffect.hh"
-#include "G4eplusAnnihilation.hh"
+#include "G4RayleighScattering.hh"
 
 Physics_List::Physics_List() {}
 
@@ -31,14 +33,16 @@ void Physics_List::ConstructProcess() {
   
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
 
-  //Heavy ion interactions
+  //Heavy ion
   ph->RegisterProcess(new G4ionIonisation(),G4GenericIon::Definition());
   ph->RegisterProcess(new G4StepLimiter(),G4GenericIon::Definition());
+  //ph->RegisterProcess(new G4hMultipleScattering("ionmsc"),G4GenericIon::Definition());
   
-  //Gamma interactions
+  //Gamma
   ph->RegisterProcess(new G4PhotoElectricEffect(),G4Gamma::Definition());
   ph->RegisterProcess(new G4ComptonScattering(),G4Gamma::Definition());
   ph->RegisterProcess(new G4GammaConversion(),G4Gamma::Definition());
+  ph->RegisterProcess(new G4RayleighScattering(),G4Gamma::Definition());
 
   //Electron
   ph->RegisterProcess(new G4eIonisation(),G4Electron::Definition());
