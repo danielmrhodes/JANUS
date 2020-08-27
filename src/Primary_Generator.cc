@@ -59,7 +59,28 @@ void Primary_Generator::GeneratePrimaries(G4Event* evt) {
     case MODE::Scattering: {
  
       GenerateScatteringPrimaries(evt);
+      /*
+      G4ThreeVector bdir = G4RandomDirection();
+      G4ThreeVector rdir = G4RandomDirection();
+      //rdir.setTheta(bdir.theta());
+      rdir.setPhi(bdir.phi()-pi);
+
+      G4ThreeVector pos = G4ThreeVector(0.3*mm,0.63*mm,0.0);
       
+      //Beam vertex
+      gun->SetParticleDefinition(projGS);
+      gun->SetParticleEnergy(200.0*MeV);
+      gun->SetParticleMomentumDirection(bdir);
+      gun->SetParticlePosition(pos);
+      gun->GeneratePrimaryVertex(evt);
+      
+      //Recoil vertex
+      gun->SetParticleDefinition(recoilGS);
+      gun->SetParticleEnergy(100.0*MeV);
+      gun->SetParticleMomentumDirection(rdir);
+      gun->SetParticlePosition(pos);
+      gun->GeneratePrimaryVertex(evt);
+      */
       break;
     }
 
@@ -100,9 +121,23 @@ void Primary_Generator::GenerateScatteringPrimaries(G4Event* evt) {
   
   //Reaction position
   //Randomize X and Y
+  
   G4ThreeVector pos = G4ThreeVector(G4RandGauss::shoot(beam_X,sigma_X),
 				    G4RandGauss::shoot(beam_Y,sigma_Y),
 				    -(width/2.0) + depth); //reaction position
+  /*
+  G4ThreeVector pos;
+  if(G4UniformRand() < 0.8) {
+    pos = G4ThreeVector(G4RandGauss::shoot(0.25*mm,0.7*mm),
+			G4RandGauss::shoot(-0.75*mm,0.7*mm),
+			-(width/2.0) + depth);
+  }
+  else {
+    pos = G4ThreeVector(G4RandGauss::shoot(-0.5*mm,0.2*mm),
+			G4RandGauss::shoot(0.7*mm,0.2*mm),
+			-(width/2.0) + depth);
+  }
+  */
   
   //Outgoing vectors
   G4ThreeVector bdir = G4ThreeVector(0,0,1); //projectile direction
@@ -206,7 +241,7 @@ void Primary_Generator::Update() {
   switch(mode) {
 
     case MODE::Scattering: {
-  
+      
       G4IonTable* table = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
       
       projGS = table->GetIon(reac->GetBeamZ(),reac->GetBeamA(),0.0*MeV);
