@@ -65,15 +65,12 @@ G4DecayProducts* Gamma_Decay::DecayIt(G4double) {
   G4double costheta;
   G4double phi;
   trans->SampleGammaTransition(pParent->GetNuclearPolarization(),pParent->GetSpin()*2,
-			       pDaughter->GetSpin(),2,1,0,costheta,phi);
+			       pDaughter->GetSpin()*2,2,1,0,costheta,phi);
 
   pDaughter->SetPolarization(pParent->GetPolarization());
   
-  //G4double costheta = 2.*G4UniformRand()-1.0;
+
   G4double sintheta = std::sqrt((1.0 - costheta)*(1.0 + costheta));
-  //G4double theta = theAngDis.GetRandomAngle();
-  //G4double phi  = twopi*G4UniformRand()*rad;
-  //G4ParticleMomentum direction(std::sin(theta)*std::cos(phi),std::sin(theta)*std::sin(phi),std::cos(theta));
   G4ParticleMomentum direction(sintheta*std::cos(phi),sintheta*std::sin(phi),costheta);
 
   //create daughter G4DynamicParticle
