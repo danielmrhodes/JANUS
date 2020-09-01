@@ -19,6 +19,7 @@ Primary_Generator::Primary_Generator() {
   
   reac = new Reaction();
   excite = new Excitation();
+  polar = new Polarization();
 
   projGS = NULL;
   recoilGS = NULL;
@@ -176,11 +177,11 @@ void Primary_Generator::GenerateScatteringPrimaries(G4Event* evt) {
 void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
 
   for(auto p : excite->GetProjectileLevels()) {
-    p->GetNuclearPolarization()->Unpolarize();
+    p->Unpolarize();
   }
 
   for(auto r : excite->GetRecoilLevels()) {
-    r->GetNuclearPolarization()->Unpolarize();
+    r->Unpolarize();
   }
   
   //Choose thetaCM 
@@ -275,6 +276,7 @@ void Primary_Generator::Update() {
 
       excite->BuildLevelSchemes(reac->GetBeamZ(),reac->GetBeamA(),reac->GetRecoilZ(),reac->GetRecoilA());
       excite->BuildProbabilities();
+      //polar->BuildStatisticalTensors();
       
       projGS = excite->GetProjectileState(0);
       recoilGS = excite->GetRecoilState(0);

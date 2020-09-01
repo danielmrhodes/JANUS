@@ -29,8 +29,6 @@ Excitation::Excitation() {
   rSimpleEn = 0.0*MeV;;
   rSimpleLt = 0.0*ps;
   rSelected = -1;
-
-  //popGS = false;
   
 }
 

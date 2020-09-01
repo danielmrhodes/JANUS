@@ -3,7 +3,6 @@
 
 #include "G4ParticleDefinition.hh"
 #include "G4NuclearPolarization.hh"
-#include "G4PolarizationTransition.hh"
 
 class Polarized_Particle {
 
@@ -16,9 +15,10 @@ public:
   G4NuclearPolarization* GetNuclearPolarization() const {return polar;}
   G4int GetSpin() const {return spin;}
   
-  std::vector< std::vector<G4complex> >& GetPolarization() const {return polar->GetPolarization();}
+  std::vector<std::vector<G4complex>>& GetPolarization() const {return polar->GetPolarization();}
   
   void SetPolarization(std::vector< std::vector<G4complex> >& p) {polar->SetPolarization(p);}
+  void Unpolarize() {polar->Unpolarize();}
   
 private:
 

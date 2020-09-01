@@ -60,7 +60,7 @@ private:
 
   G4String pPF; //Projectile probabilities file name
   G4String rPF; //Recoil probabilities file name
-
+  
   std::vector<Polarized_Particle*> pLevels; //projectile states
   std::vector<G4DataInterpolation*> pSplines; //projectile probability splines
 
@@ -76,8 +76,6 @@ private:
   G4double rSimpleEn;
   G4double rSimpleLt;
   G4int rSelected;
-
-  //G4bool popGS;
 
 };
 

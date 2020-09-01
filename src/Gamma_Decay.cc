@@ -14,6 +14,7 @@ Gamma_Decay::Gamma_Decay(Polarized_Particle* Parent, Polarized_Particle* daughte
 						    daughter->GetDefinition(),BR) {
 
   trans = new G4PolarizationTransition();
+  //trans->SetVerbose(10);
   pParent = Parent;
   pDaughter = daughter;
   

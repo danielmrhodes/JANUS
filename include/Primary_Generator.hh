@@ -4,13 +4,13 @@
 #include "Primary_Generator_Messenger.hh"
 #include "Reaction.hh"
 #include "Excitation.hh"
+#include "Polarization.hh"
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleDefinition.hh"
 
 class Primary_Generator_Messenger;
-
 class Primary_Generator : public G4VUserPrimaryGeneratorAction {
   
 public:
@@ -58,6 +58,7 @@ private:
   
   Reaction* reac;
   Excitation* excite;
+  Polarization* polar;
 
   G4ParticleDefinition* projGS; //Projectile ground state
   G4ParticleDefinition* recoilGS; //Recoil ground state
