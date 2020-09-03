@@ -237,7 +237,8 @@ TVector3 GetPos(const int det, const int seg) {
   pos.SetPhi((quad+0.5)*2*PI/4.);
   pos.SetZ((length/8.0)*(2.0*slice - 7.0));
 
-  double rd = 12.975;
+  //double rd = 12.975;
+  double rd = 13.2;
   double phid = (det-1)*(2.*PI/8.);
   double zd = length + 2*0.05 + 0.6;
   if(det > 8) {

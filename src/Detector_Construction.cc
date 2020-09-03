@@ -150,7 +150,7 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   //Make the gate valve
   G4Tubs* solid_GV = new G4Tubs("GV_Sol",9.3*cm,17*cm,5.9*cm,0*deg,360*deg);
   G4LogicalVolume* logic_GV = new G4LogicalVolume(solid_GV,GV_mat,"GV_Logical");
-  new G4PVPlacement(0,G4ThreeVector(0,0,50*cm),logic_GV,"GV",logic_world,false,0,check);
+  //new G4PVPlacement(0,G4ThreeVector(0,0,50*cm),logic_GV,"GV",logic_world,false,0,check);
   
   //Visualization
   G4VisAttributes* vis = new G4VisAttributes(G4Colour::Grey());
