@@ -10,10 +10,12 @@ class Gamma_Decay : public G4VDecayChannel {
 
 public:
 
-  Gamma_Decay(Polarized_Particle* Parent, Polarized_Particle* daughter, G4double BR);
+  Gamma_Decay(Polarized_Particle* Parent, Polarized_Particle* daughter, G4double BR, G4int L0, G4int Lp,
+	      G4double del);
   ~Gamma_Decay();
 
   G4DecayProducts* DecayIt(G4double);
+  
   static G4double Pmx(G4double e, G4double p1, G4double p2);
   
 private:
@@ -27,6 +29,10 @@ private:
 
   Polarized_Particle* pParent;
   Polarized_Particle* pDaughter;
+
+  G4int transL;
+  G4int transLp;
+  G4double delta;
   
 };
 

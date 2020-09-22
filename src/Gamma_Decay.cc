@@ -9,14 +9,18 @@
 #include "G4UnitsTable.hh"
 #include "G4HadronicException.hh"
 
-Gamma_Decay::Gamma_Decay(Polarized_Particle* Parent, Polarized_Particle* daughter,
-			 G4double BR) : Gamma_Decay(Parent->GetDefinition(),
-						    daughter->GetDefinition(),BR) {
+Gamma_Decay::Gamma_Decay(Polarized_Particle* Parent, Polarized_Particle* daughter, G4double BR, G4int L0,
+			 G4int Lp, G4double del) : Gamma_Decay(Parent->GetDefinition(),
+							       daughter->GetDefinition(),BR) {
 
   trans = new G4PolarizationTransition();
-  //trans->SetVerbose(10);
+  
   pParent = Parent;
   pDaughter = daughter;
+
+  transL = L0;
+  transLp = Lp;
+  delta = del;
   
 }
 
@@ -62,14 +66,12 @@ G4DecayProducts* Gamma_Decay::DecayIt(G4double) {
   //calculate daughter momentum
   daughtermomentum = Pmx(parentmass,daughtermass[0],daughtermass[1]);
 
-
   G4double costheta;
   G4double phi;
-  trans->SampleGammaTransition(pParent->GetNuclearPolarization(),pParent->GetSpin()*2,
-			       pDaughter->GetSpin()*2,2,1,0,costheta,phi);
+  trans->SampleGammaTransition(pParent->GetNuclearPolarization(),pParent->TwoJ(),
+			       pDaughter->TwoJ(),transL,transLp,delta,costheta,phi);
 
   pDaughter->SetPolarization(pParent->GetPolarization());
-  
 
   G4double sintheta = std::sqrt((1.0 - costheta)*(1.0 + costheta));
   G4ParticleMomentum direction(sintheta*std::cos(phi),sintheta*std::sin(phi),costheta);
