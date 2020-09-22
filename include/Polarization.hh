@@ -1,9 +1,10 @@
 #ifndef Polarization_h
 #define Polarization_h 1
 
+#include "Polarized_Particle.hh"
 #include "G4DataInterpolation.hh"
+#include <map>
 
-//class Polarization_Messenger;
 class Polarization {
 
 public:
@@ -59,22 +60,56 @@ public:
   
   };
 
-  void BuildStatisticalTensors();
-
   Polarization();
   ~Polarization();
+
+  void BuildStatisticalTensors(G4int projZ, G4int projA, G4double projEn, G4int recZ, G4int recA,
+			       std::vector<Polarized_Particle*> projLevels,
+			       std::vector<Polarized_Particle*> recLevels);
+
+  std::vector< std::vector<G4complex> > GetProjectilePolarization(const G4int state, const G4double th,
+								  const G4double ph);
+  std::vector< std::vector<G4complex> > GetRecoilPolarization(const G4int state, const G4double th,
+							      const G4double ph);
+
+  void SetProjectileFile(G4String fn) {pFN = fn;}
+  void SetRecoilFile(G4String fn) {rFN = fn;}
+
+  void SetProjCalcGk(G4bool calc) {pCalcGk = calc;}
+  void SetRecCalcGk(G4bool calc) {rCalcGk = calc;}
 
 private:
 
   void ReadTensorFile(G4String fn, std::vector<State>& states, std::vector<double>& thetas);
-  void BuildProjectileTensors();
-  void BuildRecoilTensors();
+  void BuildProjectileTensors(G4int projZ, G4int projA, G4double projM, G4double projEn, G4double recM,
+			      std::vector<Polarized_Particle*> projLevels);
+  
+  void BuildRecoilTensors(G4double projM, G4double projEn, G4int recZ, G4int recA, G4double recM,
+			  std::vector<Polarized_Particle*> recLevels);
 
-  std::vector<std::vector<G4DataInterpolation*>> pTensors; //Projectile statistical tensors
-  std::vector<std::vector<G4DataInterpolation*>> rTensors; //Recoil statistical tensors
+  //calculate Gk coefficients
+  std::array<G4double,7> GKK(const G4int iz, const G4int ia, const G4double beta, const G4double spin,
+			     const G4double time);
+  G4double ATS(const G4int Ne);
+  void XSTATIC(const G4int iz, const G4double beta, G4int& id, G4int& iu, G4double& qcen, G4double& dq,
+	       G4double& xnor);
 
-  G4String pFN;
-  G4String rFN;
+  inline void Print(const std::vector< std::vector<G4complex> > polar) const;
+
+  std::vector< std::vector<G4complex> > unpolarized; //Unpolarized statistical tensor
+
+  std::map<G4int,G4int> offsets;
+  std::vector< std::vector<G4DataInterpolation*> > pTensors; //Projectile statistical tensors
+  std::vector< std::vector<G4DataInterpolation*> > rTensors; //Recoil statistical tensors
+
+  std::vector<G4double> pMaxK; //Max k for projectile states
+  std::vector<G4double> rMaxK; //Max k for recoil states
+
+  G4String pFN; //Projectile tensor file name
+  G4String rFN; //Recoil tensor file name
+
+  G4bool pCalcGk; //Flag to calculate depolarization coefficients for projectile
+  G4bool rCalcGk; //Flag to calculate depolarization coefficients for recoil
 
 };
 
