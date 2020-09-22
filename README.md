@@ -119,8 +119,8 @@ This condition is never satisified and will set the entire Rutherford distributi
 | /Beam/SigmaEn *double unit* | Set Gaussian sigma of the kinetic energy distribution of the incoming beam (Default: 0 MeV) |
 | /Beam/PositionX *double unit* | Set X position of incoming beam spot. (Default: 0 mm) |
 | /Beam/PositionY *double unit* | Set Y position of incoming beam spot. (Default: 0 mm) |
-| /Beam/AngleX" *double unit* | Set angle about x-axis of incoming beam. (Default: 0 deg) |
-| /Beam/AngleY" *double unit* | Set angle about y-axis of incoming beam. (Default: 0 deg) |
+| /Beam/AngleX *double unit* | Set angle about x-axis of incoming beam. (Default: 0 deg) |
+| /Beam/AngleY *double unit* | Set angle about y-axis of incoming beam. (Default: 0 deg) |
 | /Beam/SigmaX *double unit* | Set Gaussian sigma of x position distribution of the incoming beam. (Default: 0 mm) |
 | /Beam/SigmaY *double unit* | Set Gaussian sigma of y position distribution of the incoming beam. (Default: 0 mm) |
 | /Beam/SigmaAX *double unit* | Set Gaussian sigma of angle distribution about the x-axis. (Default: 0 deg) |
