@@ -203,7 +203,13 @@ void Polarization::BuildProjectileTensors(G4int pZ, G4int pA, G4double pM, G4dou
     }
   }
 
-  G4cout << pTensors.size() << " statistical tensors built for the projectile!\n";
+  if(pTensors.size() == levels.size() - 1) {
+    G4cout << "All " << pTensors.size() << " statistical tensors built for the projectile!\n";
+  }
+  else {
+    G4cout << pTensors.size() << " statistical tensors were built for the projectile, which has "
+	   << levels.size() - 1 << " excited states! Make sure this was intentional." << G4endl;;
+  }
 
   return;
   
@@ -280,7 +286,13 @@ void Polarization::BuildRecoilTensors(G4double pM, G4double pEn, G4int rZ, G4int
     }
   }
   
-  G4cout << rTensors.size() << " statistical tensors built for the recoil!\n";
+  if(rTensors.size() == levels.size() - 1) {
+    G4cout << "All " << rTensors.size() << " statistical tensors built for the recoil!\n";
+  }
+  else {
+    G4cout << rTensors.size() << " statistical tensors were built for the recoil, which has "
+	   << levels.size() - 1 << " excited states! Make sure this was intentional." << G4endl;;
+  }
 
   return;
   
