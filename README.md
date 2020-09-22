@@ -128,16 +128,20 @@ This condition is never satisified and will set the entire Rutherford distributi
 
 Full Mode Commands
 -----------------
-For the Full CoulEx simulation, all Scattering mode commands still apply. Additionally, /Excitation commands can be called which determine the level scheme and excitation pattern in both the projectile and recoil nucleus. All /Excitation commands are optional. Not calling any /Excitation commands will reduce the Full simulation to a Scattering simulation.
+For the Full CoulEx simulation, all Scattering mode commands still apply. Additionally, /Excitation commands can be called which determine the level scheme, excitation pattern, and nuclear alignment in both the projectile and recoil nucleus. All /Excitation commands are optional. Not calling any /Excitation commands will reduce the Full simulation to a Scattering simulation.
 
 | Command | Description |
 | --- | --- |
 | /Excitation/Projectile/LevelScheme *string* | Name of the file to be read-in which defines the projectile level scheme. |
 | /Excitation/Projectile/Probabilities *string* | Name of the file to be read-in which defines the angle-dependent excitation probabilities for the projectile. |
+| /Excitation/Projectile/StatisticalTensors *string* | Name of the file to be read-in which contains the statistical tensors for the projectile to determine the angle-dependent nuclear alignment. |
+| /Excitation/Projectile/OnlyConsiderState *int* | Only allow this state or the ground state to be populated in the projectile, using realistic probabilities. This requires a level scheme file and a probabilities file. |
 | /Excitation/Projectile/PopulateState *int* | Choose one state to populate in the projectile, irrespective of scattering angle. This overrides /Excitation/Projectile/Probabilities, but still requires a level scheme file. |
 | /Excitation/Projectile/Simple | Declare a "simple" level scheme and excitation pattern for the projectile. This means there is only one excited state in the projectile, and it will always be populated. This overrides the above three commands. |
 | /Excitation/Projectile/SimpleEnergy *double unit* | Set the energy of the simple state in the projectile. |
 | /Excitation/Projectile/SimpleLifetime *double unit* | Set the lifetime of the simple state in the projectile. |
+| /Excitation/Projectile/GroundStateSpin *double* | Set the spin of the projectile ground state. The spin must be integer or half-integer. (Default: 0.0) |
+| /Excitation/Projectile/CalculateGk *bool* | Control whether the deorientation effect coefficients (G<sub>k</sub>) will be calculated for the projectile. These attenuate the nuclear alignment induced after CoulEx. (Default: true) |
 
 To control the level scheme and excitations in the recoil nucleus, replace /Excitation/Projectile/ with /Excitation/Recoil/. All commands are identically the same. 
 
@@ -178,3 +182,78 @@ theta<sub>2</sub> P<sub>0</sub>(theta<sub>2</sub>) P<sub>1</sub>(theta<sub>2</su
 theta<sub>K</sub> P<sub>0</sub>(theta<sub>K</sub>) P<sub>1</sub>(theta<sub>K</sub>) ... P<sub>N</sub>(theta<sub>K</sub>)
 
 Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. P<sub>i</sub>(theta<sub>k</sub>) is the excitation probability of state i for the CoM scattering angle theta<sub>k</sub>. The scattering angles must be entered smallest to largest, and there is no limit on the number of theta spline points. The state indices are defined by the level scheme file. Note that the ground state probabilities (index 0) must be included here. An example probabilities file is in the Examples/Probabilities folder.
+
+Statistical Tensor File Format
+-----------------
+The statistical tensor files are text files which contatin the components of the statistical tensor for each excited state at different scattering angles. They have the following format.
+
+
+Theta [CM]: theta<sub>1</sub> rad
+STATISTICAL TENSORS: LAB FRAME
+INDEX:	    KA:	     KAPPA:	RHOC:
+1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>1</sub>)
+1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>1</sub>)
+1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>1</sub>)
+1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>1</sub>)
+...\
+1	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)
+2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>1</sub>)
+2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>1</sub>)
+2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>1</sub>)
+2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>1</sub>)
+...\
+2	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)
+...\
+N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>1</sub>)
+N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>1</sub>)
+N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>1</sub>)
+N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>1</sub>)
+...\
+N	k<sup>(N)</sup><sub>max</sub>	k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>
+
+Theta [CM]: theta<sub>2</sub> rad
+STATISTICAL TENSORS: LAB FRAME
+INDEX:	    KA:	     KAPPA:	RHOC:
+1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>2</sub>)
+1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>2</sub>)
+1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>2</sub>)
+1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>2</sub>)
+...\
+1	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>2</sub>)
+2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>2</sub>)
+2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>2</sub>)
+2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>2</sub>)
+2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>2</sub>)
+...\
+2	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>2</sub>)
+...\
+N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>1</sub>)
+N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>1</sub>)
+N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>1</sub>)
+N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>1</sub>)
+...\
+N	k<sup>(N)</sup><sub>max</sub>	k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>2</sub>)
+...\
+
+Theta [CM]: theta<sub>K</sub> rad
+STATISTICAL TENSORS: LAB FRAME
+INDEX:	    KA:	     KAPPA:	RHOC:
+1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>K</sub>)
+1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>K</sub>)
+1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>K</sub>)
+1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>K</sub>)
+...\
+1	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
+2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>K</sub>)
+2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>K</sub>)
+2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>K</sub>)
+2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>K</sub>)
+...\
+2	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
+...\
+N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>K</sub>)
+N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>K</sub>)
+N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>K</sub>)
+N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>K</sub>)
+...\
+N	k<sup>(N)</sup><sub>max</sub>	k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
