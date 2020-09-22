@@ -102,8 +102,8 @@ private:
   std::vector< std::vector<G4DataInterpolation*> > pTensors; //Projectile statistical tensors
   std::vector< std::vector<G4DataInterpolation*> > rTensors; //Recoil statistical tensors
 
-  std::vector<G4double> pMaxK; //Max k for projectile states
-  std::vector<G4double> rMaxK; //Max k for recoil states
+  std::vector<G4int> pMaxK; //Max k for projectile states
+  std::vector<G4int> rMaxK; //Max k for recoil states
 
   G4String pFN; //Projectile tensor file name
   G4String rFN; //Recoil tensor file name

@@ -96,7 +96,9 @@ void Polarization::ReadTensorFile(G4String fn, std::vector<State>& states, std::
 
       if(!(states.at(index-1).HasK(k))) { //new k value
 
-	states.at(index-1).fMaxK = k;
+	if(k > states.at(index-1).fMaxK) {
+	  states.at(index-1).fMaxK = k;
+	}
     
 	states.at(index-1).fTensor.emplace_back();
 	states.at(index-1).fTensor.back().fK = k;
