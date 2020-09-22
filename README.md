@@ -186,7 +186,7 @@ theta<sub>2</sub> P<sub>0</sub>(theta<sub>2</sub>) P<sub>1</sub>(theta<sub>2</su
 theta<sub>K</sub> P<sub>0</sub>(theta<sub>K</sub>) P<sub>1</sub>(theta<sub>K</sub>) ... P<sub>N</sub>(theta<sub>K</sub>)
 </pre>
 
-Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. P<sub>i</sub>(theta<sub>k</sub>) is the excitation probability of state i for the CoM scattering angle theta<sub>k</sub>. The scattering angles must be entered smallest to largest, and there is no limit on the number of theta spline points. The state indices are defined by the level scheme file. Note that the ground state probabilities (index 0) must be included here. An example probabilities file is in the Examples/Probabilities folder.
+Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. There is no limit on the number of theta spline points. P<sub>i</sub>(theta<sub>k</sub>) is the excitation probability of state i for the CoM scattering angle theta<sub>k</sub>. The scattering angles must be entered smallest to largest, and the probabilities must be entered in the order of the states 0 to N. The state indices are defined by the level scheme file. Note that the ground state probabilities (index 0) must be included here. An example probabilities file is in the Examples/Probabilities folder.
 
 Statistical Tensor File Format
 -----------------
@@ -264,7 +264,7 @@ N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>K</sub>)
 N	    k<sup>(N)</sup><sub>max</sub>    k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
 </pre>
 
-Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. The INDEX column specifies the state index, defined by the level scheme file, and these must entered in order from 1 to N. The KA and KAPPA columns specify the component of the statistical tensor, and these must be entered in odometer ordering as shown (lowest k first, then lowest kappa first). The RHOC column lists the value of the component. The largest k for state i (k<sup>(i)</sup><sub>max</sub>) is given by the lesser number of 2J<sup>(i)</sup> and 6. Note the ground state is not included in this file.
+Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians, and these must be entered smallest to largest. There is no limit on the number of theta spline points, and they do not need to be the same as in the probabilities file. The INDEX column specifies the state index, defined by the level scheme file, and these must entered in order from 1 to N. The KA and KAPPA columns specify the component of the statistical tensor, and these must be entered in odometer ordering as shown (lowest k first, then lowest kappa first). The RHOC column lists the value of the component. The largest k for state i (k<sup>(i)</sup><sub>max</sub>) is given by the lesser number of 2J<sup>(i)</sup> and 6. Note that the ground state is not included in this file.
 
 The statistical tensor must be calculated in coordinate frame C as defined by [ALD75]. This implies they are purely real and only have non-zero components for even k. Only positive kappa values should be inlcuded, with kappa running from 0 to k.
 
