@@ -33,8 +33,8 @@ struct Bambino2Data {
 
 struct JANUSData {
 
-  Bambino2Data bData[100];
-  SegaData sData[100];
+  Bambino2Data bData[10]; //100
+  SegaData sData[50]; //100
 
 }__attribute__((__packed__));
 
