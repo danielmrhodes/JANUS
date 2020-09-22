@@ -30,6 +30,11 @@ void Event_Action::EndOfEventAction(const G4Event* evt) {
 
       Ion_Hit_Collection* iHC = (Ion_Hit_Collection*)HCE->GetHC(i);  
       for(int j=0;j<iHC->entries();j++) {
+
+	if(nB > 9) {
+	  G4cout << "Too many ion hits!" << G4endl;
+	  break;
+	}
     
         Ion_Hit* hit = (Ion_Hit*)iHC->GetHit(j);
         G4ThreeVector pos = hit->GetPos();
@@ -46,6 +51,11 @@ void Event_Action::EndOfEventAction(const G4Event* evt) {
 
       Gamma_Hit_Collection* gHC = (Gamma_Hit_Collection*)HCE->GetHC(i);
       for(int j=0;j<gHC->entries();j++) {
+
+	if(nS > 49) {
+	  G4cout << "Too many gamma hits!" << G4endl;
+	  break;
+	}
     
         Gamma_Hit* hit = (Gamma_Hit*)gHC->GetHit(j);
         G4ThreeVector pos = hit->GetPos();

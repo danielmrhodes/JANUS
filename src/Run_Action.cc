@@ -40,7 +40,7 @@ void Run_Action::BeginOfRunAction(const G4Run* run) {
 
   G4SDManager* SDman = G4SDManager::GetSDMpointer();
 
-  G4cout << "Starting run!" << G4endl; 
+  G4cout << "\nStarting run!" << G4endl; 
   switch(gen->GetMode()) {
     case Primary_Generator::MODE::Scattering: {
 
