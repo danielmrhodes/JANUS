@@ -264,7 +264,7 @@ N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>K</sub>)
 N	    k<sup>(N)</sup><sub>max</sub>    k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
 </pre>
 
-Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. The INDEX column specifies the state index, defined by the level scheme file, and these must entered in order. The KA and KAPPA columns specify the component of the statistical tensor, and the RHOC column lists the value of that component. The largest k for state i (k<sup>(i)</sup><sub>max</sub>,) is given by the lesser number of 2J<sup>(i)</sup> and 6. Note the ground state is not included in this file.
+Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. The INDEX column specifies the state index, defined by the level scheme file, and these must entered in order. The KA and KAPPA columns specify the component of the statistical tensor, and the RHOC column lists the value of that component. The largest k for state i (k<sup>(i)</sup><sub>max</sub>) is given by the lesser number of 2J<sup>(i)</sup> and 6. Note the ground state is not included in this file.
 
 The statistical tensor must be calculated in coordinate frame C as defined by [ALD75]. This implies they are purely real and only have non-zero components for even k. Only positive kappa values should be inlcuded, with kappa running from 0 to k.
 
