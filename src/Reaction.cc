@@ -29,7 +29,7 @@ Reaction::~Reaction() {
 
 void Reaction::ConstructRutherfordCM(G4double Ep, G4double Ex) {
 
-  G4cout << "\nBuilding Rutherford scattering distribution!\n" << G4endl;
+  //G4cout << "\nBuilding Rutherford scattering distribution!" << G4endl;
   
   if(good_LAB_thetas.size()) {
     
@@ -38,7 +38,8 @@ void Reaction::ConstructRutherfordCM(G4double Ep, G4double Ex) {
     }
     else {
       
-      G4cout << "Desired LAB angle ranges were improperly defined! Resorting to default angle ranges!" << G4endl;
+      G4cout << "Desired LAB angle ranges were improperly defined! Resorting to default angle ranges!"
+	     << G4endl;
       
       Bambino2Thetas();
       TruncatedRutherfordCM(Ep,Ex);
@@ -54,7 +55,7 @@ void Reaction::ConstructRutherfordCM(G4double Ep, G4double Ex) {
 
 void Reaction::FullRutherfordCM(G4double Ep, G4double Ex) {
 
-  const G4int nBins = 1000;
+  const G4int nBins = 1800;
   G4double probDist[nBins-1];
 
   for(int i=0;i<nBins-1;i++) {
@@ -72,7 +73,7 @@ void Reaction::FullRutherfordCM(G4double Ep, G4double Ex) {
 
 void Reaction::TruncatedRutherfordCM(G4double Ep, G4double Ex) {
   
-  const G4int nBins = 1000;
+  const G4int nBins = 1800;
   G4double probDist[nBins-1];
 
   for(int i=0;i<nBins-1;i++) {
@@ -301,7 +302,7 @@ G4double Reaction::Recoil_Theta_LAB_Max(G4double Ep, G4double Ex) {
 
 G4double Reaction::RutherfordCM(G4double thetaCM, G4double Ep, G4double Ex) {
 
-  G4double Ecm = Ep/(1.0 + ((G4double)beamA/(G4double)targA));
+  G4double Ecm = Ep/(1.0 + (beam_mass/targ_mass));
   G4double Esym2 = std::pow(Ecm,1.5)*std::sqrt(Ecm-Ex);
   G4double denom = Esym2*std::pow(std::sin(thetaCM/2.0),4);
   G4double factor = 1.29596*MeV*MeV*(millibarn/sr);
@@ -401,3 +402,45 @@ G4double Reaction::Theta_CM_FR(G4double ThetaLAB, G4double Ep, G4bool sol2, G4do
   
 }
 */
+
+///////Static Functions///////
+G4double Reaction::KE_LAB(G4double thetaCM, G4double Ep, G4double bM, G4double rM, G4double Ex) {
+
+  G4double tau = (bM/rM)/std::sqrt(1 - (Ex/Ep)*(1 + bM/rM));
+
+  G4double term1 = std::pow(rM/(bM + rM),2);
+  G4double term2 = 1 + tau*tau + 2*tau*std::cos(thetaCM);
+  G4double term3 = Ep - Ex*(1 + bM/rM);
+  
+  return term1*term2*term3;
+}
+
+G4double Reaction::Recoil_KE_LAB(G4double thetaCM, G4double Ep, G4double bM, G4double rM, G4double Ex) {
+
+  G4double tau = 1.0/std::sqrt(1 - (Ex/Ep)*(1 + bM/rM));
+
+  G4double term1 = bM*rM/std::pow(bM + rM,2);
+  G4double term2 = 1 + tau*tau + 2*tau*std::cos(pi - thetaCM);
+  G4double term3 = Ep - Ex*(1 + bM/rM);
+  
+  return term1*term2*term3;
+}
+
+G4double Reaction::Beta_LAB(G4double thetaCM, G4double Ep, G4double bM, G4double rM, G4double Ex) {
+
+  G4double energy = KE_LAB(thetaCM,Ep,bM,rM,Ex);
+  G4double gam = energy/bM + 1.0;
+
+  return std::sqrt(1.0 - 1.0/(gam*gam));
+  
+}
+
+G4double Reaction::Recoil_Beta_LAB(G4double thetaCM, G4double Ep, G4double bM, G4double rM, G4double Ex) {
+
+  G4double energy = Recoil_KE_LAB(thetaCM,Ep,bM,rM,Ex);
+  G4double gam = energy/rM + 1.0;
+
+  return std::sqrt(1.0 - 1.0/(gam*gam));
+  
+}
+//////////////////////////////

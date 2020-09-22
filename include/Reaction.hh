@@ -52,7 +52,7 @@ public:
   
   G4double SampleRutherfordCM();
 
-  //Getters and setters//
+  ////////Getters and setters////////
   void SetBeamZ(G4int Z) {beamZ = Z;}
   void SetBeamA(G4int A) {beamA = A;}
   void SetBeamMass(G4double M) {beam_mass = M;}
@@ -69,7 +69,16 @@ public:
   G4int GetRecoilZ() {return targZ;}
   G4int GetRecoilA() {return targA;}
   G4double GetRecoilMass() {return targ_mass;}
-  ///////////////////////
+  ///////////////////////////////////
+
+  ////////Static Kinematic Functions////////
+  static G4double KE_LAB(G4double thetaCM, G4double Ep, G4double bM, G4double rM, G4double Ex=0.0*MeV);
+  static G4double Recoil_KE_LAB(G4double thetaCM, G4double Ep, G4double bM, G4double rM,
+				G4double Ex=0.0*MeV);
+  static G4double Beta_LAB(G4double thetaCM, G4double Ep, G4double bM, G4double rM, G4double Ex=0.0*MeV);
+  static G4double Recoil_Beta_LAB(G4double thetaCM, G4double Ep, G4double bM, G4double rM,
+				  G4double Ex=0.0*MeV);
+  //////////////////////////////////////////
   
 private:
 
