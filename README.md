@@ -187,32 +187,31 @@ Statistical Tensor File Format
 -----------------
 The statistical tensor files are text files which contatin the components of the statistical tensor for each excited state at different scattering angles. They have the following format.
 
-
-Theta [CM]: theta<sub>1</sub> rad\
-STATISTICAL TENSORS: LAB FRAME\
-INDEX:&nbsp;&nbsp;&nbsp;&nbsp;KA:&nbsp;&nbsp;&nbsp;&nbsp;KAPPA:&nbsp;&nbsp;&nbsp;&nbsp;RHOC:\
-1&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;rho<sup>(1)</sup><sub>00</sub>(theta<sub>1</sub>)\
-1&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;rho<sup>(1)</sup><sub>20</sub>(theta<sub>1</sub>)\
-1&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;rho<sup>(1)</sup><sub>21</sub>(theta<sub>1</sub>)\
-1&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;rho<sup>(1)</sup><sub>22</sub>(theta<sub>1</sub>)\
-...\
-1&nbsp;&nbsp;&nbsp;&nbsp;k<sup>(1)</sup><sub>max</sub>&nbsp;&nbsp;&nbsp;&nbsp;k<sup>(1)</sup><sub>max</sub>&nbsp;&nbsp;&nbsp;&nbsp;rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)\
 <pre>
-2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>1</sub>)\
-2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>1</sub>)\
-2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>1</sub>)\
-2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>1</sub>)\
-</pre>
+Theta [CM]: theta<sub>1</sub> rad
+STATISTICAL TENSORS: LAB FRAME
+INDEX:	    KA:	     KAPPA:	RHOC:
+1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>1</sub>)
+1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>1</sub>)
+1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>1</sub>)
+1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>1</sub>)
+...
+1&nbsp;&nbsp;&nbsp;&nbsp;k<sup>(1)</sup><sub>max</sub>&nbsp;&nbsp;&nbsp;&nbsp;k<sup>(1)</sup><sub>max</sub>&nbsp;&nbsp;&nbsp;&nbsp;rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)
+2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>1</sub>)
+2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>1</sub>)
+2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>1</sub>)
+2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>1</sub>)
+...
+2	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)
+...
+N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>1</sub>)
+N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>1</sub>)
+N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>1</sub>)
+N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>1</sub>)
 ...\
-2	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)\
-...\
-N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>1</sub>)\
-N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>1</sub>)\
-N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>1</sub>)\
-N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>1</sub>)\
-...\
-N	k<sup>(N)</sup><sub>max</sub>	k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>\
+N	k<sup>(N)</sup><sub>max</sub>	k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>
 
+</pre>
 Theta [CM]: theta<sub>2</sub> rad\
 STATISTICAL TENSORS: LAB FRAME\
 INDEX:	    KA:	     KAPPA:	RHOC:\
