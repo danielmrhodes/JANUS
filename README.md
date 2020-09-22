@@ -151,22 +151,22 @@ To control the level scheme and excitations in the recoil nucleus, replace /Exci
 
 Level Scheme File Format
 -----------------
-The level scheme files are text files which describe the excited states of a nucleus. They have the following format.
+The level scheme files are text files which describe the excited states of a nucleus and their gamma decay. They have the following format.
 
 <pre>
-II<sub>1</sub> en<sub>1</sub> sp<sub>1</sub> tau<sub>1</sub> nb<sub>1</sub>
+II<sub>1</sub> En<sub>1</sub> Sp<sub>1</sub> Tau<sub>1</sub> Nb<sub>1</sub>
  IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub>
     ...
- IF<sub>nb<sub>1</sub></sub> P<sub>nb<sub>1</sub></sub> L1<sub>nb<sub>1</sub></sub> L2<sub>nb<sub>1</sub></sub> DL<sub>nb<sub>1</sub></sub>
-II<sub>2</sub> en<sub>2</sub> sp<sub>2</sub> tau<sub>2</sub> nb<sub>2</sub>
+ IF<sub>Nb<sub>1</sub></sub> P<sub>Nb<sub>1</sub></sub> L1<sub>Nb<sub>1</sub></sub> L2<sub>Nb<sub>1</sub></sub> DL<sub>Nb<sub>1</sub></sub>
+II<sub>2</sub> En<sub>2</sub> Sp<sub>2</sub> Tau<sub>2</sub> Nb<sub>2</sub>
  IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub>
     ...
- IF<sub>nb<sub>2</sub></sub> P<sub>nb<sub>2</sub></sub> L1<sub>nb<sub>2</sub></sub> L2<sub>nb<sub>2</sub></sub> DL<sub>nb<sub>2</sub></sub>
+ IF<sub>Nb<sub>2</sub></sub> P<sub>Nb<sub>2</sub></sub> L1<sub>Nb<sub>2</sub></sub> L2<sub>Nb<sub>2</sub></sub> DL<sub>Nb<sub>2</sub></sub>
 ...
-II<sub>N</sub> en<sub>N</sub> sp<sub>N</sub> tau<sub>N</sub> nb<sub>N</sub>
+II<sub>N</sub> En<sub>N</sub> Sp<sub>N</sub> Tau<sub>N</sub> Nb<sub>N</sub>
  IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub>
     ...
- IF<sub>nb<sub>N</sub></sub> P><sub>nb<sub>N</sub></sub> L1<sub>nb<sub>N</sub></sub> L2<sub>nb<sub>N</sub></sub> DL<sub>nb<sub>N</sub></sub>
+ IF<sub>Nb<sub>N</sub></sub> P><sub>Nb<sub>N</sub></sub> L1<sub>Nb<sub>N</sub></sub> L2<sub>Nb<sub>N</sub></sub> DL<sub>Nb<sub>N</sub></sub>
 </pre>
  
 Here II<sub>i</sub> is the index of state i, en<sub>i</sub> is its energy in keV, sp<sub>i</sub> is its spin (J), tau<sub>i</sub> is its mean-lifetime in ps, and nb<sub>i</sub> is the number of gamma decays from this state. IF<sub>j</sub> is the index of the final state for gamma decay j of this state (state II<sub>i</sub>). P<sub>j</sub> is the probability of that decay, L1<sub>j</sub> is the higher multipolarity of the transition, L2<sub>j</sub> is the lower multipolarity of the transition, and DL<sub>j</sub> is the mixing ratio.
