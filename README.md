@@ -153,19 +153,21 @@ Level Scheme File Format
 -----------------
 The level scheme files are text files which describe the excited states of a nucleus. They have the following format.
 
-II<sub>1</sub> en<sub>1</sub> tau<sub>1</sub> nb<sub>1</sub> \
-&nbsp;IF<sup>(1)</sup><sub>1</sub> P<sup>(1)</sup><sub>1</sub>\
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...\
-&nbsp;IF<sup>(1)</sup><sub>nb<sub>1</sub></sub> P<sup>(1)</sup><sub>nb<sub>1</sub></sub>\
-II<sub>2</sub> en<sub>2</sub> tau<sub>2</sub> nb<sub>2</sub> \
-&nbsp;IF<sup>(2)</sup><sub>1</sub> P<sup>(2)</sup><sub>1</sub>\
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...\
-&nbsp;IF<sup>(2)</sup><sub>nb<sub>2</sub></sub> P<sup>(2)</sup><sub>nb<sub>2</sub></sub>\
-...\
-II<sub>N</sub> en<sub>N</sub> tau<sub>N</sub> nb<sub>N</sub> \
-&nbsp;IF<sup>(N)</sup><sub>1</sub> P<sup>(N)</sup><sub>1</sub>\
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...\
-&nbsp;IF<sup>(N)</sup><sub>nb<sub>N</sub></sub> P<sup>(N)</sup><sub>nb<sub>N</sub></sub>
+<pre>
+II<sub>1</sub> en<sub>1</sub> tau<sub>1</sub> nb<sub>1</sub>
+ IF<sup>(1)</sup><sub>1</sub> P<sup>(1)</sup><sub>1</sub>
+      ...
+ IF<sup>(1)</sup><sub>nb<sub>1</sub></sub> P<sup>(1)</sup><sub>nb<sub>1</sub></sub>
+II<sub>2</sub> en<sub>2</sub> tau<sub>2</sub> nb<sub>2</sub>
+ IF<sup>(2)</sup><sub>1</sub> P<sup>(2)</sup><sub>1</sub>
+      ...
+ IF<sup>(2)</sup><sub>nb<sub>2</sub></sub> P<sup>(2)</sup><sub>nb<sub>2</sub></sub>
+...
+II<sub>N</sub> en<sub>N</sub> tau<sub>N</sub> nb<sub>N</sub>
+ IF<sup>(N)</sup><sub>1</sub> P<sup>(N)</sup><sub>1</sub>
+      ...
+ IF<sup>(N)</sup><sub>nb<sub>N</sub></sub> P<sup>(N)</sup><sub>nb<sub>N</sub></sub>
+</pre>
  
 Here II<sub>i</sub> is the index of state i, en<sub>i</sub> is its energy in keV, tau<sub>i</sub> is its mean-lifetime in ps, and nb<sub>i</sub> is the number of gamma decays from this state. IF<sup>(i)</sup><sub>j</sub> is the index of the final state for gamma decay j of state i. P<sup>(i)</sup><sub>j</sub> is the probability of that decay.
 
