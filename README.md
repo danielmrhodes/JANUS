@@ -190,13 +190,13 @@ The statistical tensor files are text files which contatin the components of the
 
 Theta [CM]: theta<sub>1</sub> rad\
 STATISTICAL TENSORS: LAB FRAME\
-INDEX:	    KA:	     KAPPA:	RHOC:\
-1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>1</sub>)\
-1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>1</sub>)\
-1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>1</sub>)\
-1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>1</sub>)\
+INDEX:&nbsp;&nbsp;&nbsp;&nbsp;KA:&nbsp;&nbsp;&nbsp;&nbsp;KAPPA:&nbsp;&nbsp;&nbsp;&nbsp;RHOC:\
+1&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;rho<sup>(1)</sup><sub>00</sub>(theta<sub>1</sub>)\
+1&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;rho<sup>(1)</sup><sub>20</sub>(theta<sub>1</sub>)\
+1&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;rho<sup>(1)</sup><sub>21</sub>(theta<sub>1</sub>)\
+1&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;rho<sup>(1)</sup><sub>22</sub>(theta<sub>1</sub>)\
 ...\
-1	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)\
+1&nbsp;&nbsp;&nbsp;&nbsp;k<sup>(1)</sup><sub>max</sub>&nbsp;&nbsp;&nbsp;&nbsp;k<sup>(1)</sup><sub>max</sub>&nbsp;&nbsp;&nbsp;&nbsp;rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)\
 2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>1</sub>)\
 2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>1</sub>)\
 2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>1</sub>)\
