@@ -29,7 +29,7 @@ The JANUS simultation has three modes: Source, Scattering, and Full. Each mode h
 
 - Source: Simulates a simple isotropic gamma-ray source. No (massive) particles involved.
 - Scattering: Simulates two-body scattering events. No gamma-rays involved. 
-- Full: Simulates Coulomb Excitation events with user-definable level schemes, scattering-angle dependent excitation probabilities, and scattering-angle dependent alignemnt of the excited states..
+- Full: Simulates Coulomb Excitation events with user-definable level schemes, scattering-angle dependent excitation probabilities, and scattering-angle dependent alignment of the excited states..
 
 Macro Files
 -----------------
