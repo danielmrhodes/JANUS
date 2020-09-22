@@ -13,6 +13,7 @@
 Excitation::Excitation() {
 
   messenger = new Excitation_Messenger(this);
+  polar = new Polarization();
   
   pFN = "";
   pPF = "";
@@ -21,6 +22,8 @@ Excitation::Excitation() {
   pSimpleEn = 0.0*MeV;;
   pSimpleLt = 0.0*ps;
   pSelected = -1;
+  pConsidered = 0;
+  pGSS = 0.0;
     
   rFN = "";
   rPF = "";
@@ -29,12 +32,15 @@ Excitation::Excitation() {
   rSimpleEn = 0.0*MeV;;
   rSimpleLt = 0.0*ps;
   rSelected = -1;
+  rConsidered = 0;
+  rGSS = 0.0;
   
 }
 
 Excitation::~Excitation() {
 
   delete messenger;
+  delete polar;
 }
 
 void Excitation::BuildLevelSchemes(int pZ, int pA, int rZ, int rA) {
@@ -53,16 +59,21 @@ void Excitation::BuildProbabilities() {
   return;
 }
 
-void Excitation::BuildProjectileLS(int Z, int A) {
+void Excitation::BuildStatisticalTensors(G4int pZ, G4int pA, G4double pEn, G4int rZ, G4int rA) {
+  
+  polar->BuildStatisticalTensors(pZ,pA,pEn,rZ,rA,pLevels,rLevels);
+  
+  return;
+}
 
-  G4int J = 2;
+void Excitation::BuildProjectileLS(int Z, int A) {
   
   G4IonTable* table = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
 
   G4ParticleDefinition* projGS = table->GetIon(Z,A,0.0*MeV);
   projGS->SetPDGStable(true);
 
-  Polarized_Particle* polGS = new Polarized_Particle(projGS,Z,A,0,0.0*MeV);
+  Polarized_Particle* polGS = new Polarized_Particle(projGS,Z,A,pGSS,0.0*MeV);
   pLevels.push_back(polGS);
 
   if(pSimple) {
@@ -77,12 +88,12 @@ void Excitation::BuildProjectileLS(int Z, int A) {
     part->GetProcessManager()->SetParticleType(part);
     part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
 
-    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,J,pSimpleEn);
-    part->GetDecayTable()->Insert(new Gamma_Decay(ppart,pLevels.at(0),1));
+    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,2.0,pSimpleEn);
+    part->GetDecayTable()->Insert(new Gamma_Decay(ppart,pLevels.at(0),1,2,0,0));
 
     pLevels.push_back(ppart);
 
-    G4cout << " 1 " << pSimpleEn/keV << " " << pSimpleLt/ps << " 1\n  0 1\nSuccess!" << G4endl;  
+    G4cout << " 1 " << pSimpleEn/keV << " 2 " << pSimpleLt/ps << " 1\n  0 1 2 0 0\nSuccess!" << G4endl;  
 
     return;
     
@@ -107,12 +118,13 @@ void Excitation::BuildProjectileLS(int Z, int A) {
   unsigned int state_index = 0;
   G4double energy = 1.*MeV;
   G4double lifetime = 1.*ps;
+  G4double spin = 0.0;
   
   std::string line, word;
   while(std::getline(file,line)) {
     
     G4ParticleDefinition* part;
-    int nbr = 0;
+    G4int nbr = 0;
     
     std::stringstream linestream1(line);
     G4int word_num = 0;
@@ -125,7 +137,7 @@ void Excitation::BuildProjectileLS(int Z, int A) {
       switch (word_num) {
 
         case 0: { //Index
-	  state_index = (int)temp;
+	  state_index = (unsigned int)temp;
 	  break;
         }
 
@@ -135,24 +147,28 @@ void Excitation::BuildProjectileLS(int Z, int A) {
 	  break;
         }
 
-        case 2: { //State lifetime
+        case 2: { //State J
+	  spin = temp;
+	}
+
+        case 3: { //State lifetime
 	  lifetime = temp*ps;
 	  part->SetPDGStable(false);
 	  part->SetPDGLifeTime(lifetime);
 	  break;
         }
 
-        case 3: { //Number of branches
-	  nbr = (int)temp;
+        case 4: { //Number of branches
+	  nbr = (G4int)temp;
 	  if(nbr == 0) {
-	    G4cout << "Probem reading projectile level scheme file " << pFN
+	    G4cout << "Problem reading projectile level scheme file " << pFN
 		   << "! No decay braches declared for state " << state_index << G4endl;
 	  }
 	  break;
         }
 
         default: {
-	  G4cout << "Probem reading projectile level scheme file " << pFN
+	  G4cout << "Problem reading projectile level scheme file " << pFN
 		 << "! Too many entries for state " <<
 		 state_index << G4endl;
 	  break;
@@ -163,13 +179,14 @@ void Excitation::BuildProjectileLS(int Z, int A) {
       word_num++;
     }
 
-    G4cout << " " << state_index << " " << energy/keV << " " << lifetime/ps << " " << nbr << G4endl;
+    G4cout << " " << state_index << " " << energy/keV << " " << spin << " " << lifetime/ps << " " << nbr
+	   << G4endl;
 
     part->SetDecayTable(new G4DecayTable());
     part->GetProcessManager()->SetParticleType(part);
     part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
 
-    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,J,energy);
+    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,spin,energy);
     for(int i=0;i<nbr;i++) {
 
       std::getline(file,line);
@@ -177,19 +194,37 @@ void Excitation::BuildProjectileLS(int Z, int A) {
       
       linestream2 >> word;
 
-      int index;
+      G4int index;
       std::stringstream ss1(word);
       ss1 >> index;
 
       linestream2 >> word;
       
-      double BR;
+      G4double BR;
       std::stringstream ss2(word);
       ss2 >> BR;
 
-      G4cout << "  " << index << " " << BR << G4endl;
+      linestream2 >> word;
 
-      part->GetDecayTable()->Insert(new Gamma_Decay(ppart,pLevels.at(index),BR));
+      G4int L0;
+      std::stringstream ss3(word);
+      ss3 >> L0;
+
+      linestream2 >> word;
+
+      G4int Lp;
+      std::stringstream ss4(word);
+      ss4 >> Lp;
+
+      linestream2 >> word;
+
+      G4double del;
+      std::stringstream ss5(word);
+      ss5 >> del;
+
+      G4cout << "  " << index << " " << BR << " " << L0 << " " << Lp << " " << del << G4endl;
+
+      part->GetDecayTable()->Insert(new Gamma_Decay(ppart,pLevels.at(index),BR,L0,Lp,del));
 	
     }
 
@@ -208,15 +243,13 @@ void Excitation::BuildProjectileLS(int Z, int A) {
 }
 
 void Excitation::BuildRecoilLS(int Z, int A) {
-
-  G4int J = 2;
   
   G4IonTable* table = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
 
   G4ParticleDefinition* recGS = table->GetIon(Z,A,0.0*MeV);
   recGS->SetPDGStable(true);
 
-  Polarized_Particle* polGS = new Polarized_Particle(recGS,Z,A,0,0.0*MeV);
+  Polarized_Particle* polGS = new Polarized_Particle(recGS,Z,A,rGSS,0.0*MeV);
   rLevels.push_back(polGS);
 
   if(rSimple) {
@@ -231,12 +264,12 @@ void Excitation::BuildRecoilLS(int Z, int A) {
     part->GetProcessManager()->SetParticleType(part);
     part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
 
-    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,J,rSimpleEn);
-    part->GetDecayTable()->Insert(new Gamma_Decay(ppart,rLevels.at(0),1));
+    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,2.0,rSimpleEn);
+    part->GetDecayTable()->Insert(new Gamma_Decay(ppart,rLevels.at(0),1,2,0,0));
     
     rLevels.push_back(ppart);
 
-    G4cout << " 1 " << rSimpleEn/keV << " " << rSimpleLt/ps << " 1\n  0 1\nSuccess!" << G4endl;  
+    G4cout << " 1 " << rSimpleEn/keV << " 2 " << rSimpleLt/ps << " 1\n  0 1 2 0 0\nSuccess!" << G4endl;  
 
     return;
     
@@ -261,6 +294,7 @@ void Excitation::BuildRecoilLS(int Z, int A) {
   unsigned int state_index = 0;
   G4double energy = 1.*MeV;
   G4double lifetime = 1.*ps;
+  double spin = 0;
   
   std::string line, word;
   while(std::getline(file,line)) {
@@ -279,7 +313,7 @@ void Excitation::BuildRecoilLS(int Z, int A) {
       switch (word_num) {
 
         case 0: { //Index
-	  state_index = (int)temp;
+	  state_index = (unsigned int)temp;
 	  break;
         }
 
@@ -289,24 +323,28 @@ void Excitation::BuildRecoilLS(int Z, int A) {
 	  break;
         }
 
-        case 2: { //State lifetime
+        case 2: { //State J
+	  spin = temp;
+	}
+
+        case 3: { //State lifetime
 	  lifetime = temp*ps;
 	  part->SetPDGStable(false);
 	  part->SetPDGLifeTime(lifetime);
 	  break;
         }
 
-        case 3: { //Number of branches
+        case 4: { //Number of branches
 	  nbr = (int)temp;
 	  if(nbr == 0) {
-	    G4cout << "Probem reading recoil level scheme file " << rFN
+	    G4cout << "Problem reading recoil level scheme file " << rFN
 		   << "! No decay braches declared for state " << state_index << G4endl;
 	  }
 	  break;
         }
 
         default: {
-	  G4cout << "Probem reading recoil level scheme file " << rFN
+	  G4cout << "Problem reading recoil level scheme file " << rFN
 		 << "! Too many entries for state " <<
 		 state_index << G4endl;
 	  break;
@@ -317,13 +355,14 @@ void Excitation::BuildRecoilLS(int Z, int A) {
       word_num++;
     }
 
-    G4cout << " " << state_index << " " << energy/keV << " " << lifetime/ps << " " << nbr << G4endl;
+    G4cout << " " << state_index << " " << energy/keV << " " << spin << " " << lifetime/ps << " " << nbr
+	   << G4endl;
 
     part->SetDecayTable(new G4DecayTable());
     part->GetProcessManager()->SetParticleType(part);
     part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
 
-    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,J,energy);
+    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,spin,energy);
     for(int i=0;i<nbr;i++) {
 
       std::getline(file,line);
@@ -341,9 +380,27 @@ void Excitation::BuildRecoilLS(int Z, int A) {
       std::stringstream ss2(word);
       ss2 >> BR;
 
-      G4cout << "  " << index << " " << BR << G4endl;
+      linestream2 >> word;
 
-      part->GetDecayTable()->Insert(new Gamma_Decay(ppart,rLevels.at(index),BR));
+      G4int L0;
+      std::stringstream ss3(word);
+      ss3 >> L0;
+
+      linestream2 >> word;
+
+      G4int Lp;
+      std::stringstream ss4(word);
+      ss4 >> Lp;
+
+      linestream2 >> word;
+
+      G4double del;
+      std::stringstream ss5(word);
+      ss5 >> del;
+
+      G4cout << "  " << index << " " << BR << " " << L0 << " " << Lp << " " << del << G4endl;
+
+      part->GetDecayTable()->Insert(new Gamma_Decay(ppart,rLevels.at(index),BR,L0,Lp,del));
 	
     }
 
@@ -389,7 +446,7 @@ void Excitation::BuildProjectileSplines() {
   G4cout << "\nBuilding projectile excitation probabilities from " << pPF << G4endl;
 
   std::vector<G4double> thetas;
-  std::vector<std::vector<G4double>> probs;
+  std::vector< std::vector<G4double> > probs;
 
   std::string line, word;
 
@@ -421,12 +478,48 @@ void Excitation::BuildProjectileSplines() {
     }
     line_num++;
   }
+  
+  if(pConsidered) {
+
+    G4cout << "Renormalizing for projectile considered state " << pConsidered << "..." << G4endl;
+    
+    std::vector<G4double> tmp1 = probs.at(pConsidered);
+    probs.clear();
+
+    G4double max = 0;
+    for(unsigned int i=0;i<tmp1.size();i++) {
+      if(tmp1.at(i) > max) {
+	max = tmp1.at(i);
+      }
+    }
+
+    for(unsigned int i=0;i<tmp1.size();i++) {
+      tmp1.at(i) /= max;
+    }
+
+    std::vector<G4double> tmp0;
+    for(unsigned int i=0;i<tmp1.size();i++) {
+      tmp0.push_back(1.0-tmp1.at(i));
+    }
+
+    probs.push_back(tmp0);
+    probs.push_back(tmp1);
+
+    G4cout << " Done!" << G4endl;
+    
+  }
 
   const unsigned int size = thetas.size();
   for(unsigned int i=0;i<probs.size();i++) {
 
     if(probs.at(i).size() != size) {
-      G4cout << "Projectile state " << i << " has " << probs.at(i).size()
+
+      G4int state = i;
+      if(pConsidered && i == 1) {
+	state = pConsidered;
+      }
+      
+      G4cout << "Projectile state " << state << " has " << probs.at(i).size()
 	     << " probability splines points, while there are " << size
 	     << " thetaCM spline points! This is likely a mistake and could break things." << G4endl; 
     }
@@ -435,12 +528,24 @@ void Excitation::BuildProjectileSplines() {
     
   }
 
-  if(pSplines.size() == pLevels.size()) {
-    G4cout << "All " << pSplines.size() << " projectile probability splines successfully built!" << G4endl;
+  if(!pConsidered) {
+    if(pSplines.size() == pLevels.size()) {
+      G4cout << "All " << pSplines.size() << " projectile probability splines successfully built!"
+	     << G4endl;
+    }
+    else {
+      G4cout << "Created " << pSplines.size() << " projectile probability splines for " << pLevels.size()
+	     << " levels! The simulation might not behave properly!" << G4endl;
+    }
   }
   else {
-    G4cout << "Created " << pSplines.size() << " projectile probability splines for " << pLevels.size()
-	   << " levels! The simulation might not behave properly!" << G4endl;
+    if(pSplines.size() == 2) {
+      G4cout << "Both projectile probability splines successfully built!" << G4endl;
+    }
+    else {
+      G4cout << "Created " << pSplines.size() << " projectile probability splines instead of 2!"; 
+      G4cout << "The simulation might not behave properly!" << G4endl;
+    }
   }
 
   return;
@@ -475,7 +580,7 @@ void Excitation::BuildRecoilSplines() {
   G4cout << "\nBuilding recoil excitation probabilities from " << rPF << G4endl;
 
   std::vector<G4double> thetas;
-  std::vector<std::vector<G4double>> probs;
+  std::vector< std::vector<G4double> > probs;
 
   std::string line, word;
 
@@ -508,11 +613,46 @@ void Excitation::BuildRecoilSplines() {
     line_num++;
   }
 
+  if(rConsidered) {
+
+    G4cout << " Renormalizing for recoil considered state " << rConsidered << "..." << G4endl; 
+    
+    std::vector<G4double> tmp1 = probs.at(rConsidered);
+    probs.clear();
+
+    G4double max = 0;
+    for(unsigned int i=0;i<tmp1.size();i++) {
+      if(tmp1.at(i) > max) {
+	max = tmp1.at(i);
+      }
+    }
+
+    for(unsigned int i=0;i<tmp1.size();i++) {
+      tmp1.at(i) /= max;
+    }
+
+    std::vector<G4double> tmp0;
+    for(unsigned int i=0;i<tmp1.size();i++) {
+      tmp0.push_back(1.0-tmp1.at(i));
+    }
+
+    probs.push_back(tmp0);
+    probs.push_back(tmp1);
+
+    G4cout << " Done!" << G4endl;
+    
+  }
+
   const unsigned int size = thetas.size();
   for(unsigned int i=0;i<probs.size();i++) {
 
+    G4int state = i;
+    if(rConsidered && i == 1) {
+      state = rConsidered;
+    }
+
     if(probs.at(i).size() != size) {
-      G4cout << "Recoil state " << i << " has " << probs.at(i).size()
+      G4cout << "Recoil state " << state << " has " << probs.at(i).size()
 	     << " probability splines points, while there are " << size
 	     << " thetaCM spline points! This is likely a mistake and could break things." << G4endl; 
     }
@@ -521,12 +661,23 @@ void Excitation::BuildRecoilSplines() {
     
   }
 
-  if(rSplines.size() == rLevels.size()) {
-    G4cout << "All " << rSplines.size() << " recoil probability splines successfully built!" << G4endl;
+  if(!rConsidered) {
+    if(rSplines.size() == rLevels.size()) {
+      G4cout << "All " << rSplines.size() << " recoil probability splines successfully built!" << G4endl;
+    }
+    else {
+      G4cout << "Created " << rSplines.size() << " recoil probability splines for " << rLevels.size()
+	     << " levels! The simulation might not behave properly!" << G4endl;
+    }
   }
   else {
-    G4cout << "Created " << rSplines.size() << " recoil probability splines for " << rLevels.size()
-	   << " levels! The simulation might not behave properly!" << G4endl;
+    if(rSplines.size() == 2) {
+      G4cout << "Both recoil probability splines successfully built!" << G4endl;
+    }
+    else {
+      G4cout << "Created " << rSplines.size() << " recoil probability splines instead of 2!"; 
+      G4cout << "The simulation might not behave properly!" << G4endl;
+    }
   }
 
   return;
@@ -565,17 +716,21 @@ G4int Excitation::ChooseProjectileState(const G4double th) {
 
   G4double sumBR = 0.0;
   G4double num = G4UniformRand();
+  G4int index = 0;
 
   for(unsigned int i=0;i<probs.size();i++) {
     sumBR += probs.at(i);
     if(num < sumBR) {
-      return i;
+      index = i;
+      break;
     }
   }
 
-  G4cout << "No decay channel selected for the projectile! Defaulting to the ground state." << G4endl;
+  if(pConsidered && index == 1) {
+    return pConsidered;
+  }
   
-  return 0;
+  return index;
   
 }
 
@@ -611,17 +766,22 @@ G4int Excitation::ChooseRecoilState(const G4double th) {
 
   G4double sumBR = 0.0;
   G4double num = G4UniformRand();
+  G4int index = 0;
 
   for(unsigned int i=0;i<probs.size();i++) {
     sumBR += probs.at(i);
     if(num < sumBR) {
-      return i;
+      index = i;
+      break;
     }
   }
 
-  G4cout << "No decay channel selected for the recoil! Defaulting to the ground state." << G4endl;
+  if(rConsidered && index == 1) {
+    return rConsidered;
+  }
   
-  return 0;
+  return index;
+
 }
 
 G4double Excitation::GetProjectileExcitation(int index) {
@@ -650,4 +810,30 @@ G4double Excitation::GetRecoilExcitation(int index) {
 
   return rLevels.at(index)->GetDefinition()->GetPDGMass() - rLevels.at(0)->GetDefinition()->GetPDGMass();
   
+}
+
+void Excitation::Polarize(G4int pI, G4int rI, G4double th, G4double ph) {
+
+  if(pI) {
+    pLevels.at(pI)->SetPolarization(polar->GetProjectilePolarization(pI,th,ph));
+  }
+
+  if(rI) {
+    rLevels.at(rI)->SetPolarization(polar->GetRecoilPolarization(rI,th,ph));
+  }
+  
+  return;
+}
+
+void Excitation::Unpolarize() {
+
+  for(auto p : pLevels) {
+    p->Unpolarize();
+  }
+
+  for(auto r : rLevels) {
+    r->Unpolarize();
+  }
+  
+  return;
 }
