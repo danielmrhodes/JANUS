@@ -19,7 +19,6 @@ Primary_Generator::Primary_Generator() {
   
   reac = new Reaction();
   excite = new Excitation();
-  polar = new Polarization();
 
   projGS = NULL;
   recoilGS = NULL;
@@ -176,13 +175,8 @@ void Primary_Generator::GenerateScatteringPrimaries(G4Event* evt) {
 
 void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
 
-  for(auto p : excite->GetProjectileLevels()) {
-    p->Unpolarize();
-  }
-
-  for(auto r : excite->GetRecoilLevels()) {
-    r->Unpolarize();
-  }
+  //Remove all polarization
+  excite->Unpolarize();
   
   //Choose thetaCM 
   G4double th = reac->SampleRutherfordCM();
@@ -215,10 +209,13 @@ void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
   G4ThreeVector bdir = G4ThreeVector(0,0,1); //projectile direction
   bdir.setTheta(reac->Theta_LAB(th,en,ex)); //theta from kinematics
   bdir.setPhi(G4RandFlat::shoot(-pi,pi)); //randomly choose phi
-
+  
   G4ThreeVector rdir = G4ThreeVector(0,0,1); //recoil direction
   rdir.setTheta(reac->Recoil_Theta_LAB(th,en,ex)); //theta from kinematics
   rdir.setPhi(bdir.phi()-pi); //Particles emerge back-to-back in LAB frame
+
+  //Polarize excited states
+  excite->Polarize(pI,rI,th,bdir.phi());
   
   //Randomize direction using angle distributions
   G4double ax = G4RandGauss::shoot(beam_AX,sigma_AX);
@@ -230,14 +227,14 @@ void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
   rdir.rotateY(ay);
   
   //Beam vertex
-  gun->SetParticleDefinition(excite->GetProjectileState(pI));
+  gun->SetParticleDefinition(excite->GetProjectileDefinition(pI));
   gun->SetParticleEnergy(reac->KE_LAB(th,en,ex));
   gun->SetParticlePosition(pos);
   gun->SetParticleMomentumDirection(bdir);
   gun->GeneratePrimaryVertex(evt);
   
   //Recoil vertex
-  gun->SetParticleDefinition(excite->GetRecoilState(rI));
+  gun->SetParticleDefinition(excite->GetRecoilDefinition(rI));
   gun->SetParticleEnergy(reac->Recoil_KE_LAB(th,en,ex));
   gun->SetParticlePosition(pos);
   gun->SetParticleMomentumDirection(rdir);
@@ -247,6 +244,7 @@ void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
 
 void Primary_Generator::Update() {
 
+  //Don't change the order of these functions
   switch(mode) {
 
     case MODE::Scattering: {
@@ -274,14 +272,20 @@ void Primary_Generator::Update() {
 
     case MODE::Full: {
 
-      excite->BuildLevelSchemes(reac->GetBeamZ(),reac->GetBeamA(),reac->GetRecoilZ(),reac->GetRecoilA());
-      excite->BuildProbabilities();
-      //polar->BuildStatisticalTensors();
+      G4int bZ = reac->GetBeamZ();
+      G4int bA = reac->GetBeamA();
+      G4int rZ = reac->GetRecoilZ();
+      G4int rA = reac->GetRecoilA();
       
-      projGS = excite->GetProjectileState(0);
-      recoilGS = excite->GetRecoilState(0);
-
+      excite->BuildLevelSchemes(bZ,bA,rZ,rA);
+      excite->BuildProbabilities();
+      
+      projGS = excite->GetProjectileDefinition(0);
+      recoilGS = excite->GetRecoilDefinition(0);
       UpdateReaction();
+
+      G4double bEn = beam_En - 0.5*dedx*width;
+      excite->BuildStatisticalTensors(bZ,bA,bEn,rZ,rA);
       
       break;
     }

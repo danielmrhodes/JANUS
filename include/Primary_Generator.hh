@@ -4,7 +4,6 @@
 #include "Primary_Generator_Messenger.hh"
 #include "Reaction.hh"
 #include "Excitation.hh"
-#include "Polarization.hh"
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ParticleGun.hh"
@@ -58,7 +57,6 @@ private:
   
   Reaction* reac;
   Excitation* excite;
-  Polarization* polar;
 
   G4ParticleDefinition* projGS; //Projectile ground state
   G4ParticleDefinition* recoilGS; //Recoil ground state
@@ -81,7 +79,7 @@ private:
 
   G4double source_En; //Energy of source gamma
 
-  G4double deltaE; //For inelastic scattering 
+  G4double deltaE; //For inelastic scattering
   
 };
 
