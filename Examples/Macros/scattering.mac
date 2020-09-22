@@ -12,7 +12,14 @@
 /Reaction/DeltaE 0.0 MeV
 /Reaction/SendToJanus
 #
-/Beam/Energy 460 MeV
+/Beam/Energy 462 MeV
+/Beam/SigmaEn 0.981 MeV
+/Beam/SigmaAX 0.0126 deg
+/Beam/SigmaAY 0.0126 deg
+/Beam/PositionX 0.2 mm
+/Beam/PositionY -0.6 mm
+/Beam/SigmaX 0.85 mm
+/Beam/SigmaY 0.85 mm
 #
 /Output/FileName scattering.dat
 #

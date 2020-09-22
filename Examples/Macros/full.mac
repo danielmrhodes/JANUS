@@ -2,20 +2,24 @@
 /Geometry/Bambino2/UpstreamOffset 3.4 cm
 /Geometry/Bambino2/DownstreamOffset 2.6 cm
 /Geometry/SeGA/Offset 3.1 cm
-/Geometry/Target/StandardTarget 208Pb
+/Geometry/Target/StandardTarget 48Ti
 /Geometry/Update
 #
 /Reaction/ProjectileZ 48
 /Reaction/ProjectileA 106
-/Reaction/RecoilZ 82
-/Reaction/RecoilA 208
-/Reaction/SendToJanus
+/Reaction/RecoilZ 22
+/Reaction/RecoilA 48
+/Reaction/SendToDownstreamJanus
 #
-/Beam/Energy 462 MeV
+/Beam/Energy 318 MeV
 #
-/Excitation/Projectile/LevelScheme proj.lvl
-/Excitation/Projectile/Probabilities proj.prb
+/Excitation/Projectile/LevelScheme cd106.lvl
+/Excitation/Projectile/Probabilities cd106_on_ti48_new.prb
+/Excitation/Projectile/StatisticalTensors cd106_on_ti48.ten
+/Excitation/Recoil/LevelScheme ti48.lvl
+/Excitation/Recoil/Probabilities ti48_by_cd106_new.prb
+/Excitation/Recoil/StatisticalTensors ti48_by_cd106.ten
 #
 /Output/FileName full.dat
 #
-/run/beamOn 100000
+/run/beamOn 10000000
