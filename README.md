@@ -267,3 +267,7 @@ N	    k<sup>(N)</sup><sub>max</sub>    k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)
 Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. The INDEX column specifies the state index, defined by the level scheme file, and these must entered in order. The KA and KAPPA columns specify the component of the statistical tensor, and the RHOC column lists the value of that component. The statistical tensor must be calculated in coordinate frame C as defined by [ALD75]. Note the ground state is not included in this file.
 
 Not all excited states must be included, but currently you cannot "skip" a state. If you have 5 excited states, including tensors for states 1, 2, and 3 is fine. Including tensors for states 1, 2, and 4 is not.
+
+References
+-----------------
+[ALD75] K. Alder and A. Winter. *Electromagnetic Excitation, Theory of Coulomb Excitation with Heavy Ions*, North Holland, Amsterdam (1975).
