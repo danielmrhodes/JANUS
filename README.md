@@ -268,7 +268,7 @@ Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. 
 
 *Not all excited states must be included, but currently you cannot "skip" a state. If you have 5 excited states, including tensors for states 1, 2, and 3 is fine. Including tensors for states 1, 2, and 4 is not.*
 
-*If the incoming particle trajectory in not parallel to the z-axis, which can be accomplised with the optional /Beam commands, the statical tensor will not technically be correct. This would require a rotation that is not yet implemented.*
+*If the incoming particle trajectory in not parallel to the z-axis, which can be accomplished with optional /Beam commands, the statistical tensor will not be correct. Correcting this would require a rotation that is not yet implemented.*
 
 References
 -----------------
