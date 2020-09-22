@@ -202,7 +202,7 @@ INDEX:	    KA:	     KAPPA:	RHOC:
 2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>1</sub>)
 2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>1</sub>)
 ...
-2	    k<sup>(1)</sup><sub>max</sub>    k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)
+2	    k<sup>(2)</sup><sub>max</sub>    k<sup>(2)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(2)</sup><sub>max</sub>k<sup>(2)</sup><sub>max</sub></sub>(theta<sub>1</sub>)
 ...
 N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>1</sub>)
 N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>1</sub>)
@@ -225,12 +225,12 @@ INDEX:	    KA:	     KAPPA:	RHOC:
 2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>2</sub>)
 2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>2</sub>)
 ...
-2	    k<sup>(1)</sup><sub>max</sub>    k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>2</sub>)
+2	    k<sup>(2)</sup><sub>max</sub>    k<sup>(2)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(2)</sup><sub>max</sub>k<sup>(2)</sup><sub>max</sub></sub>(theta<sub>2</sub>)
 ...
-N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>1</sub>)
-N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>1</sub>)
-N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>1</sub>)
-N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>1</sub>)
+N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>2</sub>)
+N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>2</sub>)
+N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>2</sub>)
+N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>2</sub>)
 ...
 N	    k<sup>(N)</sup><sub>max</sub>    k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>2</sub>)
 ...
@@ -249,7 +249,7 @@ INDEX:	    KA:	     KAPPA:	RHOC:
 2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>K</sub>)
 2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>K</sub>)
 ...
-2	    k<sup>(1)</sup><sub>max</sub>    k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
+2	    k<sup>(2)</sup><sub>max</sub>    k<sup>(2)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(2)</sup><sub>max</sub>k<sup>(2)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
 ...
 N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>K</sub>)
 N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>K</sub>)
