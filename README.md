@@ -141,7 +141,7 @@ For the Full CoulEx simulation, all Scattering mode commands still apply. Additi
 | /Excitation/Projectile/SimpleEnergy *double unit* | Set the energy of the simple state in the projectile. |
 | /Excitation/Projectile/SimpleLifetime *double unit* | Set the lifetime of the simple state in the projectile. |
 | /Excitation/Projectile/GroundStateSpin *double* | Set the spin of the projectile ground state. The spin must be integer or half-integer. (Default: 0.0) |
-| /Excitation/Projectile/CalculateGk *bool* | Control whether the deorientation effect coefficients (G<sub>k</sub>) will be calculated for the projectile. These attenuate the nuclear alignment induced after CoulEx. (Default: true) |
+| /Excitation/Projectile/CalculateGk *bool* | Control whether the deorientation effect coefficients G<sub>k</sub> will be calculated for the projectile. These attenuate the nuclear alignment induced after CoulEx. (Default: true) |
 
 To control the level scheme and excitations in the recoil nucleus, replace /Excitation/Projectile/ with /Excitation/Recoil/. All commands are identically the same. 
 
@@ -188,72 +188,72 @@ Statistical Tensor File Format
 The statistical tensor files are text files which contatin the components of the statistical tensor for each excited state at different scattering angles. They have the following format.
 
 
-Theta [CM]: theta<sub>1</sub> rad
-STATISTICAL TENSORS: LAB FRAME
-INDEX:	    KA:	     KAPPA:	RHOC:
-1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>1</sub>)
-1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>1</sub>)
-1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>1</sub>)
-1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>1</sub>)
+Theta [CM]: theta<sub>1</sub> rad\
+STATISTICAL TENSORS: LAB FRAME\
+INDEX:	    KA:	     KAPPA:	RHOC:\
+1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>1</sub>)\
+1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>1</sub>)\
+1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>1</sub>)\
+1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>1</sub>)\
 ...\
-1	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)
-2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>1</sub>)
-2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>1</sub>)
-2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>1</sub>)
-2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>1</sub>)
+1	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)\
+2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>1</sub>)\
+2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>1</sub>)\
+2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>1</sub>)\
+2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>1</sub>)\
 ...\
-2	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)
+2	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)\
 ...\
-N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>1</sub>)
-N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>1</sub>)
-N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>1</sub>)
-N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>1</sub>)
+N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>1</sub>)\
+N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>1</sub>)\
+N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>1</sub>)\
+N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>1</sub>)\
 ...\
-N	k<sup>(N)</sup><sub>max</sub>	k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>
+N	k<sup>(N)</sup><sub>max</sub>	k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>\
 
-Theta [CM]: theta<sub>2</sub> rad
-STATISTICAL TENSORS: LAB FRAME
-INDEX:	    KA:	     KAPPA:	RHOC:
-1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>2</sub>)
-1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>2</sub>)
-1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>2</sub>)
-1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>2</sub>)
+Theta [CM]: theta<sub>2</sub> rad\
+STATISTICAL TENSORS: LAB FRAME\
+INDEX:	    KA:	     KAPPA:	RHOC:\
+1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>2</sub>)\
+1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>2</sub>)\
+1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>2</sub>)\
+1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>2</sub>)\
 ...\
-1	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>2</sub>)
-2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>2</sub>)
-2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>2</sub>)
-2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>2</sub>)
-2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>2</sub>)
+1	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>2</sub>)\
+2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>2</sub>)\
+2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>2</sub>)\
+2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>2</sub>)\
+2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>2</sub>)\
 ...\
-2	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>2</sub>)
+2	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>2</sub>)\
 ...\
-N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>1</sub>)
-N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>1</sub>)
-N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>1</sub>)
-N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>1</sub>)
+N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>1</sub>)\
+N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>1</sub>)\
+N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>1</sub>)\
+N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>1</sub>)\
 ...\
-N	k<sup>(N)</sup><sub>max</sub>	k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>2</sub>)
+N	k<sup>(N)</sup><sub>max</sub>	k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>2</sub>)\
 ...\
 
-Theta [CM]: theta<sub>K</sub> rad
-STATISTICAL TENSORS: LAB FRAME
-INDEX:	    KA:	     KAPPA:	RHOC:
-1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>K</sub>)
-1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>K</sub>)
-1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>K</sub>)
-1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>K</sub>)
+Theta [CM]: theta<sub>K</sub> rad\
+STATISTICAL TENSORS: LAB FRAME\
+INDEX:	    KA:	     KAPPA:	RHOC:\
+1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>K</sub>)\
+1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>K</sub>)\
+1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>K</sub>)\
+1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>K</sub>)\
 ...\
-1	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
-2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>K</sub>)
-2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>K</sub>)
-2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>K</sub>)
-2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>K</sub>)
+1	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>K</sub>)\
+2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>K</sub>)\
+2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>K</sub>)\
+2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>K</sub>)\
+2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>K</sub>)\
 ...\
-2	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
+2	k<sup>(1)</sup><sub>max</sub>	k<sup>(1)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>K</sub>)\
 ...\
-N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>K</sub>)
-N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>K</sub>)
-N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>K</sub>)
-N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>K</sub>)
+N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>K</sub>)\
+N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>K</sub>)\
+N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>K</sub>)\
+N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>K</sub>)\
 ...\
-N	k<sup>(N)</sup><sub>max</sub>	k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
+N	k<sup>(N)</sup><sub>max</sub>	k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>K</sub>)\
