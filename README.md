@@ -154,24 +154,26 @@ Level Scheme File Format
 The level scheme files are text files which describe the excited states of a nucleus. They have the following format.
 
 <pre>
-II<sub>1</sub> en<sub>1</sub> tau<sub>1</sub> nb<sub>1</sub>
- IF<sup>(1)</sup><sub>1</sub> P<sup>(1)</sup><sub>1</sub>
+II<sub>1</sub> en<sub>1</sub> sp<sub>1</sub> tau<sub>1</sub> nb<sub>1</sub>
+ IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub>
     ...
- IF<sup>(1)</sup><sub>nb<sub>1</sub></sub> P<sup>(1)</sup><sub>nb<sub>1</sub></sub>
-II<sub>2</sub> en<sub>2</sub> tau<sub>2</sub> nb<sub>2</sub>
- IF<sup>(2)</sup><sub>1</sub> P<sup>(2)</sup><sub>1</sub>
+ IF<sub>nb<sub>1</sub></sub> P<sub>nb<sub>1</sub></sub> L1<sub>nb<sub>1</sub></sub> L2<sub>nb<sub>1</sub></sub> DL<sub>nb<sub>1</sub></sub>
+II<sub>2</sub> en<sub>2</sub> sp<sub>2</sub> tau<sub>2</sub> nb<sub>2</sub>
+ IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub>
     ...
- IF<sup>(2)</sup><sub>nb<sub>2</sub></sub> P<sup>(2)</sup><sub>nb<sub>2</sub></sub>
+ IF<sub>nb<sub>2</sub></sub> P<sub>nb<sub>2</sub></sub> L1<sub>nb<sub>2</sub></sub> L2<sub>nb<sub>2</sub></sub> DL<sub>nb<sub>2</sub></sub>
 ...
-II<sub>N</sub> en<sub>N</sub> tau<sub>N</sub> nb<sub>N</sub>
- IF<sup>(N)</sup><sub>1</sub> P<sup>(N)</sup><sub>1</sub>
+II<sub>N</sub> en<sub>N</sub> sp<sub>N</sub> tau<sub>N</sub> nb<sub>N</sub>
+ IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub>
     ...
- IF<sup>(N)</sup><sub>nb<sub>N</sub></sub> P<sup>(N)</sup><sub>nb<sub>N</sub></sub>
+ IF<sub>nb<sub>N</sub></sub> P><sub>nb<sub>N</sub></sub> L1<sub>nb<sub>N</sub></sub> L2<sub>nb<sub>N</sub></sub> DL<sub>nb<sub>N</sub></sub>
 </pre>
  
-Here II<sub>i</sub> is the index of state i, en<sub>i</sub> is its energy in keV, tau<sub>i</sub> is its mean-lifetime in ps, and nb<sub>i</sub> is the number of gamma decays from this state. IF<sup>(i)</sup><sub>j</sub> is the index of the final state for gamma decay j of state i. P<sup>(i)</sup><sub>j</sub> is the probability of that decay.
+Here II<sub>i</sub> is the index of state i, en<sub>i</sub> is its energy in keV, sp<sub>i</sub> is its spin (J), tau<sub>i</sub> is its mean-lifetime in ps, and nb<sub>i</sub> is the number of gamma decays from this state. IF<sub>j</sub> is the index of the final state for gamma decay j of this state (state II<sub>i</sub>). P<sub>j</sub> is the probability of that decay, L1<sub>j</sub> is the higher multipolarity of the transition, L2<sub>j</sub> is the lower multipolarity of the transition, and DL<sub>j</sub> is the mixing ratio.
 
 The states must be declared in order, i.e. II<sub>1</sub> = 1, II<sub>2</sub> = 2 and so on. This technically makes the initial state index redundant. The ground state (index 0) is not included in the level scheme file. There is no limit on the number of excited states or decays from a state. An example level scheme file is in the Examples/LevelSchemes folder.
+
+The spin of a state must be integer or halg-integer. For the gamma transitions, L1 > L2. If DL = 0, the transition will be pure L1 and L2 is ignored.
 
 Probability File Format
 -----------------
