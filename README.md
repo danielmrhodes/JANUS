@@ -151,7 +151,7 @@ To control the level scheme and excitations in the recoil nucleus, replace /Exci
 
 Level Scheme File Format
 -----------------
-The level scheme files are text files which describe the excited states of a nucleus and their gamma decay. They have the following format.
+The level scheme files are text files which describe the excited states of a nucleus and their gamma decays. They have the following format.
 
 <pre>
 II<sub>1</sub> En<sub>1</sub> Sp<sub>1</sub> Tau<sub>1</sub> Nb<sub>1</sub>
@@ -186,7 +186,7 @@ theta<sub>2</sub> P<sub>0</sub>(theta<sub>2</sub>) P<sub>1</sub>(theta<sub>2</su
 theta<sub>K</sub> P<sub>0</sub>(theta<sub>K</sub>) P<sub>1</sub>(theta<sub>K</sub>) ... P<sub>N</sub>(theta<sub>K</sub>)
 </pre>
 
-Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. There is no limit on the number of theta spline points. P<sub>i</sub>(theta<sub>k</sub>) is the excitation probability of state i for the CoM scattering angle theta<sub>k</sub>. The scattering angles must be entered smallest to largest, and the probabilities must be entered in the order of the states 0 to N. The state indices are defined by the level scheme file. Note that the ground state probabilities (index 0) must be included here. An example probabilities file is in the Examples/Probabilities folder.
+Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. There is no limit on the number of theta spline points. P<sub>i</sub>(theta<sub>k</sub>) is the excitation probability of state i for the CoM scattering angle theta<sub>k</sub>. The scattering angles must be entered smallest to largest, and the probabilities must be entered in the order of the states 0 to N. The state indices are defined by the level scheme file, and all states must be included. Note that the ground state probabilities (index 0) must be included here. An example probabilities file is in the Examples/Probabilities folder.
 
 Statistical Tensor File Format
 -----------------
