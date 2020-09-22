@@ -29,7 +29,7 @@ The JANUS simultation has three modes: Source, Scattering, and Full. Each mode h
 
 - Source: Simulates a simple isotropic gamma-ray source. No (massive) particles involved.
 - Scattering: Simulates two-body scattering events. No gamma-rays involved. 
-- Full: Simulates Coulomb Excitation events with user-definable level schemes and scattering-angle dependent excitation probabilities.
+- Full: Simulates Coulomb Excitation events with user-definable level schemes, scattering-angle dependent excitation probabilities, and scattering-angle dependent alignemnt of the excited states..
 
 Macro Files
 -----------------
@@ -156,24 +156,24 @@ The level scheme files are text files which describe the excited states of a nuc
 <pre>
 II<sub>1</sub> En<sub>1</sub> Sp<sub>1</sub> Tau<sub>1</sub> Nb<sub>1</sub>
  IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub>
-    ...
+ ...
  IF<sub>Nb<sub>1</sub></sub> P<sub>Nb<sub>1</sub></sub> L1<sub>Nb<sub>1</sub></sub> L2<sub>Nb<sub>1</sub></sub> DL<sub>Nb<sub>1</sub></sub>
 II<sub>2</sub> En<sub>2</sub> Sp<sub>2</sub> Tau<sub>2</sub> Nb<sub>2</sub>
  IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub>
-    ...
+ ...
  IF<sub>Nb<sub>2</sub></sub> P<sub>Nb<sub>2</sub></sub> L1<sub>Nb<sub>2</sub></sub> L2<sub>Nb<sub>2</sub></sub> DL<sub>Nb<sub>2</sub></sub>
 ...
 II<sub>N</sub> En<sub>N</sub> Sp<sub>N</sub> Tau<sub>N</sub> Nb<sub>N</sub>
  IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub>
-    ...
- IF<sub>Nb<sub>N</sub></sub> P><sub>Nb<sub>N</sub></sub> L1<sub>Nb<sub>N</sub></sub> L2<sub>Nb<sub>N</sub></sub> DL<sub>Nb<sub>N</sub></sub>
+ ...
+ IF<sub>Nb<sub>N</sub></sub> P<sub>Nb<sub>N</sub></sub> L1<sub>Nb<sub>N</sub></sub> L2<sub>Nb<sub>N</sub></sub> DL<sub>Nb<sub>N</sub></sub>
 </pre>
  
-Here II<sub>i</sub> is the index of state i, En<sub>i</sub> is its energy in keV, Sp<sub>i</sub> is its spin (J), Tau<sub>i</sub> is its mean-lifetime in ps, and Nb<sub>i</sub> is the number of gamma decays from this state. IF<sub>j</sub> is the index of the final state for gamma decay j of this state (state II<sub>i</sub>). P<sub>j</sub> is the probability of that decay, L1<sub>j</sub> is the higher multipolarity of the transition, L2<sub>j</sub> is the lower multipolarity of the transition, and DL<sub>j</sub> is the mixing ratio.
+Here II<sub>i</sub> is the index of state i, En<sub>i</sub> is its energy in keV, Sp<sub>i</sub> is its spin (J), Tau<sub>i</sub> is its mean-lifetime in ps, and Nb<sub>i</sub> is the number of gamma decays from this state. IF<sub>j</sub> is the index of the final state for gamma decay j of this state. P<sub>j</sub> is the probability of that decay, L1<sub>j</sub> is the higher multipolarity of the transition, L2<sub>j</sub> is the lower multipolarity of the transition, and DL<sub>j</sub> is the mixing ratio.
 
 The states must be declared in order, i.e. II<sub>1</sub> = 1, II<sub>2</sub> = 2 and so on. This technically makes the initial state index redundant. The ground state (index 0) is not included in the level scheme file. There is no limit on the number of excited states or decays from a state. An example level scheme file is in the Examples/LevelSchemes folder.
 
-The spin of a state must be integer or halg-integer. For the gamma transitions, L1 > L2. If DL = 0, the transition will be pure L1 and L2 is ignored.
+The spin of a state must be integer or half-integer. For the gamma transitions, L1 > L2. If DL = 0, the transition will be pure L1 and L2 is ignored.
 
 Probability File Format
 -----------------
@@ -263,3 +263,7 @@ N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>K</sub>)
 ...
 N	    k<sup>(N)</sup><sub>max</sub>    k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
 </pre>
+
+Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. The INDEX column specifies the state index, defined by the level scheme file, and these must entered in order. The KA and KAPPA columns specify the component of the statistical tensor, and the RHOC column lists the value of that component. The statistical tensor must be calculated in coordinate frame C as defined by [ALD75]. Note the ground state is not included in this file.
+
+Not all excited states must be included, but currently you cannot "skip" a state. If you have 5 excited states, including tensors for states 1, 2, and 3 is fine. Including tensors for states 1, 2, and 4 is not.
