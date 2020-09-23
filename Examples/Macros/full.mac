@@ -14,10 +14,10 @@
 /Beam/Energy 318 MeV
 #
 /Excitation/Projectile/LevelScheme cd106.lvl
-/Excitation/Projectile/Probabilities cd106_on_ti48_new.prb
+/Excitation/Projectile/Probabilities cd106_on_ti48.prb
 /Excitation/Projectile/StatisticalTensors cd106_on_ti48.ten
 /Excitation/Recoil/LevelScheme ti48.lvl
-/Excitation/Recoil/Probabilities ti48_by_cd106_new.prb
+/Excitation/Recoil/Probabilities ti48_by_cd106.prb
 /Excitation/Recoil/StatisticalTensors ti48_by_cd106.ten
 #
 /Output/FileName full.dat
