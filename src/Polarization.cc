@@ -137,6 +137,10 @@ void Polarization::ReadTensorFile(G4String fn, std::vector<State>& states, std::
 void Polarization::BuildProjectileTensors(G4int pZ, G4int pA, G4double pM, G4double pEn, G4double rM,
 					  std::vector<Polarized_Particle*> levels) {
 
+  if(levels.size() == 1) {
+    return;
+  }
+
   if(pFN == "") {
     G4cout << "\nNo projectile polarization\n";
     return;
@@ -220,6 +224,10 @@ void Polarization::BuildProjectileTensors(G4int pZ, G4int pA, G4double pM, G4dou
 void Polarization::BuildRecoilTensors(G4double pM, G4double pEn, G4int rZ, G4int rA, G4double rM,
 				      std::vector<Polarized_Particle*> levels) {
 
+  if(levels.size() == 1) {
+    return;
+  }
+  
   if(rFN == "") {
     G4cout << "\nNo recoil polarization\n";
     return;
