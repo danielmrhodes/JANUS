@@ -43,7 +43,7 @@ Excitation::~Excitation() {
   delete polar;
 }
 
-void Excitation::BuildLevelSchemes(int pZ, int pA, int rZ, int rA) {
+void Excitation::BuildLevelSchemes(G4int pZ, G4int pA, G4int rZ, G4int rA) {
 
   BuildProjectileLS(pZ,pA);
   BuildRecoilLS(rZ,rA);
@@ -66,13 +66,11 @@ void Excitation::BuildStatisticalTensors(G4int pZ, G4int pA, G4double pEn, G4int
   return;
 }
 
-void Excitation::BuildProjectileLS(int Z, int A) {
+void Excitation::BuildProjectileLS(G4int Z, G4int A) {
   
   G4IonTable* table = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
 
   G4ParticleDefinition* projGS = table->GetIon(Z,A,0.0*MeV);
-  projGS->SetPDGStable(true);
-
   Polarized_Particle* polGS = new Polarized_Particle(projGS,Z,A,pGSS,0.0*MeV);
   pLevels.push_back(polGS);
 
@@ -81,9 +79,7 @@ void Excitation::BuildProjectileLS(int Z, int A) {
     G4cout << "\nBuilding simple projectile level scheme!\n";
     
     G4ParticleDefinition* part = table->GetIon(Z,A,pSimpleEn);
-    part->SetPDGStable(false);
     part->SetPDGLifeTime(pSimpleLt);
-
     part->SetDecayTable(new G4DecayTable());
     part->GetProcessManager()->SetParticleType(part);
     part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
@@ -114,78 +110,64 @@ void Excitation::BuildProjectileLS(int Z, int A) {
   }
 
   G4cout << "\nBuilding projectile level scheme from " << pFN << G4endl;
-
-  unsigned int state_index = 0;
-  G4double energy = 1.*MeV;
-  G4double lifetime = 1.*ps;
-  G4double spin = 0.0;
   
   std::string line, word;
   while(std::getline(file,line)) {
-    
-    G4ParticleDefinition* part;
-    G4int nbr = 0;
-    
+      
     std::stringstream linestream1(line);
-    G4int word_num = 0;
-    while(linestream1 >> word) {
+    linestream1 >> word;
 
-      G4double temp;
-      std::stringstream ss(word);
-      ss >> temp;
+    G4int state_index;
+    std::stringstream ss(word);
+    ss >> state_index;
 
-      switch (word_num) {
+    linestream1 >> word;
 
-        case 0: { //Index
-	  state_index = (unsigned int)temp;
-	  break;
-        }
+    G4double energy;
+    std::stringstream ss1(word);
+    ss1 >> energy;
+    energy *= keV;
+    
+    linestream1 >> word;
+    
+    G4double spin;
+    std::stringstream ss2(word);
+    ss2 >> spin;
 
-        case 1: { //State energy
-	  energy = temp*keV;
-	  part = table->GetIon(Z,A,energy);
-	  break;
-        }
+    linestream1 >> word;
 
-        case 2: { //State J
-	  spin = temp;
-	}
+    G4double lifetime;
+    std::stringstream ss3(word);
+    ss3 >> lifetime;
+    lifetime *= ps;
 
-        case 3: { //State lifetime
-	  lifetime = temp*ps;
-	  part->SetPDGStable(false);
-	  part->SetPDGLifeTime(lifetime);
-	  break;
-        }
+    linestream1 >> word;
 
-        case 4: { //Number of branches
-	  nbr = (G4int)temp;
-	  if(nbr == 0) {
-	    G4cout << "Problem reading projectile level scheme file " << pFN
-		   << "! No decay braches declared for state " << state_index << G4endl;
-	  }
-	  break;
-        }
-
-        default: {
-	  G4cout << "Problem reading projectile level scheme file " << pFN
-		 << "! Too many entries for state " <<
-		 state_index << G4endl;
-	  break;
-        }
+    G4int nbr;
+    std::stringstream ss4(word);
+    ss4 >> nbr;
+    
+    if(nbr == 0) {
+      G4cout << "Problem reading projectile level scheme file " << pFN
+	     << "! No decay braches declared for state " << state_index << G4endl;
+    }
 	
-      }
-
-      word_num++;
+    G4ParticleDefinition* part = table->GetIon(Z,A,energy);
+    if(!pConsidered || state_index == pConsidered) {
+      
+      part->SetPDGLifeTime(lifetime);
+      part->SetDecayTable(new G4DecayTable());
+      part->GetProcessManager()->SetParticleType(part);
+      part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
+      
+    }
+    else {
+      part->SetPDGLifeTime(-1.0);
     }
 
     G4cout << " " << state_index << " " << energy/keV << " " << spin << " " << lifetime/ps << " " << nbr
 	   << G4endl;
-
-    part->SetDecayTable(new G4DecayTable());
-    part->GetProcessManager()->SetParticleType(part);
-    part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
-
+    
     Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,spin,energy);
     for(int i=0;i<nbr;i++) {
 
@@ -195,40 +177,42 @@ void Excitation::BuildProjectileLS(int Z, int A) {
       linestream2 >> word;
 
       G4int index;
-      std::stringstream ss1(word);
-      ss1 >> index;
+      std::stringstream ss5(word);
+      ss5 >> index;
 
       linestream2 >> word;
       
       G4double BR;
-      std::stringstream ss2(word);
-      ss2 >> BR;
+      std::stringstream ss6(word);
+      ss6 >> BR;
 
       linestream2 >> word;
 
       G4int L0;
-      std::stringstream ss3(word);
-      ss3 >> L0;
+      std::stringstream ss7(word);
+      ss7 >> L0;
 
       linestream2 >> word;
 
       G4int Lp;
-      std::stringstream ss4(word);
-      ss4 >> Lp;
+      std::stringstream ss8(word);
+      ss8 >> Lp;
 
       linestream2 >> word;
 
       G4double del;
-      std::stringstream ss5(word);
-      ss5 >> del;
+      std::stringstream ss9(word);
+      ss9 >> del;
 
       G4cout << "  " << index << " " << BR << " " << L0 << " " << Lp << " " << del << G4endl;
-
-      part->GetDecayTable()->Insert(new Gamma_Decay(ppart,pLevels.at(index),BR,L0,Lp,del));
-	
+      
+      if(!pConsidered || state_index == pConsidered) {
+	part->GetDecayTable()->Insert(new Gamma_Decay(ppart,pLevels.at(index),BR,L0,Lp,del));
+      }
+      
     }
 
-    if(state_index != pLevels.size()) {
+    if((unsigned int)state_index != pLevels.size()) {
       G4cout << "States are out of order in projectile level scheme file " << pFN << "!" << G4endl;
     }
 
@@ -242,13 +226,11 @@ void Excitation::BuildProjectileLS(int Z, int A) {
   
 }
 
-void Excitation::BuildRecoilLS(int Z, int A) {
+void Excitation::BuildRecoilLS(G4int Z, G4int A) {
   
   G4IonTable* table = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
 
   G4ParticleDefinition* recGS = table->GetIon(Z,A,0.0*MeV);
-  recGS->SetPDGStable(true);
-
   Polarized_Particle* polGS = new Polarized_Particle(recGS,Z,A,rGSS,0.0*MeV);
   rLevels.push_back(polGS);
 
@@ -257,9 +239,7 @@ void Excitation::BuildRecoilLS(int Z, int A) {
     G4cout << "\nBuilding simple recoil level scheme!\n";
     
     G4ParticleDefinition* part = table->GetIon(Z,A,rSimpleEn);
-    part->SetPDGStable(false);
     part->SetPDGLifeTime(rSimpleLt);
-
     part->SetDecayTable(new G4DecayTable());
     part->GetProcessManager()->SetParticleType(part);
     part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
@@ -290,78 +270,64 @@ void Excitation::BuildRecoilLS(int Z, int A) {
   }
 
   G4cout << "\nBuilding recoil level scheme from " << rFN << G4endl;
-
-  unsigned int state_index = 0;
-  G4double energy = 1.*MeV;
-  G4double lifetime = 1.*ps;
-  double spin = 0;
   
   std::string line, word;
   while(std::getline(file,line)) {
-
-    G4ParticleDefinition* part;
-    int nbr = 0;
-    
+      
     std::stringstream linestream1(line);
-    G4int word_num = 0;
-    while(linestream1 >> word) {
+    linestream1 >> word;
 
-      G4double temp;
-      std::stringstream ss(word);
-      ss >> temp;
+    G4int state_index;
+    std::stringstream ss(word);
+    ss >> state_index;
 
-      switch (word_num) {
+    linestream1 >> word;
 
-        case 0: { //Index
-	  state_index = (unsigned int)temp;
-	  break;
-        }
+    G4double energy;
+    std::stringstream ss1(word);
+    ss1 >> energy;
+    energy *= keV;
+    
+    linestream1 >> word;
+    
+    G4double spin;
+    std::stringstream ss2(word);
+    ss2 >> spin;
 
-        case 1: { //State energy
-	  energy = temp*keV;
-	  part = table->GetIon(Z,A,energy);
-	  break;
-        }
+    linestream1 >> word;
 
-        case 2: { //State J
-	  spin = temp;
-	}
+    G4double lifetime;
+    std::stringstream ss3(word);
+    ss3 >> lifetime;
+    lifetime *= ps;
 
-        case 3: { //State lifetime
-	  lifetime = temp*ps;
-	  part->SetPDGStable(false);
-	  part->SetPDGLifeTime(lifetime);
-	  break;
-        }
+    linestream1 >> word;
 
-        case 4: { //Number of branches
-	  nbr = (int)temp;
-	  if(nbr == 0) {
-	    G4cout << "Problem reading recoil level scheme file " << rFN
-		   << "! No decay braches declared for state " << state_index << G4endl;
-	  }
-	  break;
-        }
-
-        default: {
-	  G4cout << "Problem reading recoil level scheme file " << rFN
-		 << "! Too many entries for state " <<
-		 state_index << G4endl;
-	  break;
-        }
+    G4int nbr;
+    std::stringstream ss4(word);
+    ss4 >> nbr;
+    
+    if(nbr == 0) {
+      G4cout << "Problem reading recoil level scheme file " << rFN
+	     << "! No decay braches declared for state " << state_index << G4endl;
+    }
 	
-      }
-
-      word_num++;
+    G4ParticleDefinition* part = table->GetIon(Z,A,energy);
+    if(!rConsidered || state_index == rConsidered) {
+      
+      part->SetPDGLifeTime(lifetime);
+      part->SetDecayTable(new G4DecayTable());
+      part->GetProcessManager()->SetParticleType(part);
+      part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
+      
+    }
+    else {
+      part->SetPDGLifeTime(-1.0);
     }
 
     G4cout << " " << state_index << " " << energy/keV << " " << spin << " " << lifetime/ps << " " << nbr
 	   << G4endl;
-
-    part->SetDecayTable(new G4DecayTable());
-    part->GetProcessManager()->SetParticleType(part);
-    part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
-
+    
     Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,spin,energy);
     for(int i=0;i<nbr;i++) {
 
@@ -370,41 +336,43 @@ void Excitation::BuildRecoilLS(int Z, int A) {
       
       linestream2 >> word;
 
-      int index;
-      std::stringstream ss1(word);
-      ss1 >> index;
+      G4int index;
+      std::stringstream ss5(word);
+      ss5 >> index;
 
       linestream2 >> word;
       
-      double BR;
-      std::stringstream ss2(word);
-      ss2 >> BR;
+      G4double BR;
+      std::stringstream ss6(word);
+      ss6 >> BR;
 
       linestream2 >> word;
 
       G4int L0;
-      std::stringstream ss3(word);
-      ss3 >> L0;
+      std::stringstream ss7(word);
+      ss7 >> L0;
 
       linestream2 >> word;
 
       G4int Lp;
-      std::stringstream ss4(word);
-      ss4 >> Lp;
+      std::stringstream ss8(word);
+      ss8 >> Lp;
 
       linestream2 >> word;
 
       G4double del;
-      std::stringstream ss5(word);
-      ss5 >> del;
+      std::stringstream ss9(word);
+      ss9 >> del;
 
       G4cout << "  " << index << " " << BR << " " << L0 << " " << Lp << " " << del << G4endl;
 
-      part->GetDecayTable()->Insert(new Gamma_Decay(ppart,rLevels.at(index),BR,L0,Lp,del));
+      if(!rConsidered || state_index == rConsidered) {
+	part->GetDecayTable()->Insert(new Gamma_Decay(ppart,rLevels.at(index),BR,L0,Lp,del));
+      }
 	
     }
 
-    if(state_index != rLevels.size()) {
+    if((unsigned int)state_index != rLevels.size()) {
       G4cout << "States are out of order in recoil level scheme file " << rFN << "!" << G4endl;
     }
 
@@ -481,7 +449,7 @@ void Excitation::BuildProjectileSplines() {
   
   if(pConsidered) {
 
-    G4cout << "Renormalizing for projectile considered state " << pConsidered << "..." << G4endl;
+    G4cout << " Renormalizing for projectile considered state " << pConsidered << "..." << G4endl;
     
     std::vector<G4double> tmp1 = probs.at(pConsidered);
     probs.clear();
@@ -504,8 +472,6 @@ void Excitation::BuildProjectileSplines() {
 
     probs.push_back(tmp0);
     probs.push_back(tmp1);
-
-    G4cout << " Done!" << G4endl;
     
   }
 
@@ -638,8 +604,6 @@ void Excitation::BuildRecoilSplines() {
 
     probs.push_back(tmp0);
     probs.push_back(tmp1);
-
-    G4cout << " Done!" << G4endl;
     
   }
 
@@ -726,7 +690,7 @@ G4int Excitation::ChooseProjectileState(const G4double th) {
     }
   }
 
-  if(pConsidered && index == 1) {
+  if(pConsidered && index) {
     return pConsidered;
   }
   
@@ -776,7 +740,7 @@ G4int Excitation::ChooseRecoilState(const G4double th) {
     }
   }
 
-  if(rConsidered && index == 1) {
+  if(rConsidered && index) {
     return rConsidered;
   }
   
@@ -784,7 +748,7 @@ G4int Excitation::ChooseRecoilState(const G4double th) {
 
 }
 
-G4double Excitation::GetProjectileExcitation(int index) {
+G4double Excitation::GetProjectileExcitation(G4int index) {
 
   if(pSimple) {
     return pSimpleEn;
@@ -798,7 +762,7 @@ G4double Excitation::GetProjectileExcitation(int index) {
   
 }
 
-G4double Excitation::GetRecoilExcitation(int index) {
+G4double Excitation::GetRecoilExcitation(G4int index) {
 
   if(rSimple) {
     return rSimpleEn;
