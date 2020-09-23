@@ -102,7 +102,7 @@ The Scattering mode commands are divided into two categories: /Beam and /Reactio
 | /Reaction/DeltaE *double unit* | Set (positive) deltaE to simulate inelastic scattering. (Default: 0 MeV) |
  /Reaction/RecoilThreshold *double unit* | Set recoil energy detection threshold. Removes very low energy recoils, which scatter into the silicon detector, that occur at small CM angles during inelastic scattering. (Default: 0 MeV) |
 
-The use of optional /Reaction commands is highly encouraged. Without these commands, the entire scattering angle range [0,pi] will be sampled according the Rutheford scattering distribution. This means roughly 10<sup>-4</sup> of your simulated events will result in a particle entering the silicon detectors.
+The use of optional /Reaction commands is strongly recommended. Without these commands, the entire scattering angle range [0,pi] will be sampled according the Rutheford scattering distribution. This means roughly 10<sup>-4</sup> of your simulated events will result in a particle entering the silicon detectors.
 
 The optional /Reaction commands can be used together, so you can fully customize what scattering angles you simulate. The /Reaction/SendToX commands will overwrite any scattering angles defined via the /Reaction/AddThetaLAB command. To use these commands together, always call the /Reaction/SendToX command first.
 
@@ -135,13 +135,13 @@ For the Full CoulEx simulation, all Scattering mode commands still apply. Additi
 | /Excitation/Projectile/LevelScheme *string* | Name of the file to be read-in which defines the projectile level scheme. |
 | /Excitation/Projectile/Probabilities *string* | Name of the file to be read-in which defines the angle-dependent excitation probabilities for the projectile. |
 | /Excitation/Projectile/StatisticalTensors *string* | Name of the file to be read-in which contains the statistical tensors for the projectile to determine the angle-dependent nuclear alignment. |
-| /Excitation/Projectile/OnlyConsiderState *int* | Only allow this state or the ground state to be populated in the projectile, using realistic probabilities. This requires a level scheme file and a probabilities file. |
-| /Excitation/Projectile/PopulateState *int* | Choose one state to populate in the projectile, irrespective of scattering angle. This overrides /Excitation/Projectile/Probabilities, but still requires a level scheme file. |
-| /Excitation/Projectile/Simple | Declare a "simple" level scheme and excitation pattern for the projectile. This means there is only one excited state in the projectile, and it will always be populated. This overrides the above three commands. |
+| /Excitation/Projectile/OnlyConsiderState *int* | Turn off gamma decays from all states except this one. This requires a level scheme file and a probabilities file. |
+| /Excitation/Projectile/PopulateState *int* | Choose one state to populate in the projectile, irrespective of scattering angle. This only requires a level scheme file (the probabilities file will simply be ignored). |
+| /Excitation/Projectile/Simple | Declare a "simple" level scheme and excitation pattern for the projectile. This means there is only one excited state, and it will always be populated. This overrides the above commands. |
 | /Excitation/Projectile/SimpleEnergy *double unit* | Set the energy of the simple state in the projectile. |
 | /Excitation/Projectile/SimpleLifetime *double unit* | Set the lifetime of the simple state in the projectile. |
 | /Excitation/Projectile/GroundStateSpin *double* | Set the spin of the projectile ground state. The spin must be integer or half-integer. (Default: 0.0) |
-| /Excitation/Projectile/CalculateGk *bool* | Control whether the deorientation effect coefficients G<sub>k</sub> will be calculated for the projectile. These attenuate the nuclear alignment induced after CoulEx. (Default: true) |
+| /Excitation/Projectile/CalculateGk *bool* | Control whether the deorientation effect coefficients G<sub>k</sub> will be calculated for the projectile. These attenuate the nuclear alignment induced after CoulEx, and are only used if the statistical tensors file is provided. (Default: true) |
 
 To control the level scheme and excitations in the recoil nucleus, replace /Excitation/Projectile/ with /Excitation/Recoil/. All commands are identically the same. 
 
