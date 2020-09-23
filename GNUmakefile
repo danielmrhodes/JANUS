@@ -7,10 +7,6 @@ name := JANUS
 G4TARGET := $(name)
 G4EXLIB := true
 
-ifndef G4INSTALL
-  G4INSTALL = /scratch/Programs/geant4.10.02.p02/
-endif
-
 CPPFLAGS += -std=c++11 -g 
 
 .PHONY: all
