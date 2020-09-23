@@ -18,14 +18,14 @@ void IonSD::Initialize(G4HCofThisEvent*) {
 G4bool IonSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
 
   G4String name = step->GetTrack()->GetParticleDefinition()->GetParticleName();
-  if(name == proj_name || name == recoil_name) {
+  if((name.find(proj_name) != std::string::npos) || (name.find(recoil_name) != std::string::npos)) {
   
     Ion_Hit* rHit = new Ion_Hit();
     rHit->SetPos(step->GetPreStepPoint()->GetPosition());
     rHit->SetEdep(step->GetTotalEnergyDeposit());
     rHit->SetSeg(step->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo());
 
-    if(name == proj_name) {
+    if(name.find(proj_name) != std::string::npos) {
       rHit->SetIsProjectile();
       rHit->SetIsNotRecoil();
     }
