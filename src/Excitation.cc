@@ -71,6 +71,8 @@ void Excitation::BuildProjectileLS(G4int Z, G4int A) {
   G4IonTable* table = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
 
   G4ParticleDefinition* projGS = table->GetIon(Z,A,0.0*MeV);
+  projGS->SetPDGLifeTime(-1.0);
+  
   Polarized_Particle* polGS = new Polarized_Particle(projGS,Z,A,pGSS,0.0*MeV);
   pLevels.push_back(polGS);
 
@@ -231,6 +233,8 @@ void Excitation::BuildRecoilLS(G4int Z, G4int A) {
   G4IonTable* table = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
 
   G4ParticleDefinition* recGS = table->GetIon(Z,A,0.0*MeV);
+  recGS->SetPDGLifeTime(-1.0);
+  
   Polarized_Particle* polGS = new Polarized_Particle(recGS,Z,A,rGSS,0.0*MeV);
   rLevels.push_back(polGS);
 
