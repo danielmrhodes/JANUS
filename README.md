@@ -149,11 +149,15 @@ For the Full CoulEx simulation, all Scattering mode commands still apply. Additi
 
 To control the level scheme and excitations in the recoil nucleus, replace /Excitation/Projectile/ with /Excitation/Recoil/. All commands are identically the same.
 
-The statistical tensors [ALD75] and deorientation effect coefficients G<sub>k</sub> are critical for reproducing the LAB frame gamma-ray spectra. See [CZO83] for details on the two-state model, and the meaning of its parameters, which is used to describe the deorientation effect. The parameters can be controlled using the above /Excitation/DeorientationEffect/ commands.
+The statistical tensors [1] and deorientation effect coefficients G<sub>k</sub> are critical for reproducing the LAB frame gamma-ray spectra. See [2] for details on the two-state model, and the meaning of its parameters, which is used to describe the deorientation effect. The parameters can be controlled using the above /Excitation/DeorientationEffect/ commands.
 
 *If you input a level scheme, you must also input the probabilities or choose a state to populate. Otherwise the level scheme won't be used.*
 
 *In a Full simulation, the /Reaction/DeltaE command only affects what CM angles will be sampled. The Q-value and LAB scattering anlges for each event are calculated based on which excited states get populated.*
+
+Input Preparation
+-----------------
+The ROOT script MakeInput.C will make the probabilities file and statistical tensors file that can be given to JANUS. The level scheme file must be created manually (its format is described below). The script uses the Coulomb excitation code Cygnus [3] for the calculations. The Cygnus libraries must be loaded into the ROOT session before loading MakeInput.C, and the Cygnus nucleus file must already be created. See [3] for details.  
 
 Level Scheme File Format
 -----------------
@@ -272,7 +276,7 @@ N	    k<sup>(N)</sup><sub>max</sub>    k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)
 
 Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians, and these must be entered smallest to largest. There is no limit on the number of theta spline points, and they do not need to be the same as in the probabilities file. The INDEX column specifies the state index, defined by the level scheme file, and these must entered in order from 1 to N. The KA and KAPPA columns specify the component of the statistical tensor, and these must be entered in odometer ordering as shown (lowest k first, then lowest kappa first). The RHOC column lists the value of the component. The largest k for state i (k<sup>(i)</sup><sub>max</sub>) is given by the lesser number of 2J<sup>(i)</sup> and 6. Note that the ground state is not included in this file.
 
-The statistical tensor must be calculated in coordinate frame C as defined by [ALD75]. This implies they are purely real and only have non-zero components for even k. Only positive kappa values should be inlcuded, with kappa running from 0 to k.
+The statistical tensor must be calculated in coordinate frame C as defined by [1]. This implies they are purely real and only have non-zero components for even k. Only positive kappa values should be inlcuded, with kappa running from 0 to k.
 
 *Not all excited states must be included, but currently you cannot "skip" a state. If you have 5 excited states, including tensors for states 1, 2, and 3 is fine. Including tensors for states 1, 2, and 4 is not.*
 
@@ -280,6 +284,8 @@ The statistical tensor must be calculated in coordinate frame C as defined by [A
 
 References
 -----------------
-[CZO83] T. Czosnyka, D. Cline, and C.Y. Wu, *GOSIA User's Manual*, Bull. Am. Phys. Soc. **28**, 745 (1983). [http://www.pas.rochester.edu/~cline/Gosia/Gosia_Manual_20120510.pdf](http://www.pas.rochester.edu/~cline/Gosia/Gosia_Manual_20120510.pdf)
+[1] K. Alder and A. Winter, *Electromagnetic Excitation, Theory of Coulomb Excitation with Heavy Ions*, North Holland, Amsterdam (1975).
 
-[ALD75] K. Alder and A. Winter. *Electromagnetic Excitation, Theory of Coulomb Excitation with Heavy Ions*, North Holland, Amsterdam (1975).
+[2] T. Czosnyka, D. Cline, and C.Y. Wu, *GOSIA User's Manual*, Bull. Am. Phys. Soc. **28**, 745 (1983). [http://www.pas.rochester.edu/~cline/Gosia/Gosia_Manual_20120510.pdf](http://www.pas.rochester.edu/~cline/Gosia/Gosia_Manual_20120510.pdf)
+
+[3] J. Henderson, *Cygnus*, [https://github.com/jhenderson88/Cygnus](https://github.com/jhenderson88/Cygnus)
