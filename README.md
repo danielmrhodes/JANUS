@@ -149,7 +149,7 @@ For the Full CoulEx simulation, all Scattering mode commands still apply. Additi
 
 To control the level scheme and excitations in the recoil nucleus, replace /Excitation/Projectile/ with /Excitation/Recoil/. All commands are identically the same.
 
-The statistical tensors [ALD75] and deorientation effect coefficients G<sub>k</sub> are critical for reproducing the LAB frame gamma-ray spectra. See [CZO83] for details on the two-state model and its parameters used to describe the deorientation effect. These parameters can be controlled using the above /Excitation/DeorientationEffect/ commands.
+The statistical tensors [ALD75] and deorientation effect coefficients G<sub>k</sub> are critical for reproducing the LAB frame gamma-ray spectra. See [CZO83] for details on the two-state model, and the meaning of its parameters, which is used to describe the deorientation effect. The parameters can be controlled using the above /Excitation/DeorientationEffect/ commands.
 
 *If you input a level scheme, you must also input the probabilities or choose a state to populate. Otherwise the level scheme won't be used.*
 
