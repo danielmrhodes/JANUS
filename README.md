@@ -139,8 +139,17 @@ For the Full CoulEx simulation, all Scattering mode commands still apply. Additi
 | /Excitation/Projectile/PopulateState *int* | Choose one state to populate in the projectile, irrespective of scattering angle. This only requires a level scheme file (the probabilities file will simply be ignored). |
 | /Excitation/Projectile/GroundStateSpin *double* | Set the spin of the projectile ground state. The spin must be integer or half-integer. (Default: 0.0) |
 | /Excitation/Projectile/CalculateGk *bool* | Control whether the deorientation effect coefficients G<sub>k</sub> will be calculated for the projectile. These attenuate the nuclear alignment induced after CoulEx, and are only used if the statistical tensors file is provided. (Default: true) |
+| /Excitation/DeorientationEffect/AverageJ *double* | Set the average atomic spin for the deorentation effect two-state model (Default: 3.0) |
+| /Excitation/DeorientationEffect/Gamma *double* | Set the FWHM of the frequency distribution (ps^-1 ) for the deorentation effect two-state model (Default: 0.02) |
+| /Excitation/DeorientationEffect/Lambda *double* | Set the transition rate (ps^-1 ) between static and fluctuating states for the deorentation effect two-state model (Default: 0.0345) |
+| /Excitation/DeorientationEffect/TauC *double* | Set the correlation time (ps) of the fluctating state for the deorentation effect two-state model (Default: 3.5) |
+| /Excitation/DeorientationEffect/GfactorScaling *double* | Set the scaling factor applied to the nuclear gyromagnetic ratio g = Z/A for the deorentation effect two-state model (Default: 1.0) |
+| /Excitation/DeorientationEffect/FieldCoefficient *double* | Set the hyperfine field coefficient (10^8 T) for the deorentation effect two-state model (Default: 6*10<sup>-6</sup>) |
+| /Excitation/DeorientationEffect/FieldExponent *double* | Set the hyperfine field exponent for the deorentation effect two-state model (Default: 0.6) |
 
-To control the level scheme and excitations in the recoil nucleus, replace /Excitation/Projectile/ with /Excitation/Recoil/. All commands are identically the same. 
+To control the level scheme and excitations in the recoil nucleus, replace /Excitation/Projectile/ with /Excitation/Recoil/. All commands are identically the same.
+
+The statistical tensors [ALD75] and deorientation effect coefficients G<sub>k</sub> are critical for reproducing the LAB frame gamma-ray spectra. See [CZO83] for details on the two-state model and its parameters used to describe the deorientation effect. These parameters can be controlled using the above /Excitation/DeorientationEffect/ commands.
 
 *If you input a level scheme, you must also input the probabilities or choose a state to populate. Otherwise the level scheme won't be used.*
 
@@ -271,4 +280,6 @@ The statistical tensor must be calculated in coordinate frame C as defined by [A
 
 References
 -----------------
+[CZO83] T. Czosnyka, D. Cline, and C.Y. Wu, *GOSIA User's Manual*, Bull. Am. Phys. Soc. **28**, 745 (1983). [http://www.pas.rochester.edu/~cline/Gosia/Gosia_Manual_20120510.pdf](http://www.pas.rochester.edu/~cline/Gosia/Gosia_Manual_20120510.pdf)
+
 [ALD75] K. Alder and A. Winter. *Electromagnetic Excitation, Theory of Coulomb Excitation with Heavy Ions*, North Holland, Amsterdam (1975).
