@@ -34,9 +34,6 @@ public:
   void SetProjLSFile(G4String name) {pFN = name;}
   void SetProjPrbFile(G4String name) {pPF = name;}
 
-  void SetSimpleProj() {pSimple = true;}
-  void SetSimpleProjEn(G4double En) {pSimpleEn = En;}
-  void SetSimpleProjLt(G4double Lt) {pSimpleLt = Lt;}
   void FixProjState(G4int index) {pSelected = index;}
   void OnlyConsiderProjState(G4int index) {pConsidered = index;}
   void SetProjGSS(G4double gss) {pGSS = gss;}
@@ -44,9 +41,6 @@ public:
   void SetRecPrbFile(G4String name) {rPF = name;}
   void SetRecLSFile(G4String name) {rFN = name;}
 
-  void SetSimpleRec() {rSimple = true;}
-  void SetSimpleRecEn(G4double En) {rSimpleEn = En;}
-  void SetSimpleRecLt(G4double Lt) {rSimpleLt = Lt;}
   void FixRecState(G4int index) {rSelected = index;}
   void OnlyConsiderRecState(G4int index) {rConsidered = index;}
   void SetRecGSS(G4double gss) {rGSS = gss;}
@@ -87,10 +81,7 @@ private:
   
   std::vector<Polarized_Particle*> pLevels; //projectile states
   std::vector<G4DataInterpolation*> pSplines; //projectile probability splines
-
-  G4bool pSimple;
-  G4double pSimpleEn;
-  G4double pSimpleLt;
+  
   G4int pSelected;
   G4int pConsidered;
   G4double pGSS;
@@ -98,9 +89,6 @@ private:
   std::vector<Polarized_Particle*> rLevels; //recoil states
   std::vector<G4DataInterpolation*> rSplines; //recoil probability splines
   
-  G4bool rSimple;
-  G4double rSimpleEn;
-  G4double rSimpleLt;
   G4int rSelected;
   G4int rConsidered;
   G4double rGSS;

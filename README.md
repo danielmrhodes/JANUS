@@ -137,9 +137,6 @@ For the Full CoulEx simulation, all Scattering mode commands still apply. Additi
 | /Excitation/Projectile/StatisticalTensors *string* | Name of the file to be read-in which contains the statistical tensors for the projectile to determine the angle-dependent nuclear alignment. |
 | /Excitation/Projectile/OnlyConsiderState *int* | Turn off gamma decays from all states except this one. This requires a level scheme file and a probabilities file. |
 | /Excitation/Projectile/PopulateState *int* | Choose one state to populate in the projectile, irrespective of scattering angle. This only requires a level scheme file (the probabilities file will simply be ignored). |
-| /Excitation/Projectile/Simple | Declare a "simple" level scheme and excitation pattern for the projectile. This means there is only one excited state, and it will always be populated. This overrides the above commands. |
-| /Excitation/Projectile/SimpleEnergy *double unit* | Set the energy of the simple state in the projectile. |
-| /Excitation/Projectile/SimpleLifetime *double unit* | Set the lifetime of the simple state in the projectile. |
 | /Excitation/Projectile/GroundStateSpin *double* | Set the spin of the projectile ground state. The spin must be integer or half-integer. (Default: 0.0) |
 | /Excitation/Projectile/CalculateGk *bool* | Control whether the deorientation effect coefficients G<sub>k</sub> will be calculated for the projectile. These attenuate the nuclear alignment induced after CoulEx, and are only used if the statistical tensors file is provided. (Default: true) |
 
@@ -147,7 +144,7 @@ To control the level scheme and excitations in the recoil nucleus, replace /Exci
 
 *If you input a level scheme, you must also input the probabilities or choose a state to populate. Otherwise the level scheme won't be used.*
 
-*In a Full simulation, the /Reaction/DeltaE command only affects what CM angles will be sampled. The Q-value, and corresponding LAB anlges, for each scattering event are calculated based on which excited states get populated.*
+*In a Full simulation, the /Reaction/DeltaE command only affects what CM angles will be sampled. The Q-value and LAB scattering anlges for each event are calculated based on which excited states get populated.*
 
 Level Scheme File Format
 -----------------

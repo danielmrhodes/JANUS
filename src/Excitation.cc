@@ -17,20 +17,14 @@ Excitation::Excitation() {
   
   pFN = "";
   pPF = "";
-
-  pSimple = false;
-  pSimpleEn = 0.0*MeV;;
-  pSimpleLt = 0.0*ps;
+  
   pSelected = -1;
   pConsidered = 0;
   pGSS = 0.0;
     
   rFN = "";
   rPF = "";
-
-  rSimple = false;
-  rSimpleEn = 0.0*MeV;;
-  rSimpleLt = 0.0*ps;
+  
   rSelected = -1;
   rConsidered = 0;
   rGSS = 0.0;
@@ -75,28 +69,7 @@ void Excitation::BuildProjectileLS(G4int Z, G4int A) {
   
   Polarized_Particle* polGS = new Polarized_Particle(projGS,Z,A,pGSS,0.0*MeV);
   pLevels.push_back(polGS);
-
-  if(pSimple) {
-
-    G4cout << "\nBuilding simple projectile level scheme!\n";
-    
-    G4ParticleDefinition* part = table->GetIon(Z,A,pSimpleEn);
-    part->SetPDGLifeTime(pSimpleLt);
-    part->SetDecayTable(new G4DecayTable());
-    part->GetProcessManager()->SetParticleType(part);
-    part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
-
-    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,2.0,pSimpleEn);
-    part->GetDecayTable()->Insert(new Gamma_Decay(ppart,pLevels.at(0),1,2,0,0));
-
-    pLevels.push_back(ppart);
-
-    G4cout << " 1 " << pSimpleEn/keV << " 2 " << pSimpleLt/ps << " 1\n  0 1 2 0 0\nSuccess!" << G4endl;  
-
-    return;
-    
-  }
-
+  
   if(pFN == "") {
     G4cout << "\nNo projectile excitations." << G4endl;
     return;
@@ -151,7 +124,7 @@ void Excitation::BuildProjectileLS(G4int Z, G4int A) {
     
     if(nbr == 0) {
       G4cout << "Problem reading projectile level scheme file " << pFN
-	     << "! No decay braches declared for state " << state_index << G4endl;
+	     << "! No decay branches declared for state " << state_index << G4endl;
     }
 	
     G4ParticleDefinition* part = table->GetIon(Z,A,energy);
@@ -237,28 +210,7 @@ void Excitation::BuildRecoilLS(G4int Z, G4int A) {
   
   Polarized_Particle* polGS = new Polarized_Particle(recGS,Z,A,rGSS,0.0*MeV);
   rLevels.push_back(polGS);
-
-  if(rSimple) {
-
-    G4cout << "\nBuilding simple recoil level scheme!\n";
-    
-    G4ParticleDefinition* part = table->GetIon(Z,A,rSimpleEn);
-    part->SetPDGLifeTime(rSimpleLt);
-    part->SetDecayTable(new G4DecayTable());
-    part->GetProcessManager()->SetParticleType(part);
-    part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
-
-    Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,2.0,rSimpleEn);
-    part->GetDecayTable()->Insert(new Gamma_Decay(ppart,rLevels.at(0),1,2,0,0));
-    
-    rLevels.push_back(ppart);
-
-    G4cout << " 1 " << rSimpleEn/keV << " 2 " << rSimpleLt/ps << " 1\n  0 1 2 0 0\nSuccess!" << G4endl;  
-
-    return;
-    
-  }
-
+  
   if(rFN == "") {
     G4cout << "\nNo recoil excitations." << G4endl;
     return;
@@ -313,7 +265,7 @@ void Excitation::BuildRecoilLS(G4int Z, G4int A) {
     
     if(nbr == 0) {
       G4cout << "Problem reading recoil level scheme file " << rFN
-	     << "! No decay braches declared for state " << state_index << G4endl;
+	     << "! No decay branches declared for state " << state_index << G4endl;
     }
 	
     G4ParticleDefinition* part = table->GetIon(Z,A,energy);
@@ -391,12 +343,7 @@ void Excitation::BuildRecoilLS(G4int Z, G4int A) {
 }
 
 void Excitation::BuildProjectileSplines() {
-
-  if(pSimple) {
-    G4cout << "\nProjectile simple state will always be populated" << G4endl;
-    return;
-  }
-
+  
   if(pSelected > -1) {
     G4cout << "\nProjectile state " << pSelected << " will always be populated" << G4endl;
     return;
@@ -523,12 +470,7 @@ void Excitation::BuildProjectileSplines() {
 }
 
 void Excitation::BuildRecoilSplines() {
-
-  if(rSimple) {
-    G4cout << "\nRecoil simple state will always be populated" << G4endl;
-    return;
-  }
-
+  
   if(rSelected > -1) {
     G4cout << "\nRecoil state " << rSelected << " will always be populated" << G4endl;
     return;
@@ -653,11 +595,7 @@ void Excitation::BuildRecoilSplines() {
 }
 
 G4int Excitation::ChooseProjectileState(const G4double th) {
-
-  if(pSimple) {
-    return 1;
-  }
-
+  
   if(pSelected > -1) {
     return pSelected;
   }
@@ -703,11 +641,7 @@ G4int Excitation::ChooseProjectileState(const G4double th) {
 }
 
 G4int Excitation::ChooseRecoilState(const G4double th) {
-
-  if(rSimple) {
-    return 1;
-  }
-
+  
   if(rSelected > -1) {
     return rSelected;
   }
@@ -753,10 +687,6 @@ G4int Excitation::ChooseRecoilState(const G4double th) {
 }
 
 G4double Excitation::GetProjectileExcitation(G4int index) {
-
-  if(pSimple) {
-    return pSimpleEn;
-  }
   
   if(!index) {
     return 0.0*MeV;
@@ -767,11 +697,7 @@ G4double Excitation::GetProjectileExcitation(G4int index) {
 }
 
 G4double Excitation::GetRecoilExcitation(G4int index) {
-
-  if(rSimple) {
-    return rSimpleEn;
-  }
-
+  
   if(!index) {
     return 0.0*MeV;
   }

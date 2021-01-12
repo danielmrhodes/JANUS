@@ -22,22 +22,7 @@ Excitation_Messenger::Excitation_Messenger(Excitation* exc) : excitation(exc) {
   pTF_cmd = new G4UIcmdWithAString("/Excitation/Projectile/StatisticalTensors",this);
   pTF_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   pTF_cmd->SetGuidance("Set name of projectile statistical tensor file");
-
-  //Simple excitation
-  pSim_cmd = new G4UIcmdWithoutParameter("/Excitation/Projectile/Simple",this);
-  pSim_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  pSim_cmd->SetGuidance("Declare a simple excitation scheme for the projectile");
-
-  //Simple state energy
-  pSEn_cmd = new G4UIcmdWithADoubleAndUnit("/Excitation/Projectile/SimpleEnergy",this);
-  pSEn_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  pSEn_cmd->SetGuidance("Set energy of simple state in the projectile");
-
-  //Simple state lifetime
-  pSLt_cmd = new G4UIcmdWithADoubleAndUnit("/Excitation/Projectile/SimpleLifetime",this);
-  pSLt_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  pSLt_cmd->SetGuidance("Set lifetime of simple state in the projectile");
-
+  
   //Selected state
   pSel_cmd = new G4UIcmdWithAnInteger("/Excitation/Projectile/PopulateState",this);
   pSel_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
@@ -75,21 +60,6 @@ Excitation_Messenger::Excitation_Messenger(Excitation* exc) : excitation(exc) {
   rTF_cmd = new G4UIcmdWithAString("/Excitation/Recoil/StatisticalTensors",this);
   rTF_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   rTF_cmd->SetGuidance("Set name of recoil statistical tensor file");
-
-  //Simple excitation
-  rSim_cmd = new G4UIcmdWithoutParameter("/Excitation/Recoil/Simple",this);
-  rSim_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  rSim_cmd->SetGuidance("Declare a simple excitation scheme for the recoil");
-
-  //Simple state energy
-  rSEn_cmd = new G4UIcmdWithADoubleAndUnit("/Excitation/Recoil/SimpleEnergy",this);
-  rSEn_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  rSEn_cmd->SetGuidance("Set energy of simple state in the recoil");
-
-  //Simple state lifetime
-  rSLt_cmd = new G4UIcmdWithADoubleAndUnit("/Excitation/Recoil/SimpleLifetime",this);
-  rSLt_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  rSLt_cmd->SetGuidance("Set lifetime of simple state in the recoil");
 
   //Selected state
   rSel_cmd = new G4UIcmdWithAnInteger("/Excitation/Recoil/PopulateState",this);
@@ -161,9 +131,6 @@ Excitation_Messenger::~Excitation_Messenger() {
   delete pPF_cmd;
   delete pTF_cmd;
   
-  delete pSim_cmd;
-  delete pSEn_cmd;
-  delete pSLt_cmd;
   delete pSel_cmd;
   delete pCon_cmd;
   delete pGSS_cmd;
@@ -172,10 +139,7 @@ Excitation_Messenger::~Excitation_Messenger() {
   delete rLS_cmd;
   delete rPF_cmd;
   delete rTF_cmd;
-
-  delete rSim_cmd;
-  delete rSEn_cmd;
-  delete rSLt_cmd;
+  
   delete rSel_cmd;
   delete rCon_cmd;
   delete rGSS_cmd;
@@ -208,21 +172,6 @@ void Excitation_Messenger::SetNewValue(G4UIcommand* command, G4String newValue) 
   else if(command == pTF_cmd) {
     excitation->SetProjTensorFile(newValue);
     G4cout << "Setting projectile statistical tensor file to " << newValue << G4endl;
-  }
-
-  else if(command == pSim_cmd) {
-    excitation->SetSimpleProj();
-    G4cout << "Setting a simple excitation scheme for the projectile!" << G4endl;
-  }
-
-  else if(command == pSEn_cmd) {
-    excitation->SetSimpleProjEn(pSEn_cmd->GetNewDoubleValue(newValue));
-    G4cout << "Setting energy of simple projectile state to " << newValue << G4endl;
-  }
-
-  else if(command == pSLt_cmd) {
-    excitation->SetSimpleProjLt(pSLt_cmd->GetNewDoubleValue(newValue));
-    G4cout << "Setting lifetime of simple projectile state to " << newValue << G4endl;
   }
 
   else if(command == pSel_cmd) {
@@ -261,21 +210,6 @@ void Excitation_Messenger::SetNewValue(G4UIcommand* command, G4String newValue) 
   else if(command == rTF_cmd) {
     excitation->SetRecTensorFile(newValue);
     G4cout << "Setting recoil statistical tensor file to " << newValue << G4endl;
-  }
-
-  else if(command == rSim_cmd) {
-    excitation->SetSimpleRec();
-    G4cout << "Setting a simple excitation scheme for the recoil!" << G4endl;
-  }
-
-  else if(command == rSEn_cmd) {
-    excitation->SetSimpleRecEn(rSEn_cmd->GetNewDoubleValue(newValue));
-    G4cout << "Setting energy of simple recoil state to " << newValue << G4endl;
-  }
-
-  else if(command == rSLt_cmd) {
-    excitation->SetSimpleRecLt(rSLt_cmd->GetNewDoubleValue(newValue));
-    G4cout << "Setting lifetime of simple recoil state to " << newValue << G4endl;
   }
 
   else if(command == rSel_cmd) {
