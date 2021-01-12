@@ -59,6 +59,14 @@ public:
 
   void Polarize(G4int pIndex, G4int rIndex, G4double th, G4double ph);
   void Unpolarize();
+
+  void SetAverageJ(G4double avj) {polar->SetAverageJ(avj);}
+  void SetGamma(G4double gam) {polar->SetGamma(gam);}
+  void SetLambdaStar(G4double lam) {polar->SetLambdaStar(lam);}
+  void SetTauC(G4double tc) {polar->SetTauC(tc);}
+  void SetGFacMult(G4double mult) {polar->SetGFacMult(mult);}
+  void SetFieldCoef(G4double coef) {polar->SetFieldCoef(coef);}
+  void SetFieldExp(G4double ex) {polar->SetFieldExp(ex);}
   
 private:
 

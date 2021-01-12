@@ -23,6 +23,15 @@ Polarization::Polarization() {
   
   unpolarized.emplace_back();
   unpolarized.at(0).push_back(val);
+
+  Avji = 3.0;
+  Gam = 0.02;
+  Xlamb = 0.0345;
+  TimeC = 3.5;
+  //Gfac = iz/G4double(ia);
+  GfacMult = 1.0;
+  Field = 6.0*std::pow(10.0,-6.0);
+  Power = 0.6;
   
 }
 
@@ -433,6 +442,7 @@ std::array<G4double,7> Polarization::GKK(const G4int iz, const G4int ia, const G
 					 const G4double spin, const G4double time) {
 
   //model parameters
+  /*
   const G4double Avji = 3.0; // Average atomic spin
   const G4double Gam = 0.02; // FWHM of frequency distribution
   const G4double Xlamb = 0.0345; //Fluctuating state to static state transition rate
@@ -440,6 +450,9 @@ std::array<G4double,7> Polarization::GKK(const G4int iz, const G4int ia, const G
   const G4double Gfac = iz/G4double(ia); //Nuclear gyromagnetic factor
   const G4double Field = 6.0*std::pow(10.0,-6.0); //Hyperfine field coefficient (600 T)
   const G4double Power = 0.6; //Hyperfine field exponent
+  */
+
+  G4double Gfac = GfacMult*iz/G4double(ia);
   
   G4int  inq, ifq;
   G4double qcen, dq, xnor;

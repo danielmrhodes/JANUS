@@ -53,6 +53,17 @@ private:
   G4UIcmdWithAnInteger* rCon_cmd; //Only consider this excited state
   G4UIcmdWithADouble* rGSS_cmd; //Ground state spin
   G4UIcmdWithABool* rCGk_cmd; //Calculate Gk coefficients
+
+  G4UIdirectory* deo_dir; //Deorientation effect directory
+
+  //Control deorientation effect paramerts
+  G4UIcmdWithADouble* avj_cmd; //Average J
+  G4UIcmdWithADouble* gam_cmd; //Gamma
+  G4UIcmdWithADouble* lam_cmd; //Lambda star
+  G4UIcmdWithADouble* tau_cmd; //Tau_C
+  G4UIcmdWithADouble* gfm_cmd; //g-factor multiplier
+  G4UIcmdWithADouble* fld_cmd; //Field coefficient
+  G4UIcmdWithADouble* exp_cmd; //Field exponent
   
 };
 

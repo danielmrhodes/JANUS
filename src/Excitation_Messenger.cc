@@ -110,6 +110,44 @@ Excitation_Messenger::Excitation_Messenger(Excitation* exc) : excitation(exc) {
   rCGk_cmd = new G4UIcmdWithABool("/Excitation/Recoil/CalculateGk",this);
   rCGk_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   rCGk_cmd->SetGuidance("Calculate Gk coefficiencts and apply them to the recoil statistical tensor");
+
+  //Deorentation effect paramter directory
+  deo_dir = new G4UIdirectory("/Excitation/DeorientationEffect/");
+
+  //Average J
+  avj_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/AverageJ",this);
+  avj_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  avj_cmd->SetGuidance("Set the average atomic spin");
+
+  //Gamma
+  gam_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/Gamma",this);
+  gam_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  gam_cmd->SetGuidance("Set the FWHM of the frequency distribution (ps^-1 )");
+
+  //Lambda
+  lam_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/Lambda",this);
+  lam_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  lam_cmd->SetGuidance("Set the transition rate (ps^-1 ) between static and fluctuating states");
+
+  //TauC
+  tau_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/TauC",this);
+  tau_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  tau_cmd->SetGuidance("Set the correlation time (ps)");
+
+  //g-factor scaling
+  gfm_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/GfactorScaling",this);
+  gfm_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  gfm_cmd->SetGuidance("Set the scaling factor applied to the nuclear gyromagnetic ratio g = Z/A");
+
+  //Field coefficient
+  fld_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/FieldCoefficient",this);
+  fld_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  fld_cmd->SetGuidance("Set the hyperfine field coefficient (10^8 T)");
+
+  //Field exponent
+  exp_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/FieldExponent",this);
+  exp_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  exp_cmd->SetGuidance("Set the hyperfine field exponent");
   
 }
 
@@ -142,6 +180,15 @@ Excitation_Messenger::~Excitation_Messenger() {
   delete rCon_cmd;
   delete rGSS_cmd;
   delete rCGk_cmd;
+
+  delete deo_dir;
+  delete avj_cmd;
+  delete gam_cmd;
+  delete lam_cmd;
+  delete tau_cmd;
+  delete gfm_cmd;
+  delete fld_cmd;
+  delete exp_cmd;
   
 }
 
@@ -253,6 +300,43 @@ void Excitation_Messenger::SetNewValue(G4UIcommand* command, G4String newValue) 
   }
   ///////////////////////////////////////
 
+  ////////////Deorientation effect commands////////////
+  else if(command == avj_cmd) {
+    excitation->SetAverageJ(avj_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting average atomic spin to " << newValue << G4endl;
+  }
+
+  else if(command == gam_cmd) {
+    excitation->SetGamma(gam_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting FWHM of frequency distribution to " << newValue << " ps^-1" << G4endl;
+  }
+
+  else if(command == lam_cmd) {
+    excitation->SetLambdaStar(lam_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting state fluctuation rate to " << newValue << " ps^-1" << G4endl;
+  }
+
+  else if(command == tau_cmd) {
+    excitation->SetTauC(tau_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting correlation time to " << newValue << " ps" << G4endl;
+  }
+
+  else if(command == gfm_cmd) {
+    excitation->SetGFacMult(gfm_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting g-factor scaling to " << newValue << G4endl;
+  }
+
+  else if(command == fld_cmd) {
+    excitation->SetFieldCoef(fld_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting hyperfine field coefficient to " << newValue << "*10^8 T" << G4endl;
+  }
+
+  else if(command == exp_cmd) {
+    excitation->SetFieldExp(exp_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting hyperfine field exponent to " << newValue << G4endl;
+  }
+  /////////////////////////////////////////////////////
+  
   return;
   
 }

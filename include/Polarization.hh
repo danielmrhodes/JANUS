@@ -78,6 +78,14 @@ public:
   void SetProjCalcGk(G4bool calc) {pCalcGk = calc;}
   void SetRecCalcGk(G4bool calc) {rCalcGk = calc;}
 
+  void SetAverageJ(G4double avj) {Avji = avj;}
+  void SetGamma(G4double gam) {Gam = gam;}
+  void SetLambdaStar(G4double lam) {Xlamb = lam;}
+  void SetTauC(G4double tc) {TimeC = tc;}
+  void SetGFacMult(G4double mult) {GfacMult = mult;}
+  void SetFieldCoef(G4double coef) {Field = coef;}
+  void SetFieldExp(G4double ex) {Power = ex;}
+
 private:
 
   void ReadTensorFile(G4String fn, std::vector<State>& states, std::vector<double>& thetas);
@@ -110,6 +118,15 @@ private:
 
   G4bool pCalcGk; //Flag to calculate depolarization coefficients for projectile
   G4bool rCalcGk; //Flag to calculate depolarization coefficients for recoil
+
+  //model parameters
+  G4double Avji; // Average atomic spin
+  G4double Gam; // FWHM of frequency distribution
+  G4double Xlamb; //Fluctuating state to static state transition rate
+  G4double TimeC; //Mean time between random reorientations of fluctuating state 
+  G4double GfacMult; //Scaling factor for nuclear gyromagnetic ratio (g = Z/A)
+  G4double Field; //Hyperfine field coefficient
+  G4double Power; //Hyperfine field exponent
 
 };
 
