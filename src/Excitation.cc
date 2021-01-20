@@ -179,10 +179,16 @@ void Excitation::BuildProjectileLS(G4int Z, G4int A) {
       std::stringstream ss9(word);
       ss9 >> del;
 
-      G4cout << "  " << index << " " << BR << " " << L0 << " " << Lp << " " << del << G4endl;
+      linestream2 >> word;
+      
+      G4double cc;
+      std::stringstream ss10(word);
+      ss10 >> cc;
+
+      G4cout << "  " << index << " " << BR << " " << L0 << " " << Lp << " " << del << " " << cc << G4endl;
       
       if(!pConsidered || state_index == pConsidered) {
-	part->GetDecayTable()->Insert(new Gamma_Decay(ppart,pLevels.at(index),BR,L0,Lp,del));
+	part->GetDecayTable()->Insert(new Gamma_Decay(ppart,pLevels.at(index),BR,L0,Lp,del,cc));
       }
       
     }
@@ -320,10 +326,16 @@ void Excitation::BuildRecoilLS(G4int Z, G4int A) {
       std::stringstream ss9(word);
       ss9 >> del;
 
-      G4cout << "  " << index << " " << BR << " " << L0 << " " << Lp << " " << del << G4endl;
+      linestream2 >> word;
+      
+      G4double cc;
+      std::stringstream ss10(word);
+      ss10 >> cc;
+
+      G4cout << "  " << index << " " << BR << " " << L0 << " " << Lp << " " << del << " " << cc << G4endl;
 
       if(!rConsidered || state_index == rConsidered) {
-	part->GetDecayTable()->Insert(new Gamma_Decay(ppart,rLevels.at(index),BR,L0,Lp,del));
+	part->GetDecayTable()->Insert(new Gamma_Decay(ppart,rLevels.at(index),BR,L0,Lp,del,cc));
       }
 	
     }

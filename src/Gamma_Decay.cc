@@ -10,8 +10,8 @@
 #include "G4HadronicException.hh"
 
 Gamma_Decay::Gamma_Decay(Polarized_Particle* Parent, Polarized_Particle* daughter, G4double BR, G4int L0,
-			 G4int Lp, G4double del) : Gamma_Decay(Parent->GetDefinition(),
-							       daughter->GetDefinition(),BR) {
+			 G4int Lp, G4double del, G4double cc) : Gamma_Decay(Parent->GetDefinition(),
+									    daughter->GetDefinition(),BR) {
 
   trans = new G4PolarizationTransition();
   
@@ -21,6 +21,8 @@ Gamma_Decay::Gamma_Decay(Polarized_Particle* Parent, Polarized_Particle* daughte
   transL = L0;
   transLp = Lp;
   delta = del;
+
+  convCoef = cc;
   
 }
 
@@ -80,9 +82,13 @@ G4DecayProducts* Gamma_Decay::DecayIt(G4double) {
   G4double Etotal= std::sqrt(daughtermass[0]*daughtermass[0] + daughtermomentum*daughtermomentum); 
   G4DynamicParticle * daughterparticle = new G4DynamicParticle( G4MT_daughters[0],Etotal, direction*daughtermomentum);
   products->PushProducts(daughterparticle);
-  Etotal= std::sqrt(daughtermass[1]*daughtermass[1] + daughtermomentum*daughtermomentum);
-  daughterparticle = new G4DynamicParticle( G4MT_daughters[1],Etotal, direction*(-1.0*daughtermomentum));
-  products->PushProducts(daughterparticle);
+
+  G4double prob = 1.0/(convCoef + 1.0);
+  if(G4UniformRand() < prob) {
+    Etotal= std::sqrt(daughtermass[1]*daughtermass[1] + daughtermomentum*daughtermomentum);
+    daughterparticle = new G4DynamicParticle( G4MT_daughters[1],Etotal, direction*(-1.0*daughtermomentum));
+    products->PushProducts(daughterparticle);
+  }
 
   if (GetVerboseLevel()>1) 
     {
