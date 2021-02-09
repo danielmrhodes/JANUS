@@ -44,6 +44,8 @@ int main(int argc, char** argv) {
     //UI->ApplyCommand("/vis/scene/add/axes");
     UI->ApplyCommand("/vis/viewer/zoom 2");
     UI->ApplyCommand("/vis/viewer/set/viewpointThetaPhi 70 20");
+    UI->ApplyCommand("/Geometry/Bambino2/Construct");
+    UI->ApplyCommand("/Geometry/Target/Construct");
     UI->ApplyCommand("/Geometry/Update");
     
     G4UIsession* session = new G4UIterminal(new G4UItcsh());

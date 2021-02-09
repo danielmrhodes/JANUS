@@ -17,7 +17,8 @@ public:
 
   void Clear();
   void SetMode(Primary_Generator::MODE md) {mode = md;}
-  void SetProjectileName(G4String name) {projName = name;} 
+  void SetProjectileName(G4String name) {projName = name;}
+  void SetIsSimpleSource() {simple_source = true;}
 
   std::vector<G4int> GetProjGammas() {return projGammas;}
   std::map<G4int,std::vector<G4int>> GetIDMap() {return idMap;}
@@ -26,6 +27,7 @@ public:
 private:
 
   Primary_Generator::MODE mode;
+  G4bool simple_source;
   
   //List of projectile or recoil track IDs
   std::vector<G4int> ionIDs;

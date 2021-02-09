@@ -34,6 +34,10 @@ void Run_Action::BeginOfRunAction(const G4Run* run) {
   Tracking_Action* trkAct = (Tracking_Action*)Rman->GetUserTrackingAction();
   trkAct->SetMode(gen->GetMode());
 
+  if(gen->IsSimpleSource()) {
+    trkAct->SetIsSimpleSource();
+  }
+
   Event_Action* evtAct = (Event_Action*)Rman->GetUserEventAction();
   evtAct->SetOutputFile(output);
   evtAct->SetPerEvent(num);

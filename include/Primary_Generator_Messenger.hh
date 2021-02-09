@@ -2,10 +2,8 @@
 #define Primary_Generator_Messenger_h 1
 
 #include "G4UImessenger.hh"
-//#include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
-//#include "G4UIcmdWithAnInteger.hh"
 #include "Primary_Generator.hh"
 
 class Primary_Generator;
@@ -25,9 +23,6 @@ private:
   //Mode directory
   G4UIdirectory* mode_dir;
 
-  //Source directory
-  G4UIdirectory* source_dir;
-
   //Incoming beam directory
   G4UIdirectory* incoming_dir;
   
@@ -46,9 +41,6 @@ private:
 
   //Inelastic scattering
   G4UIcmdWithADoubleAndUnit* inEl_cmd;
-
-  //Source commands
-  G4UIcmdWithADoubleAndUnit* sourceEn_cmd;
 
   //Mode command
   G4UIcmdWithAString* mode_cmd;

@@ -18,6 +18,7 @@ Primary_Generator::Primary_Generator() {
   gun = new G4ParticleGun(1);
   
   reac = new Reaction();
+  source = new Gamma_Source();
   excite = new Excitation();
 
   projGS = NULL;
@@ -39,7 +40,6 @@ Primary_Generator::Primary_Generator() {
   sigma_En = 0.0*MeV;
 
   deltaE = 0.0*MeV;
-  source_En = 0.0*MeV;
   
 }
 
@@ -48,6 +48,7 @@ Primary_Generator::~Primary_Generator() {
   delete gun;
   delete messenger;
   delete reac;
+  delete source;
   delete excite;
   
 }
@@ -86,8 +87,7 @@ void Primary_Generator::GeneratePrimaries(G4Event* evt) {
 
     case MODE::Source: {
       
-      gun->SetParticleMomentumDirection(G4RandomDirection());
-      gun->GeneratePrimaryVertex(evt);
+      GenerateSourcePrimaries(evt);
 
       break;
     }
@@ -121,24 +121,9 @@ void Primary_Generator::GenerateScatteringPrimaries(G4Event* evt) {
   
   //Reaction position
   //Randomize X and Y
-  
   G4ThreeVector pos = G4ThreeVector(G4RandGauss::shoot(beam_X,sigma_X),
 				    G4RandGauss::shoot(beam_Y,sigma_Y),
 				    -(width/2.0) + depth); //reaction position
-  /*
-  G4ThreeVector pos;
-  if(G4UniformRand() < 0.8) {
-    pos = G4ThreeVector(G4RandGauss::shoot(0.25*mm,0.7*mm),
-			G4RandGauss::shoot(-0.75*mm,0.7*mm),
-			-(width/2.0) + depth);
-  }
-  else {
-    pos = G4ThreeVector(G4RandGauss::shoot(-0.5*mm,0.2*mm),
-			G4RandGauss::shoot(0.7*mm,0.2*mm),
-			-(width/2.0) + depth);
-  }
-  */
-  
   //Outgoing vectors
   G4ThreeVector bdir = G4ThreeVector(0,0,1); //projectile direction
   bdir.setTheta(reac->Theta_LAB(th,en,deltaE)); //theta from kinematics
@@ -171,6 +156,36 @@ void Primary_Generator::GenerateScatteringPrimaries(G4Event* evt) {
   gun->SetParticleMomentumDirection(rdir);
   gun->GeneratePrimaryVertex(evt);
 
+}
+
+void Primary_Generator::GenerateSourcePrimaries(G4Event* evt) {
+
+  //Simple isotropic gamma
+  if(source->GetEnergy() > 0.0*MeV) {
+
+    gun->SetParticleDefinition(G4Gamma::Definition());
+    gun->SetParticlePosition(G4ThreeVector());
+    gun->SetParticleEnergy(source->GetEnergy());
+    gun->SetParticleMomentumDirection(G4RandomDirection());
+    gun->GeneratePrimaryVertex(evt);
+
+    return;
+  }
+
+  //Remove polarization
+  source->Unpolarize();
+
+  //Choose excited state
+  G4int state_index = source->ChooseState();
+
+  //Make vertex
+  gun->SetParticleDefinition(source->GetDefinition(state_index));
+  gun->SetParticleEnergy(0.0*MeV);
+  gun->SetParticlePosition(G4ThreeVector());
+  gun->SetParticleMomentumDirection(G4ThreeVector());
+  gun->GeneratePrimaryVertex(evt);
+  
+  return;
 }
 
 void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
@@ -263,9 +278,7 @@ void Primary_Generator::Update() {
 
     case MODE::Source: {
       
-      gun->SetParticleDefinition(G4Gamma::Definition());
-      gun->SetParticlePosition(G4ThreeVector());
-      gun->SetParticleEnergy(source_En);
+      source->BuildLevelScheme();
       
       break;
     }
@@ -303,11 +316,13 @@ void Primary_Generator::UpdateReaction() {
 
   Detector_Construction* con =
     (Detector_Construction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
-      
-  G4EmCalculator* calc = new G4EmCalculator();
-  
-  dedx = calc->ComputeTotalDEDX(beam_En,projGS,con->GetTargetMaterial());
-  width = con->GetTargetThickness();
+
+  if(con->GetTargetMaterial()) {
+    G4EmCalculator* calc = new G4EmCalculator();
+    dedx = calc->ComputeTotalDEDX(beam_En,projGS,con->GetTargetMaterial());
+    width = con->GetTargetThickness();
+    
+  }
   
   return;
 }

@@ -57,20 +57,11 @@ Primary_Generator_Messenger::Primary_Generator_Messenger(Primary_Generator* gen)
   inEl_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   inEl_cmd->SetGuidance("Set (positive) deltaE for inelastic scattering");
 
-  //Source directory
-  source_dir = new G4UIdirectory("/Source/");
-  
-  //Source parameters
-  sourceEn_cmd = new G4UIcmdWithADoubleAndUnit("/Source/Energy",this);
-  sourceEn_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  sourceEn_cmd->SetGuidance("Set energy of source gamma");
-
 }
 
 Primary_Generator_Messenger::~Primary_Generator_Messenger() {
 
   delete incoming_dir;
-  delete source_dir;
   delete mode_dir;
 
   delete beamX_cmd;
@@ -86,8 +77,6 @@ Primary_Generator_Messenger::~Primary_Generator_Messenger() {
   delete sigEn_cmd;
 
   delete inEl_cmd;
-
-  delete sourceEn_cmd;
   delete mode_cmd;
 
 }
@@ -149,11 +138,6 @@ void Primary_Generator_Messenger::SetNewValue(G4UIcommand* command, G4String new
   else if(command == inEl_cmd) {
     generator->SetDeltaE(inEl_cmd->GetNewDoubleValue(newValue));
     G4cout << "Setting DeltaE = -Q of scattering reaction to " << newValue << G4endl;
-  }
-  
-  else if(command == sourceEn_cmd) {
-    generator->SetSourceEnergy(sourceEn_cmd->GetNewDoubleValue(newValue));
-    G4cout << "Setting source gamma-ray energy to " << newValue << G4endl;
   }
 
   else if(command == mode_cmd) {

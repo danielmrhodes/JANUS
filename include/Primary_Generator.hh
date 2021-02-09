@@ -2,7 +2,9 @@
 #define Primary_Generator_h 1
 
 #include "Primary_Generator_Messenger.hh"
+
 #include "Reaction.hh"
+#include "Gamma_Source.hh"
 #include "Excitation.hh"
 
 #include "G4VUserPrimaryGeneratorAction.hh"
@@ -32,9 +34,8 @@ public:
   void SetSigmaEn(G4double sigE) {sigma_En = sigE;}
 
   void SetDeltaE(G4double dE) {deltaE = dE;}
+  G4bool IsSimpleSource() {return source->GetEnergy() > 0.0;}
   
-  void SetSourceEnergy(G4double En) {source_En = En;}
-
   void SetMode(G4String md);
   MODE GetMode() {return mode;}
   
@@ -47,6 +48,7 @@ public:
 private:
 
   inline void GenerateScatteringPrimaries(G4Event* event);
+  inline void GenerateSourcePrimaries(G4Event* event);
   inline void GenerateFullPrimaries(G4Event* event);
 
   void UpdateReaction();
@@ -56,6 +58,7 @@ private:
   G4ParticleGun* gun;
   
   Reaction* reac;
+  Gamma_Source* source;
   Excitation* excite;
 
   G4ParticleDefinition* projGS; //Projectile ground state
@@ -76,8 +79,6 @@ private:
   G4double sigma_AX; //spread in angle about X axis
   G4double sigma_AY; //spread in angle about Y axis
   G4double sigma_En; //spread in energy
-
-  G4double source_En; //Energy of source gamma
 
   G4double deltaE; //For inelastic scattering
   
