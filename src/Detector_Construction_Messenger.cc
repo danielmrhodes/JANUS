@@ -12,6 +12,10 @@ Detector_Construction_Messenger::Detector_Construction_Messenger(Detector_Constr
 
   //Bambino2 directory
   bambino2_dir = new G4UIdirectory("/Geometry/Bambino2/");
+
+  placeSi_cmd = new G4UIcmdWithoutParameter("/Geometry/Bambino2/Construct",this);
+  placeSi_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  placeSi_cmd->SetGuidance("Place the silicon detectors");
   
   offsetUS_cmd = new G4UIcmdWithADoubleAndUnit("/Geometry/Bambino2/UpstreamOffset",this);
   offsetUS_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
@@ -30,6 +34,10 @@ Detector_Construction_Messenger::Detector_Construction_Messenger(Detector_Constr
 
   //Target directory
   target_dir = new G4UIdirectory("/Geometry/Target/");
+
+  placeTarg_cmd = new G4UIcmdWithoutParameter("/Geometry/Target/Construct",this);
+  placeTarg_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  placeTarg_cmd->SetGuidance("Place the target");
   
   Z_cmd = new G4UIcmdWithAnInteger("/Geometry/Target/Z",this);
   Z_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
@@ -72,6 +80,7 @@ Detector_Construction_Messenger::~Detector_Construction_Messenger() {
   delete update_cmd;
   
   delete bambino2_dir;
+  delete placeSi_cmd;
   delete offsetUS_cmd;
   delete offsetDS_cmd;
 
@@ -79,6 +88,7 @@ Detector_Construction_Messenger::~Detector_Construction_Messenger() {
   delete offsetS_cmd;
 
   delete target_dir;
+  delete placeTarg_cmd;
   delete Z_cmd;
   delete N_cmd;
   delete density_cmd;
@@ -92,7 +102,12 @@ Detector_Construction_Messenger::~Detector_Construction_Messenger() {
 void Detector_Construction_Messenger::SetNewValue(G4UIcommand* command, G4String newValue) {
 
   /////Bambino2 commands/////
-  if(command == offsetUS_cmd) {
+  if(command == placeSi_cmd) {
+    construction->SetPlaceSilicon();
+    G4cout << "Simulation will include the silicon detectors" << G4endl;
+  }
+  
+  else if(command == offsetUS_cmd) {
     construction->SetUS_Offset(offsetUS_cmd->GetNewDoubleValue(newValue));
     G4cout << "Setting upstream Bambino2 offset to " << newValue << G4endl;
   }
@@ -111,6 +126,11 @@ void Detector_Construction_Messenger::SetNewValue(G4UIcommand* command, G4String
   ///////////////////////
 
   /////Target commands/////
+  else if(command == placeTarg_cmd) {
+    construction->SetPlaceTarget();
+    G4cout << "Simulation will include the target" << G4endl;
+  }
+  
   else if(command == Z_cmd) {
     construction->SetTargetZ(Z_cmd->GetNewIntValue(newValue));
     G4cout << "Setting target Z to " << newValue << G4endl;

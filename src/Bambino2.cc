@@ -8,7 +8,7 @@
 #include "G4Box.hh"
 #include "G4SubtractionSolid.hh"
 
-Bambino2::Bambino2(G4bool make_sensitive) {
+Bambino2::Bambino2() {
 
   innerRadius=1.1*cm;
   outerRadius=3.5*cm;
@@ -18,11 +18,8 @@ Bambino2::Bambino2(G4bool make_sensitive) {
   nSectors=32;
 
   //Sensitive Detector
-  TrackerIon = NULL;
-  if(make_sensitive) {
-    TrackerIon = new IonSD("IonTracker");
-    G4SDManager::GetSDMpointer()->AddNewDetector(TrackerIon);
-  }
+  TrackerIon = new IonSD("IonTracker");; 
+  G4SDManager::GetSDMpointer()->AddNewDetector(TrackerIon);
   
 }
 

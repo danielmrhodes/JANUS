@@ -17,10 +17,12 @@ public:
   
   G4VPhysicalVolume* Construct();
 
+  void SetPlaceSilicon() {place_silicon = true;} 
   void SetUS_Offset(G4double off) {US_Offset = off;}
   void SetDS_Offset(G4double off) {DS_Offset = off;}
   void SetSeGA_Offset(G4double off) {SeGA_Offset = off;} 
 
+  void SetPlaceTarget() {place_target = true;} 
   void SetTargetZ(G4int Z)  {target_Z = Z;}
   void SetTargetN(G4int N)  {target_N = N;}
   void SetTargetDensity(G4double dens)  {target_density = dens;}
@@ -63,8 +65,10 @@ private:
   G4double target_mass;
   G4double target_thickness;
   G4double target_radius;
-
   G4Material* target_mat;
+
+  G4bool place_silicon;
+  G4bool place_target;
 
 };
 

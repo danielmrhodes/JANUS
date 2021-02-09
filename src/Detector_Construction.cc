@@ -26,6 +26,10 @@ Detector_Construction::Detector_Construction() {
   target_mass = 207.97665*g/mole;
   target_thickness = 882*nm;
   target_radius = 0.5*cm;
+  target_mat = NULL;
+
+  place_silicon = false;
+  place_target = false;
   
 }
 
@@ -55,12 +59,10 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   Primary_Generator* gen = (Primary_Generator*)Rman->GetUserPrimaryGeneratorAction();
 
   G4bool sens_SeGA = false;
-  G4bool sens_Bam2 = false;
   G4UserLimits* uLim = NULL;
   switch(gen->GetMode()) {
     case Primary_Generator::MODE::Scattering: {
-
-      sens_Bam2 = true;
+      
       break;
   
     }
@@ -73,36 +75,54 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
     case Primary_Generator::MODE::Full: {
 
       uLim = new G4UserLimits(0.05*target_thickness);
-      
-      sens_Bam2 = true;
+
       sens_SeGA = true;
       break;
 
     }
   }
-  
-  //Make Bambino2
-  Bambino2* bam = new Bambino2(sens_Bam2);
-  bam->Placement(logic_world,US_Offset,DS_Offset);
+
+  //Visualization
+  G4VisAttributes* vis = new G4VisAttributes(G4Colour::Grey());
+  vis->SetVisibility(true);
+  vis->SetForceSolid(false);
+  //vis->SetLineStyle(G4VisAttributes::LineStyle::unbroken);
+ 
+  G4VisAttributes* vis1 = new G4VisAttributes(G4Colour::Cyan());
+  vis1->SetVisibility(true);
+  vis1->SetForceSolid(true);
 
   //Make SeGA
   SeGA* seg = new SeGA(sens_SeGA);
   seg->Placement(logic_world,SeGA_Offset);
 
+  if(place_silicon) {
+
+    //Make Bambino2
+    Bambino2* bam = new Bambino2();
+    bam->Placement(logic_world,US_Offset,DS_Offset);  
+
+  }
+
   G4bool check = false;
+  if(place_target) {
+
+    //Target material (isotopically pure)
+    target_mat = new G4Material("target_mat",target_density,1); //Bulk material (1 component)
+    G4Element* target_ele = new G4Element("target_ele","target_symbol",1); //Element (1 isoptope)
+    G4Isotope* target_iso = new G4Isotope("target_iso",target_Z,target_N,target_mass); //The isotope
+    target_ele->AddIsotope(target_iso,1.0);
+    target_mat->AddElement(target_ele,1.0);
   
-  //Target material (isotopically pure)
-  target_mat = new G4Material("target_mat",target_density,1); //Bulk material (1 component)
-  G4Element* target_ele = new G4Element("target_ele","target_symbol",1); //Element (1 isoptope)
-  G4Isotope* target_iso = new G4Isotope("target_iso",target_Z,target_N,target_mass); //The isotope
-  target_ele->AddIsotope(target_iso,1.0);
-  target_mat->AddElement(target_ele,1.0);
-  
-  //Make the target
-  G4Tubs* solid_target = new G4Tubs("Target_Sol",0*cm,target_radius,target_thickness/2.0,0.0*deg,360.0*deg);
-  G4LogicalVolume* logic_target = new G4LogicalVolume(solid_target,target_mat,"Target_Logical",0,0,uLim);
+    //Make the target
+    G4Tubs* solid_target = new G4Tubs("Target_Sol",0*cm,target_radius,
+				      target_thickness/2.0,0.0*deg,360.0*deg);
+    G4LogicalVolume* logic_target = new G4LogicalVolume(solid_target,target_mat,"Target_Logical",0,0,uLim);
+    logic_target->SetVisAttributes(vis1);
 						      
-  new G4PVPlacement(0,G4ThreeVector(),logic_target,"Target",logic_world,false,0,check);
+    new G4PVPlacement(0,G4ThreeVector(),logic_target,"Target",logic_world,false,0,check);
+    
+  }
   
   //Beam tube and fram material (aluminium)
   G4Material* Al = new G4Material("Aluminum",13,26.98*g/mole,2.7*g/cm3);
@@ -151,18 +171,7 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   G4Tubs* solid_GV = new G4Tubs("GV_Sol",9.3*cm,17*cm,5.9*cm,0*deg,360*deg);
   G4LogicalVolume* logic_GV = new G4LogicalVolume(solid_GV,GV_mat,"GV_Logical");
   new G4PVPlacement(0,G4ThreeVector(0,0,50*cm),logic_GV,"GV",logic_world,false,0,check);
-  
-  //Visualization
-  G4VisAttributes* vis = new G4VisAttributes(G4Colour::Grey());
-  vis->SetVisibility(true);
-  vis->SetForceSolid(false);
-  //vis->SetLineStyle(G4VisAttributes::LineStyle::unbroken);
- 
-  G4VisAttributes* vis1 = new G4VisAttributes(G4Colour::Cyan());
-  vis1->SetVisibility(true);
-  vis1->SetForceSolid(true);
 
-  logic_target->SetVisAttributes(vis1);
   logic_BT->SetVisAttributes(vis);
   logic_face->SetVisAttributes(vis);
   logic_GV->SetVisAttributes(vis);
@@ -226,9 +235,11 @@ void Detector_Construction::SetTarget(G4String target) {
 
 void Detector_Construction::PrintTarget() {
 
-  G4cout << "\t Z: " << target_Z << "\n\t N: " << target_N << "\n\t Mass: " << G4BestUnit(target_mass,"Mass")
-	 <<  "\n\t Density: " << G4BestUnit(target_density,"Volumic Mass") << "\n\t Thickness: "
-	 << G4BestUnit(target_thickness,"Length") << "\n\t Radius: " << G4BestUnit(target_radius,"Length")
+  G4cout << "\t Z: " << target_Z << "\n\t N: " << target_N
+	 << "\n\t Mass: " << G4BestUnit(target_mass,"Mass")
+	 <<  "\n\t Density: "<< G4BestUnit(target_density,"Volumic Mass")
+	 << "\n\t Thickness: " << G4BestUnit(target_thickness,"Length")
+	 << "\n\t Radius: " << G4BestUnit(target_radius,"Length")
 	 << G4endl;
 
   return;

@@ -33,6 +33,7 @@ private:
   G4UIcmdWithoutParameter* update_cmd;
   
   //Bambino2 commands
+  G4UIcmdWithoutParameter* placeSi_cmd;
   G4UIcmdWithADoubleAndUnit* offsetUS_cmd;
   G4UIcmdWithADoubleAndUnit* offsetDS_cmd;
 
@@ -40,6 +41,7 @@ private:
   G4UIcmdWithADoubleAndUnit* offsetS_cmd;
 
   //Target commands
+  G4UIcmdWithoutParameter* placeTarg_cmd;
   G4UIdirectory* target_dir;
   G4UIcmdWithAnInteger* Z_cmd;
   G4UIcmdWithAnInteger* N_cmd;
