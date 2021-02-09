@@ -95,9 +95,9 @@ void Reaction::TruncatedRutherfordCM(G4double Ep, G4double Ex) {
   
 }
 
-bool Reaction::KeepThetaCM(G4double thetaCM, G4double Ep, G4double Ex) {
+G4bool Reaction::KeepThetaCM(G4double thetaCM, G4double Ep, G4double Ex) {
 
-  bool keep = false;
+  G4bool keep = false;
 
   if(onlyP) { //Only consider projectiles
     
@@ -198,21 +198,19 @@ void Reaction::Bambino2Thetas() {
   G4ThreeVector v(0,0,1);
 
   //Downstream inner edge
-  v.setRhoPhiZ(1.1*cm,0.0*rad,dso+(th/2.0));
-  //v.setRhoPhiZ(1.1*cm - 2.2*mm,0.0*rad,dso+(th/2.0));
+  v.setRhoPhiZ(1.1*cm,0.0*rad,dso-(th/2.0));
   good_LAB_thetas.push_back(v.theta());
 
   //Downstream outer edge
-  v.setRhoPhiZ(3.5*cm,0.0*rad,dso-(th/2.0));
-  //v.setRhoPhiZ(3.5*cm + 2.2*mm,0.0*rad,dso-(th/2.0));
+  v.setRhoPhiZ(3.5*cm,0.0*rad,dso+(th/2.0));
   good_LAB_thetas.push_back(v.theta());
 
   //Upstream outer edge
-  v.setRhoPhiZ(3.5*cm,0.0*rad,-uso+(th/2.0));
+  v.setRhoPhiZ(3.5*cm,0.0*rad,-uso-(th/2.0));
   good_LAB_thetas.push_back(v.theta());
   
   //Upstream inner edge
-  v.setRhoPhiZ(1.1*cm,0.0*rad,-uso-(th/2.0));
+  v.setRhoPhiZ(1.1*cm,0.0*rad,-uso+(th/2.0));
   good_LAB_thetas.push_back(v.theta());
 
   return;

@@ -25,11 +25,13 @@ int targA = 208;
 double targ_mass = 193688.0; // MeV/c^2
 //double targ_mass = 44652.0;
 
-//Silicon detector offsets (downstream and upstream)
+//Silicon detector Z-offsets (downstream and upstream)
 double DS_Offset = 2.6; // cm 
 double US_Offset = 3.4; // cm
-//TVector3 XY_DS(-0.03,-0.063,0.0); // cm
-TVector3 XY_DS(0.0,0.0,0.0);
+
+//Beam spot position (cm)
+const double beam_X = 0.0;
+const double beam_Y = 0.0;
 
 double SeGA_Offset = 3.1; // cm
 /////////////////////////////////////////////////////////////////////////
@@ -917,7 +919,12 @@ int main(int argc, char** argv) {
       double sec_en = data.bam2[i].sEn;
 
       TVector3 segPos = GetPos(det,ring,sec);
-      TVector3 pos = data.bam2[i].sPos + XY_DS;
+      TVector3 pos = data.bam2[i].sPos;
+
+      segPos.SetX(segPos.X() - beam_X);
+      segPos.SetY(segPos.Y() - beam_Y);
+      pos.SetX(pos.X() - beam_X);
+      pos.SetY(pos.Y() - beam_Y);
       
       if(!det) { //Upstream
 
@@ -1036,13 +1043,7 @@ int main(int argc, char** argv) {
       double core_en = rand->Gaus(en,Sigma(en));
       
       coreEnergy->Fill(core_en);
-      
-      if(det < 9) {
-        coreSum->Fill(det+8,core_en);
-      }
-      else {
-        coreSum->Fill(det-8,core_en);
-      }
+      coreSum->Fill(det,core_en);
 
       for(int j=0;j<data.sega[i].nsegs;j++) {
 	
@@ -1076,6 +1077,8 @@ int main(int argc, char** argv) {
         double sec_en = data.bam2[i].sEn;
 
 	TVector3 bPos = GetPos(bDet,ring,sector);
+	bPos.SetX(bPos.X() - beam_X);
+	bPos.SetY(bPos.Y() - beam_Y);
 	
 	if(bDet && data.bam2[i].rP && data.bam2[i].sP) { //Projectile DS gate
 
@@ -1167,12 +1170,7 @@ int main(int argc, char** argv) {
 	    }
 	    
 	    pCoreEnergyDS->Fill(coreEn);
-	    if(det < 9) {
-	      pCoreSumDS->Fill(det+8,coreEn);
-	    }
-	    else {
-	      pCoreSumDS->Fill(det-8,coreEn);
-	    }
+	    pCoreSumDS->Fill(det,coreEn);
 
 	    if(FEP) {
 	      pCoreEnergyDS_fep->Fill(coreEn);
@@ -1314,12 +1312,7 @@ int main(int argc, char** argv) {
 	    }
 
 	    pCoreEnergyUS->Fill(coreEn);
-	    if(det < 9) {
-	      pCoreSumUS->Fill(det+8,coreEn);
-	    }
-	    else {
-	      pCoreSumUS->Fill(det-8,coreEn);
-	    }
+	    pCoreSumUS->Fill(det,coreEn);
 	    
 	    pDopEnergyUS->Fill(dopEn);
 	    pDopSumUS->Fill(det,dopEn);
@@ -1441,12 +1434,7 @@ int main(int argc, char** argv) {
 	    }
 	    
 	    rCoreEnergy->Fill(coreEn);
-	    if(det < 9) {
-	      rCoreSum->Fill(det+8,coreEn);
-	    }
-	    else {
-	      rCoreSum->Fill(det-8,coreEn);
-	    }
+	    rCoreSum->Fill(det,coreEn);
 	    
 	    rDopEnergy->Fill(dopEn);
 	    rDopSum->Fill(det,dopEn);

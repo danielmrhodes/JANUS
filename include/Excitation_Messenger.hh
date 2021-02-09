@@ -4,9 +4,7 @@
 #include "Excitation.hh"
 #include "G4UImessenger.hh"
 #include "G4UIcmdWithAString.hh"
-#include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithADouble.hh"
-#include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithABool.hh"
 
@@ -50,7 +48,7 @@ private:
 
   G4UIdirectory* deo_dir; //Deorientation effect directory
 
-  //Control deorientation effect paramerts
+  //Control deorientation effect parameters
   G4UIcmdWithADouble* avj_cmd; //Average J
   G4UIcmdWithADouble* gam_cmd; //Gamma
   G4UIcmdWithADouble* lam_cmd; //Lambda star

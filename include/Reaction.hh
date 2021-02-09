@@ -82,7 +82,7 @@ public:
   
 private:
 
-  bool KeepThetaCM(G4double thetaCM, G4double Ep, G4double Ex=0.0*MeV);
+  G4bool KeepThetaCM(G4double thetaCM, G4double Ep, G4double Ex=0.0*MeV);
 
   Reaction_Messenger* messenger;
   
