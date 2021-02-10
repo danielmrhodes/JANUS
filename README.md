@@ -195,7 +195,7 @@ Source Mode Level Scheme File Format
 -----------------
 
 <pre>
-II<sub>1</sub> En<sub>1</sub> Sp<sub>1</sub> Tau<sub>1</sub>  Pop<sub>1</sub> Nb<sub>1</sub>
+II<sub>1</sub> En<sub>1</sub> Sp<sub>1</sub> Tau<sub>1</sub> Pop<sub>1</sub> Nb<sub>1</sub>
  IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub> CC<sub>1</sub>
  ...
  IF<sub>Nb<sub>1</sub></sub> P<sub>Nb<sub>1</sub></sub> L1<sub>Nb<sub>1</sub></sub> L2<sub>Nb<sub>1</sub></sub> DL<sub>Nb<sub>1</sub></sub> CC<sub>Nb<sub>1</sub></sub>
