@@ -11,7 +11,6 @@
 #include "Run_Action.hh"
 #include "Event_Action.hh"
 #include "Tracking_Action.hh"
-//#include "Stepping_Action.hh"
 
 int main(int argc, char** argv) {
   
@@ -27,7 +26,6 @@ int main(int argc, char** argv) {
   runManager->SetUserAction(new Run_Action());
   runManager->SetUserAction(new Event_Action());
   runManager->SetUserAction(new Tracking_Action());
-  //runManager->SetUserAction(new Stepping_Action());
 
   //Initialize
   runManager->Initialize();
@@ -41,7 +39,6 @@ int main(int argc, char** argv) {
     UI->ApplyCommand("/vis/open OGLSX");
     UI->ApplyCommand("/vis/drawVolume");
     UI->ApplyCommand("/vis/scene/add/trajectories");
-    //UI->ApplyCommand("/vis/scene/add/axes");
     UI->ApplyCommand("/vis/viewer/zoom 2");
     UI->ApplyCommand("/vis/viewer/set/viewpointThetaPhi 70 20");
     UI->ApplyCommand("/Geometry/Bambino2/Construct");
