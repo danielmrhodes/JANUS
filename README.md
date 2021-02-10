@@ -1,6 +1,6 @@
 JANUS
 =================================================================================
-A GEANT4 simulation of low-energy Coulomb Excitation experiments with SeGA-JANUS.
+A GEANT4 simulation of low-energy Coulomb excitation experiments with SeGA-JANUS.
 =================================================================================
 
 Requirements
@@ -17,7 +17,7 @@ JANUS takes an input macro file and writes the output to a data file. To run the
 
 The ROOT file hist_file.root now contains many histograms and can be opened with any standard ROOT installation.
 
-The correlator is a small program compiled with ROOT libraries. To correctly sort the simulated data, the correlator.cc file needs to be edited and recompiled. Directly after the inlcude statements, 10 variables need to be changed to match the simulation input: beamZ, beamA, beam_mass, beam_en, targZ, targA, targ_mass, DS_Offset, US_Offset, and SeGA_Offset. 
+The correlator is a small program compiled with ROOT libraries. To correctly sort the simulated data, the correlator.cc file needs to be edited and recompiled. Directly after the inlcude statements there are several variables which need to be changed to match the simulation input.
 
 To recompile the correlator, simply
 
@@ -27,7 +27,7 @@ Functionality
 -----------------
 The JANUS simultation has three modes: Source, Scattering, and Full. Each mode has different functionality and input requirements. 
 
-- Source: Simulates a simple isotropic gamma-ray source. No (massive) particles involved.
+- Source: Simulates either a simple isotropic gamma-ray, or a user-definable gamma-ray cascade. No massive particles involved.
 - Scattering: Simulates two-body scattering events. No gamma-rays involved. 
 - Full: Simulates Coulomb Excitation events with user-definable level schemes, scattering-angle dependent excitation probabilities, and scattering-angle dependent alignment of the excited states..
 
@@ -50,27 +50,32 @@ The /Geometry commands are common across all modes. With the exception of /Geome
 
 | Command | Description |
 | --- | --- |
+| /Geometry/Bambino2/Construct | Include the silicon detectors in the simulation |
+| /Geometry/Target/Construct | Include the target in the simulation |
 | /Geometry/Bambino2/UpstreamOffset *double unit* | Set (positive) z-offset of upstream silicon detector. (Default: 3 cm) |
 | /Geometry/Bambino2/DownstreamOffset *double unit* | Set (positive) z-offset of downstream silicon detector. (Default: 3 cm) |
 | /Geometry/SeGA/Offset *double unit* | Set z-offset of SeGA. (Default: 0 cm) |
+| /Geometry/Target/StandardTarget *string* | Set parameters for a standard target: 208Pb, 48Ti, or 196Pt. |
 | /Geometry/Target/Z *int* | Set Z of target nucleus. (Default: 82) |
 | /Geometry/Target/N *int* | Set N of target nucleus. (Default: 126) |
 | /Geometry/Target/Density *double unit* | Set (volume) density of target material. (Default: 11.382 g/cm<sup>3</sup>) |
 | /Geometry/Target/Mass *double unit* | Set mass of target material. (Default: 207.97665 g/mole) |
 | /Geometry/Target/Thickness *double unit* | Set (linear) thickness of target. (Default: 882 nm) |
 | /Geometry/Target/Radius *double unit* | Set radius of target. (Default: 0.5 cm) |
-| /Geometry/Target/StandardTarget *string* | Set parameters for a standard target: 208Pb, 48Ti, or 196Pt. |
 | /Geometry/Update | Update the simulation with your desired geometry. |
 
-Note that the target does **NOT** define the recoiling nucleus for the kinematics or excitation, it only defines "bulk" material properties of the target.
+Note that the target does **NOT** define the recoiling nucleus for the kinematics or excitation, it only defines "bulk" material properties of the target. If you do not call the /Construct commands for the silicon detectors or the target, they will not be in the simulation.
 
 Source Mode Commands
 -----------------
-There is only one /Source command, and it is mandatory.
+There are two /Source commands, one of which must be called. They are mutually exclusive.
 
 | Command | Description |
 | --- | --- |
-| /Source/Energy *double unit* | Set energy of source gamma-rays. |
+| /Source/Energy *double unit* | Simulate a single isotropic gamma-ray of this energy |
+| /Source/LevelScheme *string* | Simulate a gamma-ray cascade defined by this file |
+
+See the Source Level Scheme File Format section below for details on the level scheme file. 
 
 Scattering Mode Commands
 -----------------
@@ -157,11 +162,12 @@ The statistical tensors [1] and deorientation effect coefficients G<sub>k</sub> 
 
 Input Preparation
 -----------------
-The ROOT script MakeInput.C will make the probabilities file and statistical tensors file that can be given to JANUS. The level scheme file must be created manually (its format is described below). The script uses the Coulomb excitation code Cygnus [3] for the calculations. The Cygnus libraries must be loaded into the ROOT session before loading MakeInput.C, and the Cygnus nucleus file must already be created. See [3] for details.  
+The ROOT script MakeInput.C will make the probabilities file and statistical tensors file that can be given to JANUS. The script uses the Coulomb excitation code Cygnus [3] for the calculations. The Cygnus libraries must be loaded into the ROOT session before loading MakeInput.C, and the Cygnus nucleus file must already be created. See [3] for details.
 
-Level Scheme File Format
+The level scheme file, for either a Source or Full simulation, must be created manually. The file has a different format depending on the simulation mode; these are described below.   
+
+Full Mode Level Scheme File Format
 -----------------
-The level scheme files are text files which describe the excited states of a nucleus and their gamma decays. They have the following format.
 
 <pre>
 II<sub>1</sub> En<sub>1</sub> Sp<sub>1</sub> Tau<sub>1</sub> Nb<sub>1</sub>
@@ -181,13 +187,34 @@ II<sub>N</sub> En<sub>N</sub> Sp<sub>N</sub> Tau<sub>N</sub> Nb<sub>N</sub>
  
 Here II<sub>i</sub> is the index of state i, En<sub>i</sub> is its energy in keV, Sp<sub>i</sub> is its spin (J), Tau<sub>i</sub> is its mean-lifetime in ps, and Nb<sub>i</sub> is the number of gamma decays from this state. IF<sub>j</sub> is the index of the final state for gamma decay j of this state. P<sub>j</sub> is the probability of that decay (relative to the other gamma-ray decays), L1<sub>j</sub> is the higher multipolarity of the transition, L2<sub>j</sub> is the lower multipolarity of the transition, and DL<sub>j</sub> is the mixing ratio. CC<sub>j</sub> is the total conversion coefficient of this gamma-ray transition. 
 
-The states must be declared in order, i.e. II<sub>1</sub> = 1, II<sub>2</sub> = 2 and so on. This technically makes the initial state index redundant. The ground state (index 0) is not included in the level scheme file. There is no limit on the number of excited states or decays from a state. An example level scheme file is in the Examples/LevelSchemes folder.
+The states must be declared in order, i.e. II<sub>1</sub> = 1, II<sub>2</sub> = 2 and so on. This technically makes the initial state index redundant. The ground state (index 0) is not included in the level scheme file. There is no limit on the number of excited states or decays from a state.
 
-The spin of a state must be integer or half-integer. For the gamma transitions, L1 > L2. If DL = 0, the transition will be pure L1 and L2 is ignored.
+The spin of a state must be integer or half-integer. For the gamma transitions, L1 > L2. If DL = 0, the transition will be pure L1 and L2 is ignored. Example level scheme files for a Full simulation are in the Examples/LevelSchemes/Full folder.
+
+Source Mode Level Scheme File Format
+-----------------
+
+<pre>
+II<sub>1</sub> En<sub>1</sub> Sp<sub>1</sub> Tau<sub>1</sub>  Pop<sub>1</sub> Nb<sub>1</sub>
+ IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub> CC<sub>1</sub>
+ ...
+ IF<sub>Nb<sub>1</sub></sub> P<sub>Nb<sub>1</sub></sub> L1<sub>Nb<sub>1</sub></sub> L2<sub>Nb<sub>1</sub></sub> DL<sub>Nb<sub>1</sub></sub> CC<sub>Nb<sub>1</sub></sub>
+II<sub>2</sub> En<sub>2</sub> Sp<sub>2</sub> Tau<sub>2</sub> Pop<sub>2</sub> Nb<sub>2</sub>
+ IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub> CC<sub>1</sub>
+ ...
+ IF<sub>Nb<sub>2</sub></sub> P<sub>Nb<sub>2</sub></sub> L1<sub>Nb<sub>2</sub></sub> L2<sub>Nb<sub>2</sub></sub> DL<sub>Nb<sub>2</sub></sub> CC<sub>Nb<sub>2</sub></sub>
+...
+II<sub>N</sub> En<sub>N</sub> Sp<sub>N</sub> Tau<sub>N</sub> Pop<sub>2</sub> Nb<sub>N</sub>
+ IF<sub>1</sub> P<sub>1</sub> L1<sub>1</sub> L2<sub>1</sub> DL<sub>1</sub> CC<sub>1</sub>
+ ...
+ IF<sub>Nb<sub>N</sub></sub> P<sub>Nb<sub>N</sub></sub> L1<sub>Nb<sub>N</sub></sub> L2<sub>Nb<sub>N</sub></sub> DL<sub>Nb<sub>N</sub></sub> CC<sub>Nb<sub>N</sub></sub>
+</pre>
+
+The Source level scheme file is the same the Full level schem file (above), but has one additional entry, Pop<sub>i</sub>, which comes before Nb<sub>i</sub>. This is the relative population of the state i.
 
 Probability File Format
 -----------------
-The probability files are text files which describe the scattering-angle dependent excitation probabilities of the excited states. They have the following format.
+The probability files are text files which describe the scattering-angle dependent excitation probabilities of the excited states. They have the following format. An example level scheme file (co60.lvl) for a Source simulation is in the Examples/LevelSchemes/Source folder.
 
 <pre>
 theta<sub>1</sub> P<sub>0</sub>(theta<sub>1</sub>) P<sub>1</sub>(theta<sub>1</sub>) ... P<sub>N</sub>(theta<sub>1</sub>)

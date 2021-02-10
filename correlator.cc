@@ -12,26 +12,26 @@
 #include "Data_Format.hh"
 
 ////These should match the parameters defined in the simulation input////
-int beamZ = 48;
-int beamA = 106;
-double beam_mass = 98626.9; // MeV/c^2
+//These correspond to the input file Examples/Macros/full.mac
+
+const int beamZ = 48;
+const int beamA = 106;
+const double beam_mass = 98626.9; // MeV/c^2
 
 //You should reduce this value by the energy loss in the target
-//double beam_en = 434.0; // MeV
-double beam_en = 265.0;
+const double beam_en = 265.0; // MeV
   
-int targZ = 82;
-int targA = 208;
-double targ_mass = 193688.0; // MeV/c^2
-//double targ_mass = 44652.0;
+const int targZ = 82;
+const int targA = 208;
+const double targ_mass = 44652.0; // MeV/c^2
 
-//Silicon detector Z-offsets (downstream and upstream)
+//Silicon detector z-offsets (downstream and upstream)
 double DS_Offset = 2.6; // cm 
 double US_Offset = 3.4; // cm
 
-//Beam spot position (cm)
-const double beam_X = 0.0;
-const double beam_Y = 0.0;
+//Beam spot position
+const double beam_X = 0.0; // cm 
+const double beam_Y = 0.0; // cm 
 
 double SeGA_Offset = 3.1; // cm
 /////////////////////////////////////////////////////////////////////////
