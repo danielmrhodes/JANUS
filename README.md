@@ -5,8 +5,8 @@ A GEANT4 simulation of low-energy Coulomb excitation experiments with SeGA-JANUS
 
 Requirements
 ------------------
-- JANUS requires GEANT4 v10.04.02. It has not been tested on any other version.
-- In order to unpack, correlate, and histogram the simulation output, a ROOT installation is required.
+- JANUS has been tested on both GEANT4 v10.04.02 and v10.07.00. It *should* compile on any GEANT version after v10.04.02.
+- In order to use the file correlator.cc to sort and histogram the simulated data, a ROOT installation is required.
 
 Running JANUS
 -----------------
