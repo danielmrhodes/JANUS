@@ -77,8 +77,8 @@ void Event_Action::EndOfEventAction(const G4Event* evt) {
     header.nSdata = nS;
   
     fwrite(&header,header.bytes(),1,output);
-    fwrite(&data.bData,nB*sizeof(Bambino2Data),1,output);
-    fwrite(&data.sData,nS*sizeof(SegaData),1,output);
+    fwrite(&data.bData,sizeof(Bambino2Data),nB,output);
+    fwrite(&data.sData,sizeof(SegaData),nS,output);
 
   }
   
