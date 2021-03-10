@@ -210,11 +210,11 @@ II<sub>N</sub> En<sub>N</sub> Sp<sub>N</sub> Tau<sub>N</sub> Pop<sub>2</sub> Nb<
  IF<sub>Nb<sub>N</sub></sub> P<sub>Nb<sub>N</sub></sub> L1<sub>Nb<sub>N</sub></sub> L2<sub>Nb<sub>N</sub></sub> DL<sub>Nb<sub>N</sub></sub> CC<sub>Nb<sub>N</sub></sub>
 </pre>
 
-The Source level scheme file is the same the Full level schem file (above), but has one additional entry, Pop<sub>i</sub>, which comes before Nb<sub>i</sub>. This is the relative population of the state i.
+The Source level scheme file is the same the Full level schem file (above), but has one additional entry, Pop<sub>i</sub>, which comes before Nb<sub>i</sub>. This is the relative population of the state i. An example level scheme file (co60.lvl) for a Source simulation is in the Examples/LevelSchemes/Source folder.
 
 Probability File Format
 -----------------
-The probability files are text files which describe the scattering-angle dependent excitation probabilities of the excited states. They have the following format. An example level scheme file (co60.lvl) for a Source simulation is in the Examples/LevelSchemes/Source folder.
+The probability files are text files which describe the scattering-angle dependent excitation probabilities of the excited states. They have the following format.
 
 <pre>
 theta<sub>1</sub> P<sub>0</sub>(theta<sub>1</sub>) P<sub>1</sub>(theta<sub>1</sub>) ... P<sub>N</sub>(theta<sub>1</sub>)
