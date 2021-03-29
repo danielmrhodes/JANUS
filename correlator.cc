@@ -234,13 +234,13 @@ TVector3 GetPos(const int det, const int seg) {
     innerRadius = 0.5 + 0.03; //fingerRadius + DL thickness
   }
 
-  TVector3 pos(1,0,0);
+  TVector3 pos(1.0,1.0,1.0);
   pos.SetPerp((outerRadius + innerRadius)/2.0);
-  pos.SetPhi((quad+0.5)*2*PI/4.);
+  pos.SetPhi((quad+0.5)*2*PI/4.0);
   pos.SetZ((length/8.0)*(2.0*slice - 7.0));
 
   double rd = 12.975;
-  double phid = (det-1)*(2.*PI/8.);
+  double phid = (det-1)*(2.0*PI/8.0) + PI/8.0 ;
   double zd = length + 2*0.05 + 0.6;
   if(det > 8) {
     zd*=-1;

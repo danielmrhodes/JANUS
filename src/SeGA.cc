@@ -118,7 +118,7 @@ void SeGA::PlaceDetector(G4LogicalVolume* expHall_log, G4int detNum, G4double Zo
   G4LogicalVolume* cryo_log = new G4LogicalVolume(cryo,Al,"cryo_log",0,0,0); //LR
 
   G4double rd = 12.975*cm;
-  G4double phid = detNum*(360.0/8.0)*deg;
+  G4double phid = detNum*(360.0/8.0)*deg + 180.0/8.0*deg;
   G4double zd = Length + 2*oCanThickness + 0.6*cm;
 
   if(detNum > 7) {
