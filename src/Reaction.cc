@@ -28,8 +28,6 @@ Reaction::~Reaction() {
 }
 
 void Reaction::ConstructRutherfordCM(G4double Ep, G4double Ex) {
-
-  //G4cout << "\nBuilding Rutherford scattering distribution!" << G4endl;
   
   if(good_LAB_thetas.size()) {
     
@@ -61,7 +59,7 @@ void Reaction::FullRutherfordCM(G4double Ep, G4double Ex) {
   for(int i=0;i<nBins-1;i++) {
 
     G4double thetaCM = (pi/(double)nBins)*(i+1);
-    probDist[i] = RutherfordCM(thetaCM,Ep,Ex);
+    probDist[i] = 2.0*pi*std::sin(thetaCM)*RutherfordCM(thetaCM,Ep,Ex);
 
   }
 
@@ -81,10 +79,10 @@ void Reaction::TruncatedRutherfordCM(G4double Ep, G4double Ex) {
     G4double thetaCM = (pi/(double)nBins)*(i+1);
 
     if(KeepThetaCM(thetaCM,Ep,Ex)) {
-      probDist[i] = RutherfordCM(thetaCM,Ep,Ex);
+      probDist[i] = 2.0*pi*std::sin(thetaCM)*RutherfordCM(thetaCM,Ep,Ex);
     }
     else {
-      probDist[i] = 0;
+      probDist[i] = 0.0;
     }
 
   }
@@ -275,6 +273,26 @@ G4double Reaction::SampleRutherfordCM() {
   
 }
 
+/*
+//this is a standard GEANT4 implementation
+G4double Reaction::SampleRutherfordCM_2() {
+
+  //CM Angles
+  G4double cosTetMinNuc = 0.939693; //Cos(20 deg)
+  G4double cosTetMaxNuc = -0.866025; //Cos(150 deg)
+  //G4double screenZ = 2.18921e-06; //80Ge 281.6 MeV on 196Pt
+  G4double screenZ = 0.0;
+  
+  G4double x1 = 1. - cosTetMinNuc + screenZ;
+  G4double x2 = 1. - cosTetMaxNuc + screenZ;
+  G4double dx = cosTetMinNuc - cosTetMaxNuc;
+  G4double z1 = x1*x2/(x1 + G4UniformRand()*dx) - screenZ;
+
+  return std::acos(1.0 - z1);
+  
+}
+*/
+
 //Everything below here come the GOSIA manual, chapter 5
 /*
 G4double Reaction::Theta_LAB_Max(G4double Ep, G4double Ex) {
@@ -317,9 +335,9 @@ G4double Reaction::Theta_LAB(G4double thetaCM, G4double Ep, G4double Ex) {
   if(tanTheta > 0) {
     return std::atan(tanTheta);
   }
-  else {
-    return std::atan(tanTheta) + pi;
-  }
+  
+  return std::atan(tanTheta) + pi;
+  
 }
 
 G4double Reaction::Recoil_Theta_LAB(G4double thetaCM, G4double Ep, G4double Ex) {
@@ -340,6 +358,7 @@ G4double Reaction::KE_LAB(G4double thetaCM, G4double Ep, G4double Ex) {
   G4double term3 = Ep - Ex*(1 + beam_mass/targ_mass);
   
   return term1*term2*term3;
+  
 }
 
 G4double Reaction::Recoil_KE_LAB(G4double thetaCM, G4double Ep, G4double Ex) {
@@ -351,6 +370,7 @@ G4double Reaction::Recoil_KE_LAB(G4double thetaCM, G4double Ep, G4double Ex) {
   G4double term3 = Ep - Ex*(1 + beam_mass/targ_mass);
   
   return term1*term2*term3;
+  
 }
 
 /*
