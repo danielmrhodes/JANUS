@@ -1,10 +1,10 @@
+This branch has been superseded by AngularDistribution
+------------------------------------------------------
+
 JANUS
 =================================================================================
 A GEANT4 simulation of low-energy Coulomb Excitation experiments with SeGA-JANUS.
 =================================================================================
-
-This branch has been superseded by AngularDistribution
-------------------------------------------------------
 
 Requirements
 ------------------
