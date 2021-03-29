@@ -44,7 +44,7 @@ void Bambino2::Placement(G4LogicalVolume* world, G4double USoff, G4double DSoff)
 
   //Radial and angular spacing
   G4double dr = (outerRadius - innerRadius)/(double)nRings;
-  G4double dphi = 2*pi/(double)nSectors;
+  G4double dphi = 2.0*pi/(double)nSectors;
 
   G4bool check = false;
   

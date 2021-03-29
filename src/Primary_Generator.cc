@@ -189,21 +189,9 @@ void Primary_Generator::GenerateSourcePrimaries(G4Event* evt) {
 }
 
 void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
-
-  //Remove all polarization
-  excite->Unpolarize();
   
   //Choose thetaCM 
   G4double th = reac->SampleRutherfordCM();
-
-  //Choose excited states
-  G4int pI = excite->ChooseProjectileState(th);
-  G4int rI = excite->ChooseRecoilState(th);
-
-  //DelatE for inelastic scattering
-  G4double ex = 0.0*MeV;
-  ex += excite->GetProjectileExcitation(pI);
-  ex += excite->GetRecoilExcitation(rI);
 
   //Randomize incoming beam energy using energy distribution
   G4double en = G4RandGauss::shoot(beam_En,sigma_En);
@@ -213,6 +201,15 @@ void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
 
   //Energy loss
   en -= dedx*depth;
+
+  //Choose excited states
+  G4int pI = excite->ChooseProjectileState(th);
+  G4int rI = excite->ChooseRecoilState(th);
+
+  //DelatE for inelastic scattering
+  G4double ex = 0.0*MeV;
+  ex += excite->GetProjectileExcitation(pI);
+  ex += excite->GetRecoilExcitation(rI);
 
   //Reaction position
   //Randomize X and Y
@@ -229,7 +226,8 @@ void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
   rdir.setTheta(reac->Recoil_Theta_LAB(th,en,ex)); //theta from kinematics
   rdir.setPhi(bdir.phi()-pi); //Particles emerge back-to-back in LAB frame
 
-  //Polarize excited states
+  //Align excited states
+  excite->Unpolarize(); //remove old polarization
   excite->Polarize(pI,rI,th,bdir.phi());
   
   //Randomize direction using angle distributions

@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 
   G4UImanager* UI = G4UImanager::GetUIpointer();
   if(argc == 1) { //Interactive Mode
-
+    
     G4VisManager* visManager = new G4VisExecutive();
     visManager->Initialize();
 

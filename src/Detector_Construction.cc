@@ -172,12 +172,23 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   G4LogicalVolume* logic_GV = new G4LogicalVolume(solid_GV,GV_mat,"GV_Logical");
   new G4PVPlacement(0,G4ThreeVector(0,0,50*cm),logic_GV,"GV",logic_world,false,0,check);
 
+  /*
+  G4Box* box1 = new G4Box("Box_Sol1",0.99*m,0.99*m,0.99*m);
+  G4Box* box2 = new G4Box("Box_Sol2",0.92*m,0.92*m,0.92*m);
+  G4SubtractionSolid* solid_box = new G4SubtractionSolid("Box_Sol",box1,box2);
+
+  G4Material* box_mat = new G4Material("box_mat",82,207.97665*g/mole,11.832*g/cm3);
+  G4LogicalVolume* logic_box = new G4LogicalVolume(solid_box,box_mat,"Box_Logical");
+  new G4PVPlacement(0,G4ThreeVector(),logic_box,"Lead_Box",logic_world,false,0,check);
+  */
+  
   logic_BT->SetVisAttributes(vis);
   logic_face->SetVisAttributes(vis);
   logic_GV->SetVisAttributes(vis);
   logic_plate->SetVisAttributes(vis);
   logic_arm->SetVisAttributes(vis);
   logic_top->SetVisAttributes(vis);
+  //logic_box->SetVisAttributes(vis1);
 
   return world;
 }
