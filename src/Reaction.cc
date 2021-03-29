@@ -60,7 +60,7 @@ void Reaction::FullRutherfordCM(G4double Ep, G4double Ex) {
   for(int i=0;i<nBins-1;i++) {
 
     G4double thetaCM = (pi/(double)nBins)*(i+1);
-    probDist[i] = RutherfordCM(thetaCM,Ep,Ex);
+    probDist[i] = 2.0*pi*std::sin(thetaCM)*RutherfordCM(thetaCM,Ep,Ex);
 
   }
 
@@ -80,7 +80,7 @@ void Reaction::TruncatedRutherfordCM(G4double Ep, G4double Ex) {
     G4double thetaCM = (pi/(double)nBins)*(i+1);
 
     if(KeepThetaCM(thetaCM,Ep,Ex)) {
-      probDist[i] = RutherfordCM(thetaCM,Ep,Ex);
+      probDist[i] = 2.0*pi*std::sin(thetaCM)*RutherfordCM(thetaCM,Ep,Ex);
     }
     else {
       probDist[i] = 0;
