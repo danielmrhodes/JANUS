@@ -3,6 +3,9 @@ JANUS
 A GEANT4 simulation of low-energy Coulomb Excitation experiments with SeGA-JANUS.
 =================================================================================
 
+This branch has been superseded by AngularDistribution
+------------------------------------------------------
+
 Requirements
 ------------------
 - JANUS requires GEANT4 v10.04.02. It has not been tested on any other version.
