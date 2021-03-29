@@ -78,13 +78,21 @@ public:
   void SetProjCalcGk(G4bool calc) {pCalcGk = calc;}
   void SetRecCalcGk(G4bool calc) {rCalcGk = calc;}
 
-  void SetAverageJ(G4double avj) {Avji = avj;}
-  void SetGamma(G4double gam) {Gam = gam;}
-  void SetLambdaStar(G4double lam) {Xlamb = lam;}
-  void SetTauC(G4double tc) {TimeC = tc;}
-  void SetGFacMult(G4double mult) {GfacMult = mult;}
-  void SetFieldCoef(G4double coef) {Field = coef;}
-  void SetFieldExp(G4double ex) {Power = ex;}
+  void SetProjAverageJ(G4double avj) {Avji_P = avj;}
+  void SetProjGamma(G4double gam) {Gam_P = gam;}
+  void SetProjLambdaStar(G4double lam) {Xlamb_P = lam;}
+  void SetProjTauC(G4double tc) {TimeC_P = tc;}
+  void SetProjGFac(G4double gf) {Gfac_P = gf;}
+  void SetProjFieldCoef(G4double coef) {Field_P = coef;}
+  void SetProjFieldExp(G4double ex) {Power_P = ex;}
+
+  void SetRecAverageJ(G4double avj) {Avji_R = avj;}
+  void SetRecGamma(G4double gam) {Gam_R = gam;}
+  void SetRecLambdaStar(G4double lam) {Xlamb_R = lam;}
+  void SetRecTauC(G4double tc) {TimeC_R = tc;}
+  void SetRecGFac(G4double gf) {Gfac_R = gf;}
+  void SetRecFieldCoef(G4double coef) {Field_R = coef;}
+  void SetRecFieldExp(G4double ex) {Power_R = ex;}
 
 private:
 
@@ -97,7 +105,7 @@ private:
 
   //calculate Gk coefficients
   std::array<G4double,7> GKK(const G4int iz, const G4int ia, const G4double beta, const G4double spin,
-			     const G4double time);
+			     const G4double time, const G4bool rec);
   G4double ATS(const G4int Ne);
   void XSTATIC(const G4int iz, const G4double beta, G4int& id, G4int& iu, G4double& qcen, G4double& dq,
 	       G4double& xnor);
@@ -119,14 +127,23 @@ private:
   G4bool pCalcGk; //Flag to calculate depolarization coefficients for projectile
   G4bool rCalcGk; //Flag to calculate depolarization coefficients for recoil
 
-  //model parameters
-  G4double Avji; // Average atomic spin
-  G4double Gam; // FWHM of frequency distribution
-  G4double Xlamb; //Fluctuating state to static state transition rate
-  G4double TimeC; //Mean time between random reorientations of fluctuating state 
-  G4double GfacMult; //Scaling factor for nuclear gyromagnetic ratio (g = Z/A)
-  G4double Field; //Hyperfine field coefficient
-  G4double Power; //Hyperfine field exponent
+  //model parameters for projectile
+  G4double Avji_P; // Average atomic spin
+  G4double Gam_P; // FWHM of frequency distribution
+  G4double Xlamb_P; //Fluctuating state to static state transition rate
+  G4double TimeC_P; //Mean time between random reorientations of fluctuating state 
+  G4double Gfac_P; //gyromagnetic ratio (g-factor)
+  G4double Field_P; //Hyperfine field coefficient
+  G4double Power_P; //Hyperfine field exponent
+
+  //model parameters for recoil
+  G4double Avji_R;
+  G4double Gam_R;
+  G4double Xlamb_R;
+  G4double TimeC_R;
+  G4double Gfac_R;
+  G4double Field_R;
+  G4double Power_R;
 
 };
 

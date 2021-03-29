@@ -143,18 +143,18 @@ For the Full CoulEx simulation, all Scattering mode commands still apply. Additi
 | /Excitation/Projectile/OnlyConsiderState *int* | Turn off gamma decays from all states except this one. This requires a level scheme file and a probabilities file. |
 | /Excitation/Projectile/PopulateState *int* | Choose one state to populate in the projectile, irrespective of scattering angle. This only requires a level scheme file (the probabilities file will simply be ignored). |
 | /Excitation/Projectile/GroundStateSpin *double* | Set the spin of the projectile ground state. The spin must be integer or half-integer. (Default: 0.0) |
-| /Excitation/Projectile/CalculateGk *bool* | Control whether the deorientation effect coefficients G<sub>k</sub> will be calculated for the projectile. These attenuate the nuclear alignment induced after CoulEx, and are only used if the statistical tensors file is provided. (Default: true) |
-| /Excitation/DeorientationEffect/AverageJ *double* | Set the average atomic spin for the deorentation effect two-state model (Default: 3.0) |
-| /Excitation/DeorientationEffect/Gamma *double* | Set the FWHM of the frequency distribution (ps^-1 ) for the deorentation effect two-state model (Default: 0.02) |
-| /Excitation/DeorientationEffect/Lambda *double* | Set the transition rate (ps^-1 ) between static and fluctuating states for the deorentation effect two-state model (Default: 0.0345) |
-| /Excitation/DeorientationEffect/TauC *double* | Set the correlation time (ps) of the fluctating state for the deorentation effect two-state model (Default: 3.5) |
-| /Excitation/DeorientationEffect/GfactorScaling *double* | Set the scaling factor applied to the nuclear gyromagnetic ratio g = Z/A for the deorentation effect two-state model (Default: 1.0) |
-| /Excitation/DeorientationEffect/FieldCoefficient *double* | Set the hyperfine field coefficient (10^8 T) for the deorentation effect two-state model (Default: 6*10<sup>-6</sup>) |
-| /Excitation/DeorientationEffect/FieldExponent *double* | Set the hyperfine field exponent for the deorentation effect two-state model (Default: 0.6) |
+| /DeorientationEffect/Projectile/CalculateGk *bool* | Control whether the deorientation effect coefficients G<sub>k</sub> will be calculated for the projectile. These attenuate the nuclear alignment induced after CoulEx, and are only used if the statistical tensors file is provided. (Default: true) |
+| /DeorientationEffect/Projectile/AverageJ *double* | Set the average atomic spin in the projectile for the deorentation effect two-state model (Default: 3.0) |
+| /DeorientationEffect/Projectile/Gamma *double* | Set the FWHM of the frequency distribution (ps^-1 ) in the projectile for the deorentation effect two-state model (Default: 0.02) |
+| /DeorientationEffect/Projectile/Lambda *double* | Set the transition rate (ps^-1 ) between static and fluctuating states in the projectile for the deorentation effect two-state model (Default: 0.0345) |
+| /DeorientationEffect/Projectile/TauC *double* | Set the correlation time (ps) of the fluctating state in the projectile for the deorentation effect two-state model (Default: 3.5) |
+| /DeorientationEffect/Projectile/GFactor *double* | Set the gyromagnetic ratio (g-factor) of the projectile for the deorentation effect two-state model (Default: Z/A) |
+| /DeorientationEffect/Projectile/FieldCoefficient *double* | Set the hyperfine field coefficient (10^8 T) in the projectile for the deorentation effect two-state model (Default: 6*10<sup>-6</sup>) |
+| /DeorientationEffect/Projectile/FieldExponent *double* | Set the hyperfine field exponent in the projectile for the deorentation effect two-state model (Default: 0.6) |
 
-To control the level scheme and excitations in the recoil nucleus, replace /Excitation/Projectile/ with /Excitation/Recoil/. All commands are identically the same.
+The recoiling target nucleus can be controlled with identical commands. Simply replace /Projectile/ with /Recoil/ in any of the above commands.
 
-The statistical tensors [1] and deorientation effect coefficients G<sub>k</sub> are critical for reproducing the LAB frame gamma-ray spectra. See [2] for details on the two-state model, and the meaning of its parameters, which is used to describe the deorientation effect. The parameters can be controlled using the above /Excitation/DeorientationEffect/ commands.
+The statistical tensors [1] and deorientation effect coefficients G<sub>k</sub> are critical for reproducing the LAB frame gamma-ray spectra. See [2] for details on the two-state model, and the meaning of its parameters, which is used to describe the deorientation effect.
 
 *If you input a level scheme, you must also input the probabilities or choose a state to populate. Otherwise the level scheme won't be used.*
 

@@ -54,13 +54,21 @@ public:
   void Polarize(G4int pIndex, G4int rIndex, G4double th, G4double ph);
   void Unpolarize();
 
-  void SetAverageJ(G4double avj) {polar->SetAverageJ(avj);}
-  void SetGamma(G4double gam) {polar->SetGamma(gam);}
-  void SetLambdaStar(G4double lam) {polar->SetLambdaStar(lam);}
-  void SetTauC(G4double tc) {polar->SetTauC(tc);}
-  void SetGFacMult(G4double mult) {polar->SetGFacMult(mult);}
-  void SetFieldCoef(G4double coef) {polar->SetFieldCoef(coef);}
-  void SetFieldExp(G4double ex) {polar->SetFieldExp(ex);}
+  void SetProjAverageJ(G4double avj) {polar->SetProjAverageJ(avj);}
+  void SetProjGamma(G4double gam) {polar->SetProjGamma(gam);}
+  void SetProjLambdaStar(G4double lam) {polar->SetProjLambdaStar(lam);}
+  void SetProjTauC(G4double tc) {polar->SetProjTauC(tc);}
+  void SetProjGFac(G4double gf) {polar->SetProjGFac(gf);}
+  void SetProjFieldCoef(G4double coef) {polar->SetProjFieldCoef(coef);}
+  void SetProjFieldExp(G4double ex) {polar->SetProjFieldExp(ex);}
+
+  void SetRecAverageJ(G4double avj) {polar->SetRecAverageJ(avj);}
+  void SetRecGamma(G4double gam) {polar->SetRecGamma(gam);}
+  void SetRecLambdaStar(G4double lam) {polar->SetRecLambdaStar(lam);}
+  void SetRecTauC(G4double tc) {polar->SetRecTauC(tc);}
+  void SetRecGFac(G4double gf) {polar->SetRecGFac(gf);}
+  void SetRecFieldCoef(G4double coef) {polar->SetRecFieldCoef(coef);}
+  void SetRecFieldExp(G4double ex) {polar->SetRecFieldExp(ex);}
   
 private:
 

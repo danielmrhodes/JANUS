@@ -37,11 +37,6 @@ Excitation_Messenger::Excitation_Messenger(Excitation* exc) : excitation(exc) {
   pGSS_cmd = new G4UIcmdWithADouble("/Excitation/Projectile/GroundStateSpin",this);
   pGSS_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   pGSS_cmd->SetGuidance("Set spin of projectile ground state");
-
-  //Gk coefficients
-  pCGk_cmd = new G4UIcmdWithABool("/Excitation/Projectile/CalculateGk",this);
-  pCGk_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  pCGk_cmd->SetGuidance("Calculate Gk coefficiencts and apply them to the projectile statistical tensor");
   
   //Recoil directory
   rec_dir = new G4UIdirectory("/Excitation/Recoil/");
@@ -76,48 +71,91 @@ Excitation_Messenger::Excitation_Messenger(Excitation* exc) : excitation(exc) {
   rGSS_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
   rGSS_cmd->SetGuidance("Set spin of recoil ground state");
 
-  //Gk coefficients
-  rCGk_cmd = new G4UIcmdWithABool("/Excitation/Recoil/CalculateGk",this);
-  rCGk_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  rCGk_cmd->SetGuidance("Calculate Gk coefficiencts and apply them to the recoil statistical tensor");
+  //Deorentation effect paramter directory for projectile
+  deoP_dir = new G4UIdirectory("/DeorientationEffect/Projectile/");
 
-  //Deorentation effect paramter directory
-  deo_dir = new G4UIdirectory("/Excitation/DeorientationEffect/");
+  //Gk coefficients
+  pCGk_cmd = new G4UIcmdWithABool("/DeorientationEffect/Projectile/CalculateGk",this);
+  pCGk_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  pCGk_cmd->SetGuidance("Calculate Gk coefficiencts and apply them to the projectile statistical tensors");
 
   //Average J
-  avj_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/AverageJ",this);
-  avj_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  avj_cmd->SetGuidance("Set the average atomic spin");
+  avjP_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Projectile/AverageJ",this);
+  avjP_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  avjP_cmd->SetGuidance("Set the average atomic spin of the projectile");
 
   //Gamma
-  gam_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/Gamma",this);
-  gam_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  gam_cmd->SetGuidance("Set the FWHM of the frequency distribution (ps^-1 )");
+  gamP_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Projectile/Gamma",this);
+  gamP_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  gamP_cmd->SetGuidance("Set the FWHM of the frequency distribution (ps^-1 ) in the projectile");
 
   //Lambda
-  lam_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/Lambda",this);
-  lam_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  lam_cmd->SetGuidance("Set the transition rate (ps^-1 ) between static and fluctuating states");
+  lamP_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Projectile/Lambda",this);
+  lamP_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  lamP_cmd->SetGuidance("Set the transition rate (ps^-1 ) between static and fluctuating states for the projectile");
 
   //TauC
-  tau_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/TauC",this);
-  tau_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  tau_cmd->SetGuidance("Set the correlation time (ps)");
+  tauP_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Projectile/TauC",this);
+  tauP_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  tauP_cmd->SetGuidance("Set the correlation time (ps) of the projectile");
 
-  //g-factor scaling
-  gfm_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/GfactorScaling",this);
-  gfm_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  gfm_cmd->SetGuidance("Set the scaling factor applied to the nuclear gyromagnetic ratio g = Z/A");
+  //g-factor
+  gfcP_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Projectile/GFactor",this);
+  gfcP_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  gfcP_cmd->SetGuidance("Set the nuclear gyromagnetic ratio (g-factor) for the projectile");
 
   //Field coefficient
-  fld_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/FieldCoefficient",this);
-  fld_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  fld_cmd->SetGuidance("Set the hyperfine field coefficient (10^8 T)");
+  fldP_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Projectile/FieldCoefficient",this);
+  fldP_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  fldP_cmd->SetGuidance("Set the hyperfine field coefficient (10^8 T) for the projectile");
 
   //Field exponent
-  exp_cmd = new G4UIcmdWithADouble("/Excitation/DeorientationEffect/FieldExponent",this);
-  exp_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  exp_cmd->SetGuidance("Set the hyperfine field exponent");
+  expP_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Projectile/FieldExponent",this);
+  expP_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  expP_cmd->SetGuidance("Set the hyperfine field exponent for the projectile");
+
+  //Deorentation effect paramter directory for recoil
+  deoR_dir = new G4UIdirectory("/DeorientationEffect/Recoil/");
+
+  //Gk coefficients
+  rCGk_cmd = new G4UIcmdWithABool("/DeorientationEffect/Recoil/CalculateGk",this);
+  rCGk_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  rCGk_cmd->SetGuidance("Calculate Gk coefficiencts and apply them to the recoil statistical tensors");
+
+  //Average J
+  avjR_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Recoil/AverageJ",this);
+  avjR_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  avjR_cmd->SetGuidance("Set the average atomic spin of the recoil");
+
+  //Gamma
+  gamR_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Recoil/Gamma",this);
+  gamR_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  gamR_cmd->SetGuidance("Set the FWHM of the frequency distribution (ps^-1 ) in the recoil");
+
+  //Lambda
+  lamR_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Recoil/Lambda",this);
+  lamR_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  lamR_cmd->SetGuidance("Set the transition rate (ps^-1 ) between static and fluctuating states for the recoil");
+
+  //TauC
+  tauR_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Recoil/TauC",this);
+  tauR_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  tauR_cmd->SetGuidance("Set the correlation time (ps) of the recoil");
+
+  //g-factor scaling
+  gfcR_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Recoil/GFactor",this);
+  gfcR_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  gfcR_cmd->SetGuidance("Set the nuclear gyromagnetic ratio (g-factor) for the recoil");
+
+  //Field coefficient
+  fldR_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Recoil/FieldCoefficient",this);
+  fldR_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  fldR_cmd->SetGuidance("Set the hyperfine field coefficient (10^8 T) for the recoil");
+
+  //Field exponent
+  expR_cmd = new G4UIcmdWithADouble("/DeorientationEffect/Recoil/FieldExponent",this);
+  expR_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+  expR_cmd->SetGuidance("Set the hyperfine field exponent for the recoil");
   
 }
 
@@ -145,14 +183,23 @@ Excitation_Messenger::~Excitation_Messenger() {
   delete rGSS_cmd;
   delete rCGk_cmd;
 
-  delete deo_dir;
-  delete avj_cmd;
-  delete gam_cmd;
-  delete lam_cmd;
-  delete tau_cmd;
-  delete gfm_cmd;
-  delete fld_cmd;
-  delete exp_cmd;
+  delete deoP_dir;
+  delete avjP_cmd;
+  delete gamP_cmd;
+  delete lamP_cmd;
+  delete tauP_cmd;
+  delete gfcP_cmd;
+  delete fldP_cmd;
+  delete expP_cmd;
+
+  delete deoR_dir;
+  delete avjR_cmd;
+  delete gamR_cmd;
+  delete lamR_cmd;
+  delete tauR_cmd;
+  delete gfcR_cmd;
+  delete fldR_cmd;
+  delete expR_cmd;
   
 }
 
@@ -234,42 +281,80 @@ void Excitation_Messenger::SetNewValue(G4UIcommand* command, G4String newValue) 
   }
   ///////////////////////////////////////
 
-  ////////////Deorientation effect commands////////////
-  else if(command == avj_cmd) {
-    excitation->SetAverageJ(avj_cmd->GetNewDoubleValue(newValue));
-    G4cout << "Setting average atomic spin to " << newValue << G4endl;
+  ////////////Projectile deorientation effect commands////////////
+  else if(command == avjP_cmd) {
+    excitation->SetProjAverageJ(avjP_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting average atomic spin of the projectle to " << newValue << G4endl;
   }
 
-  else if(command == gam_cmd) {
-    excitation->SetGamma(gam_cmd->GetNewDoubleValue(newValue));
-    G4cout << "Setting FWHM of frequency distribution to " << newValue << " ps^-1" << G4endl;
+  else if(command == gamP_cmd) {
+    excitation->SetProjGamma(gamP_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting the FWHM of the frequency distribution in the projectle to " << newValue << " ps^-1"
+	   << G4endl;
   }
 
-  else if(command == lam_cmd) {
-    excitation->SetLambdaStar(lam_cmd->GetNewDoubleValue(newValue));
-    G4cout << "Setting state fluctuation rate to " << newValue << " ps^-1" << G4endl;
+  else if(command == lamP_cmd) {
+    excitation->SetProjLambdaStar(lamP_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting state fluctuation rate in the projectle to " << newValue << " ps^-1" << G4endl;
   }
 
-  else if(command == tau_cmd) {
-    excitation->SetTauC(tau_cmd->GetNewDoubleValue(newValue));
-    G4cout << "Setting correlation time to " << newValue << " ps" << G4endl;
+  else if(command == tauP_cmd) {
+    excitation->SetProjTauC(tauP_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting the correlation time in the projectle to " << newValue << " ps" << G4endl;
   }
 
-  else if(command == gfm_cmd) {
-    excitation->SetGFacMult(gfm_cmd->GetNewDoubleValue(newValue));
-    G4cout << "Setting g-factor scaling to " << newValue << G4endl;
+  else if(command == gfcP_cmd) {
+    excitation->SetProjGFac(gfcP_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting g-factor for the projectle to " << newValue << G4endl;
   }
 
-  else if(command == fld_cmd) {
-    excitation->SetFieldCoef(fld_cmd->GetNewDoubleValue(newValue));
-    G4cout << "Setting hyperfine field coefficient to " << newValue << "*10^8 T" << G4endl;
+  else if(command == fldP_cmd) {
+    excitation->SetProjFieldCoef(fldP_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting hyperfine field coefficient in the projectle to " << newValue << "*10^8 T" << G4endl;
   }
 
-  else if(command == exp_cmd) {
-    excitation->SetFieldExp(exp_cmd->GetNewDoubleValue(newValue));
-    G4cout << "Setting hyperfine field exponent to " << newValue << G4endl;
+  else if(command == expP_cmd) {
+    excitation->SetProjFieldExp(expP_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting hyperfine field exponent in the projectle to " << newValue << G4endl;
   }
-  /////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////
+
+  ////////////Recoil deorientation effect commands////////////
+  else if(command == avjR_cmd) {
+    excitation->SetProjAverageJ(avjR_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting average atomic spin of the recoil to " << newValue << G4endl;
+  }
+
+  else if(command == gamR_cmd) {
+    excitation->SetProjGamma(gamR_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting FWHM of frequency distribution in the recoil to " << newValue << " ps^-1" << G4endl;
+  }
+
+  else if(command == lamR_cmd) {
+    excitation->SetProjLambdaStar(lamR_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting state fluctuation rate in the recoil to " << newValue << " ps^-1" << G4endl;
+  }
+
+  else if(command == tauR_cmd) {
+    excitation->SetProjTauC(tauR_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting correlation time in the recoil to " << newValue << " ps" << G4endl;
+  }
+
+  else if(command == gfcR_cmd) {
+    excitation->SetProjGFac(gfcR_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting g-factor for the recoil to " << newValue << G4endl;
+  }
+
+  else if(command == fldR_cmd) {
+    excitation->SetProjFieldCoef(fldR_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting hyperfine field coefficient in the recoil to " << newValue << "*10^8 T" << G4endl;
+  }
+
+  else if(command == expR_cmd) {
+    excitation->SetProjFieldExp(expR_cmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting hyperfine field exponent in the recoil to " << newValue << G4endl;
+  }
+  ////////////////////////////////////////////////////////////
   
   return;
   

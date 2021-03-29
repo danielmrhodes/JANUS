@@ -24,14 +24,25 @@ Polarization::Polarization() {
   unpolarized.emplace_back();
   unpolarized.at(0).push_back(val);
 
-  Avji = 3.0;
-  Gam = 0.02;
-  Xlamb = 0.0345;
-  TimeC = 3.5;
-  //Gfac = iz/G4double(ia);
-  GfacMult = 1.0;
-  Field = 6.0*std::pow(10.0,-6.0);
-  Power = 0.6;
+  //deorientation effect model parameters for the projectile
+  //default values
+  Avji_P = 3.0;
+  Gam_P = 0.02;
+  Xlamb_P = 0.0345;
+  TimeC_P = 3.5;
+  Gfac_P = -1.0; //default is Z/A, which is assigned later
+  Field_P = 6.0*std::pow(10.0,-6.0);
+  Power_P = 0.6;
+
+  //deorientation effect model parameters for the recoil
+  //default values
+  Avji_R = Avji_P;
+  Gam_R = Gam_P;
+  Xlamb_R = Xlamb_P;
+  TimeC_R = TimeC_P;
+  Gfac_R = -1.0; //default is Z/A, which is assigned later
+  Field_R = Field_P;
+  Power_R = Power_P;
   
 }
 
@@ -190,7 +201,7 @@ void Polarization::BuildProjectileTensors(G4int pZ, G4int pA, G4double pM, G4dou
       for(unsigned int l=0;l<size;l++) {
       
 	G4double beta = Reaction::Beta_LAB(thetas.at(l),pEn,pM,rM,0.0*MeV);
-	Gks.push_back(GKK(pZ,pA,beta,spin,time/ps));
+	Gks.push_back(GKK(pZ,pA,beta,spin,time/ps,false));
       
       }
     }
@@ -277,8 +288,11 @@ void Polarization::BuildRecoilTensors(G4double pM, G4double pEn, G4int rZ, G4int
       for(unsigned int l=0;l<size;l++) {
       
 	G4double beta = Reaction::Recoil_Beta_LAB(thetas.at(l),pEn,pM,rM,0.0*MeV);
-	Gks.push_back(GKK(rZ,rA,beta,spin,time/ps));
-
+	Gks.push_back(GKK(rZ,rA,beta,spin,time/ps,true));
+	//Gks.back().at(2) *= 0.5;
+	//Gks.back().at(4) *= 0.5;
+	//Gks.back().at(6) *= 0.5;
+	
       }
     }
     
@@ -439,7 +453,7 @@ void Polarization::Print(const std::vector< std::vector<G4complex> > polar) cons
 }
 
 std::array<G4double,7> Polarization::GKK(const G4int iz, const G4int ia, const G4double beta,
-					 const G4double spin, const G4double time) {
+					 const G4double spin, const G4double time, const G4bool rec) {
 
   //model parameters
   /*
@@ -452,7 +466,40 @@ std::array<G4double,7> Polarization::GKK(const G4int iz, const G4int ia, const G
   const G4double Power = 0.6; //Hyperfine field exponent
   */
 
-  G4double Gfac = GfacMult*iz/G4double(ia);
+  G4double Avji;
+  G4double Gam;
+  G4double Xlamb;
+  G4double TimeC;
+  G4double Gfac = iz/G4double(ia);
+  G4double Field;
+  G4double  Power;
+
+  if(rec) {
+    Avji = Avji_R;
+    Gam = Gam_R;
+    Xlamb = Xlamb_R;
+    TimeC = TimeC_R;
+
+    if(Gfac_R > 0.0) {
+      Gfac = Gfac_R;
+    }
+    
+    Field = Field_R;
+    Power = Power_R;
+  }
+  else {
+    Avji = Avji_P;
+    Gam = Gam_P;
+    Xlamb = Xlamb_P;
+    TimeC = TimeC_P;
+
+    if(Gfac_P > 0.0) {
+      Gfac = Gfac_P;
+    }
+    
+    Field = Field_P;
+    Power = Power_P;
+  }
   
   G4int  inq, ifq;
   G4double qcen, dq, xnor;
