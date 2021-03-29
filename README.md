@@ -36,11 +36,11 @@ Macro Files
 The three simulation modes require different commands in their macro files. However all share a common structure: 
 
 <pre>
-/Mode mode\
-*(optional geometry commands)*\
-/Geometry/Update\
-*(mode specific commands)*\
-/Output/Filename output.dat\
+/Mode mode
+<i>(optional geometry commands)</i>
+/Geometry/Update
+<i>(mode specific commands)</i>
+/Output/Filename output.dat
 /run/beamOn nEvents
 </pre>
 
