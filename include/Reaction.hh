@@ -51,6 +51,7 @@ public:
   //////////////////////////////////////////////
   
   G4double SampleRutherfordCM();
+  //G4double SampleRutherfordCM_2();
 
   ////////Getters and setters////////
   void SetBeamZ(G4int Z) {beamZ = Z;}
