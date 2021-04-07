@@ -156,6 +156,7 @@ void Primary_Generator::GenerateScatteringPrimaries(G4Event* evt) {
   gun->SetParticleMomentumDirection(rdir);
   gun->GeneratePrimaryVertex(evt);
 
+  return;
 }
 
 void Primary_Generator::GenerateSourcePrimaries(G4Event* evt) {
@@ -252,7 +253,8 @@ void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
   gun->SetParticlePosition(pos);
   gun->SetParticleMomentumDirection(rdir);
   gun->GeneratePrimaryVertex(evt);
-  
+
+  return;
 }
 
 void Primary_Generator::Update() {
