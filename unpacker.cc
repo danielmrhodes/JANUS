@@ -13,7 +13,7 @@
 #include "Data_Format.hh"
 
 inline void print_data(const SegaData& data) {
-  
+
   std::cout << "\n  Detector " << data.det << " Segment " << data.seg << "\n  " << data.en
 	    << " keV deposited at (" << data.x << "," << data.y << "," << data.z
 	    << ")\n";
@@ -94,6 +94,8 @@ int main(int argc, char** argv) {
   //SeGA Singles
   TH1* sEnergy = new TH1D("Segment_Energy","SeGA Segment Energy",3000,0,3000);
   TH1* cEnergy = new TH1D("Core_Energy","SeGA Core Energy",3000,0,3000);
+  TH1* cEnergy_FEP = new TH1D("Core_Energy_FEP","SeGA Core Energy FEP",3000,0,3000);
+  TH1* cEnergy_nFEP = new TH1D("Core_Energy_nFEP","SeGA Core Energy Not FEP",3000,0,3000);
 
   TH2* segSum = new TH2D("Segment_Summary","SeGA Segments",512,1,513,2000,0,4000);
   TH2* coreSum = new TH2D("Core_Summary","SeGA Cores",16,1,17,2000,0,4000);
@@ -173,8 +175,9 @@ int main(int argc, char** argv) {
       int det = data.sData[i].det;
       int seg = data.sData[i].seg;
       double energy = data.sData[i].en;
+      bool fep = data.sData[i].fep;
 
-      if(seg) {
+      if(bool(seg)) {
 	  
 	sEnergy->Fill(energy);
 	  
@@ -188,6 +191,12 @@ int main(int argc, char** argv) {
 	cEnergy->Fill(energy);
       }
 
+      if(fep) {
+	cEnergy_FEP->Fill(energy);
+      }
+      else {
+	cEnergy_nFEP->Fill(energy);
+      }
 	
     } //End SeGA Singles
     
@@ -205,7 +214,9 @@ int main(int argc, char** argv) {
   
   sEnergy->Write();
   cEnergy->Write();
-
+  cEnergy_FEP->Write();
+  cEnergy_nFEP->Write();
+  
   segSum->Write();
   coreSum->Write();
 

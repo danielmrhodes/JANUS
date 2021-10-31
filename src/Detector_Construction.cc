@@ -103,7 +103,7 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
     bam->Placement(logic_world,US_Offset,DS_Offset);  
 
   }
-
+  
   G4bool check = false;
   if(place_target) {
 
@@ -189,7 +189,8 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   logic_arm->SetVisAttributes(vis);
   logic_top->SetVisAttributes(vis);
   //logic_box->SetVisAttributes(vis1);
-
+  
+    
   return world;
 }
 

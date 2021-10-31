@@ -60,13 +60,10 @@ void Primary_Generator::GeneratePrimaries(G4Event* evt) {
     case MODE::Scattering: {
  
       GenerateScatteringPrimaries(evt);
+
       /*
       G4ThreeVector bdir = G4RandomDirection();
-      G4ThreeVector rdir = G4RandomDirection();
-      //rdir.setTheta(bdir.theta());
-      rdir.setPhi(bdir.phi()-pi);
-
-      G4ThreeVector pos = G4ThreeVector(0.3*mm,0.63*mm,0.0);
+      G4ThreeVector pos = G4ThreeVector(-0.51*mm,1.04*mm,0.0);
       
       //Beam vertex
       gun->SetParticleDefinition(projGS);
@@ -74,14 +71,8 @@ void Primary_Generator::GeneratePrimaries(G4Event* evt) {
       gun->SetParticleMomentumDirection(bdir);
       gun->SetParticlePosition(pos);
       gun->GeneratePrimaryVertex(evt);
-      
-      //Recoil vertex
-      gun->SetParticleDefinition(recoilGS);
-      gun->SetParticleEnergy(100.0*MeV);
-      gun->SetParticleMomentumDirection(rdir);
-      gun->SetParticlePosition(pos);
-      gun->GeneratePrimaryVertex(evt);
       */
+      
       break;
     }
 
