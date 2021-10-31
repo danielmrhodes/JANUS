@@ -126,20 +126,26 @@ void SeGA::PlaceDetector(G4LogicalVolume* expHall_log, G4int detNum, G4double Zo
   }
 
   G4bool check = false;
+
+  G4double DLs = 0.3*mm;
   
   G4int seg = 1;
   for(G4int i=0;i<phisegs;i++) {
     for(G4int j=0;j<zsegs;j++) {
 
       G4double Inner;
+      //G4double InnerDL;
       if(j==7) {
-        Inner=0.0*cm;
+        Inner = 0.0*cm;
+	//InnerDL = 0.0*cm;
       }
       else {
-	Inner=DLouterRadius;
+	Inner = DLouterRadius;
+	//InnerDL = DLouterRadius;
       }
       
-      G4Tubs* seg_Tub = new G4Tubs("segTub",Inner,outerRadius,Length/zsegs,360/phisegs*i*deg,360/phisegs*deg);
+      G4Tubs* seg_Tub = new G4Tubs("segTub",Inner+DLs,outerRadius-DLs,Length/zsegs - 0.5*DLs,
+				   360/phisegs*i*deg,360/phisegs*deg);
       G4LogicalVolume* seg_log = new G4LogicalVolume(seg_Tub,HpGe,"segLog",0,TrackerGamma);
 
       if(j%2) {
@@ -163,8 +169,19 @@ void SeGA::PlaceDetector(G4LogicalVolume* expHall_log, G4int detNum, G4double Zo
 
       G4double zshift = j*2*Length/zsegs - double(zsegs-1)/double(zsegs)*Length;
       G4ThreeVector vec(rd*cos(phid),rd*sin(phid),zd+zshift+Zoffset);
-
       new G4PVPlacement(0,vec,seg_log,"SeGA",expHall_log,false,Copy,check);
+
+      if(DLs > 0.0*mm) {
+
+	G4Tubs* segDL_tmp = new G4Tubs("segDL_tmp",Inner,outerRadius,Length/zsegs,360/phisegs*i*deg,
+				     360/phisegs*deg);
+	G4SubtractionSolid* segDL_sol = new G4SubtractionSolid("segDL_Sol",segDL_tmp,seg_Tub);
+	G4LogicalVolume* segDL_log = new G4LogicalVolume(segDL_sol,HpGe,"segDL_Log");
+	segDL_log->SetVisAttributes(Vis4);
+
+	new G4PVPlacement(0,vec,segDL_log,"segDL",expHall_log,false,Copy,check);
+
+      }
 
       seg++;
 	
