@@ -93,6 +93,13 @@ void Bambino2::Placement(G4LogicalVolume* world, G4double USoff, G4double DSoff)
     }
   }
 
+  //Fill inner radius with lead to remove weird Si events
+  G4Material* lead = new G4Material("Pb",82,207.2*g/mole,10.678*g/cm3);
+  G4Tubs* lead_diskS = new G4Tubs("LeadDiskS",0.0*mm,innerRadius,thickness/2.0,0.0*deg,360.0*deg);
+  G4LogicalVolume* lead_diskL = new G4LogicalVolume(lead_diskS,lead,"LeadDiskL");
+  new G4PVPlacement(0,G4ThreeVector(0,0,DSoff),lead_diskL,"LeadDisk1",world,false,1,check);
+  new G4PVPlacement(0,G4ThreeVector(0,0,-USoff),lead_diskL,"LeadDisk0",world,false,0,check);
+   
   //Plastic material for holders and connectors
   G4Material* delrin = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYOXYMETHYLENE");
 
