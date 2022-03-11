@@ -121,14 +121,9 @@ void Excitation::BuildProjectileLS(G4int Z, G4int A) {
     G4int nbr;
     std::stringstream ss4(word);
     ss4 >> nbr;
-    
-    if(nbr == 0) {
-      G4cout << "Problem reading projectile level scheme file " << pFN
-	     << "! No decay branches declared for state " << state_index << G4endl;
-    }
 	
     G4ParticleDefinition* part = table->GetIon(Z,A,energy);
-    if(!pConsidered || state_index == pConsidered) {
+    if((!pConsidered || state_index == pConsidered) && nbr) {
       
       part->SetPDGLifeTime(lifetime);
       part->SetDecayTable(new G4DecayTable());
@@ -140,8 +135,13 @@ void Excitation::BuildProjectileLS(G4int Z, G4int A) {
       part->SetPDGLifeTime(-1.0);
     }
 
-    G4cout << " " << state_index << " " << energy/keV << " " << spin << " " << lifetime/ps << " " << nbr
-	   << G4endl;
+    G4cout << " " << state_index << " " << energy/keV << " " << spin << " " << lifetime/ps
+	   << " " << nbr;
+
+    if(nbr == 0)
+      G4cout << " \033[1;36m Warning: State " << state_index
+	     << " has no decay branches. Is this intentional? \033[m";
+    G4cout << G4endl;
     
     Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,spin,energy);
     for(int i=0;i<nbr;i++) {
@@ -268,14 +268,9 @@ void Excitation::BuildRecoilLS(G4int Z, G4int A) {
     G4int nbr;
     std::stringstream ss4(word);
     ss4 >> nbr;
-    
-    if(nbr == 0) {
-      G4cout << "Problem reading recoil level scheme file " << rFN
-	     << "! No decay branches declared for state " << state_index << G4endl;
-    }
 	
     G4ParticleDefinition* part = table->GetIon(Z,A,energy);
-    if(!rConsidered || state_index == rConsidered) {
+    if((!rConsidered || state_index == rConsidered) && nbr) {
       
       part->SetPDGLifeTime(lifetime);
       part->SetDecayTable(new G4DecayTable());
@@ -287,8 +282,13 @@ void Excitation::BuildRecoilLS(G4int Z, G4int A) {
       part->SetPDGLifeTime(-1.0);
     }
 
-    G4cout << " " << state_index << " " << energy/keV << " " << spin << " " << lifetime/ps << " " << nbr
-	   << G4endl;
+    G4cout << " " << state_index << " " << energy/keV << " " << spin << " " << lifetime/ps
+	   << " " << nbr;
+
+    if(nbr == 0)
+      G4cout << " \033[1;36m Warning: State " << state_index
+	     << " has no decay branches. Is this intentional? \033[m";
+    G4cout << G4endl;
     
     Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,spin,energy);
     for(int i=0;i<nbr;i++) {
