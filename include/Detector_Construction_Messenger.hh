@@ -10,7 +10,6 @@
 #include "G4SystemOfUnits.hh"
 
 class Detector_Construction;
-
 class Detector_Construction_Messenger: public G4UImessenger {
 
 public:

@@ -8,7 +8,6 @@
 #include "G4UIcmdWithAnInteger.hh"
 
 class Reaction;
-
 class Reaction_Messenger : public G4UImessenger {
 
 public:

@@ -7,7 +7,6 @@
 #include "G4LogicalVolume.hh"
 
 class Detector_Construction_Messenger;    
-
 class Detector_Construction : public G4VUserDetectorConstruction {
   
 public:
