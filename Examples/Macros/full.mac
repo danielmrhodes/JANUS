@@ -1,5 +1,5 @@
 /Mode Full
-/Geometry/Bambino2/Contruct
+/Geometry/Bambino2/Construct
 /Geometry/Bambino2/UpstreamOffset 3.4 cm
 /Geometry/Bambino2/DownstreamOffset 2.6 cm
 /Geometry/SeGA/Offset 3.1 cm
@@ -15,13 +15,13 @@
 #
 /Beam/Energy 318 MeV
 #
-/Excitation/Projectile/LevelScheme cd106.lvl
-/Excitation/Projectile/Probabilities cd106_on_ti48.prb
-/Excitation/Projectile/StatisticalTensors cd106_on_ti48.ten
-/Excitation/Recoil/LevelScheme ti48.lvl
-/Excitation/Recoil/Probabilities ti48_by_cd106.prb
-/Excitation/Recoil/StatisticalTensors ti48_by_cd106.ten
+/Excitation/Projectile/LevelScheme Examples/LevelSchemes/Full/cd106.lvl
+/Excitation/Projectile/Probabilities Examples/Probabilities/cd106_on_ti48.prb
+/Excitation/Projectile/StatisticalTensors Examples/StatisticalTensors/cd106_on_ti48.ten
+/Excitation/Recoil/LevelScheme Examples/LevelSchemes/Full/ti48.lvl
+/Excitation/Recoil/Probabilities Examples/Probabilities/ti48_by_cd106.prb
+/Excitation/Recoil/StatisticalTensors Examples/StatisticalTensors/ti48_by_cd106.ten
 #
 /Output/FileName full.dat
 #
-/run/beamOn 10000000
+/run/beamOn 100000

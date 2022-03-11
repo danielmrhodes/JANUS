@@ -2,7 +2,7 @@
 /Geometry/SeGA/Offset 3.1 cm
 /Geometry/Update
 #
-/Source/LevelScheme co60.lvl
+/Source/LevelScheme Examples/LevelSchemes/Source/co60.lvl
 #
 /Output/FileName co60.dat
 #
