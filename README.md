@@ -13,7 +13,7 @@ Running JANUS
 JANUS takes an input macro file and writes the output to a data file. To run the simulation and subsequently histogram the simulation output, do
 
 - JANUS input.mac
-- correlator output.dat hist_file.root
+- ./correlator output.dat hist_file.root
 
 The ROOT file hist_file.root now contains many histograms and can be opened with any standard ROOT installation.
 
