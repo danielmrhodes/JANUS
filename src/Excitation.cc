@@ -79,7 +79,8 @@ void Excitation::BuildProjectileLS(G4int Z, G4int A) {
   file.open(pFN.c_str(),std::ios::in);
   
   if(!file.is_open()) {
-    G4cout << "\nCould not open projectile level scheme file " << pFN << "! No levels will be built!"
+    G4cout << "\n\033[1;31mCould not open projectile level scheme file " << pFN
+	   << "! No levels will be built! \033[m"
 	   << G4endl;
     return;
   }
@@ -124,12 +125,10 @@ void Excitation::BuildProjectileLS(G4int Z, G4int A) {
 	
     G4ParticleDefinition* part = table->GetIon(Z,A,energy);
     if((!pConsidered || state_index == pConsidered) && nbr) {
-      
       part->SetPDGLifeTime(lifetime);
       part->SetDecayTable(new G4DecayTable());
       part->GetProcessManager()->SetParticleType(part);
       part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
-      
     }
     else {
       part->SetPDGLifeTime(-1.0);
@@ -139,8 +138,7 @@ void Excitation::BuildProjectileLS(G4int Z, G4int A) {
 	   << " " << nbr;
 
     if(nbr == 0)
-      G4cout << " \033[1;36m Warning: State " << state_index
-	     << " has no decay branches. Is this intentional? \033[m";
+      G4cout << " \033[1;36m Warning: State " << state_index << " has no decay branches.\033[m";
     G4cout << G4endl;
     
     Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,spin,energy);
@@ -194,7 +192,8 @@ void Excitation::BuildProjectileLS(G4int Z, G4int A) {
     }
 
     if((unsigned int)state_index != pLevels.size()) {
-      G4cout << "States are out of order in projectile level scheme file " << pFN << "!" << G4endl;
+      G4cout << "\033[1;31mStates are out of order in projectile level scheme file " << pFN
+	     << "\033[m" << G4endl;
     }
 
     pLevels.push_back(ppart);
@@ -226,7 +225,8 @@ void Excitation::BuildRecoilLS(G4int Z, G4int A) {
   file.open(rFN.c_str(),std::ios::in);
   
   if(!file.is_open()) {
-    G4cout << "\nCould not open recoil level scheme file " << rFN << "! No levels will be built!"
+    G4cout << "\n\033[1;31mCould not open recoil level scheme file " << rFN
+	   << "! No levels will be built! \033[m"
 	   << G4endl;
     return;
   }
@@ -271,12 +271,10 @@ void Excitation::BuildRecoilLS(G4int Z, G4int A) {
 	
     G4ParticleDefinition* part = table->GetIon(Z,A,energy);
     if((!rConsidered || state_index == rConsidered) && nbr) {
-      
       part->SetPDGLifeTime(lifetime);
       part->SetDecayTable(new G4DecayTable());
       part->GetProcessManager()->SetParticleType(part);
       part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
-      
     }
     else {
       part->SetPDGLifeTime(-1.0);
@@ -286,8 +284,7 @@ void Excitation::BuildRecoilLS(G4int Z, G4int A) {
 	   << " " << nbr;
 
     if(nbr == 0)
-      G4cout << " \033[1;36m Warning: State " << state_index
-	     << " has no decay branches. Is this intentional? \033[m";
+      G4cout << " \033[1;36m Warning: State " << state_index << " has no decay branches.\033[m";
     G4cout << G4endl;
     
     Polarized_Particle* ppart = new Polarized_Particle(part,Z,A,spin,energy);
@@ -341,7 +338,8 @@ void Excitation::BuildRecoilLS(G4int Z, G4int A) {
     }
 
     if((unsigned int)state_index != rLevels.size()) {
-      G4cout << "States are out of order in recoil level scheme file " << rFN << "!" << G4endl;
+      G4cout << "\033[1;31mStates are out of order in recoil level scheme file " << rFN
+	     << "\033[m" << G4endl;
     }
 
     rLevels.push_back(ppart);
@@ -369,8 +367,8 @@ void Excitation::BuildProjectileSplines() {
   file.open(pPF.c_str(),std::ios::in);
 
   if(!file.is_open()) {
-    G4cout << "\nCould not open projectile excitation probability file " << pPF
-	   << "! No probabilities will be built!" << G4endl;
+    G4cout << "\n\033[1;31mCould not open projectile excitation probability file " << pPF
+	   << "! No probabilities will be built!\033[m" << G4endl;
     return;
   }
 
@@ -448,9 +446,10 @@ void Excitation::BuildProjectileSplines() {
 	state = pConsidered;
       }
       
-      G4cout << "Projectile state " << state << " has " << probs.at(i).size()
+      G4cout << "\033[1;31mProjectile state " << state << " has " << probs.at(i).size()
 	     << " probability splines points, while there are " << size
-	     << " thetaCM spline points! This is likely a mistake and could break things." << G4endl; 
+	     << " thetaCM spline points! This is likely a mistake and could break things.\033[m"
+	     << G4endl; 
     }
     
     pSplines.push_back(new G4DataInterpolation(&thetas[0],&(probs.at(i))[0],size,0,0));
@@ -463,8 +462,9 @@ void Excitation::BuildProjectileSplines() {
 	     << G4endl;
     }
     else {
-      G4cout << "Created " << pSplines.size() << " projectile probability splines for " << pLevels.size()
-	     << " levels! The simulation might not behave properly!" << G4endl;
+      G4cout << "\033[1;31mCreated " << pSplines.size() << " projectile probability splines for "
+	     << pLevels.size() << " levels! The simulation might not behave properly!\033[m"
+	     << G4endl;
     }
   }
   else {
@@ -472,8 +472,8 @@ void Excitation::BuildProjectileSplines() {
       G4cout << "Both projectile probability splines successfully built!" << G4endl;
     }
     else {
-      G4cout << "Created " << pSplines.size() << " projectile probability splines instead of 2!"; 
-      G4cout << "The simulation might not behave properly!" << G4endl;
+      G4cout << "\033[1;31mCreated " << pSplines.size() << " projectile probability splines "
+	     << "instead of 2! The simulation might not behave properly!\033[m" << G4endl;
     }
   }
 
@@ -496,8 +496,8 @@ void Excitation::BuildRecoilSplines() {
   file.open(rPF.c_str(),std::ios::in);
 
   if(!file.is_open()) {
-    G4cout << "\nCould not open recoil excitation probability file " << rPF
-	   << "! No probabilities will be built!" << G4endl;
+    G4cout << "\n\033[1;31mCould not open recoil excitation probability file " << rPF
+	   << "! No probabilities will be built!\033[m" << G4endl;
     return;
   }
 
@@ -574,9 +574,10 @@ void Excitation::BuildRecoilSplines() {
     }
 
     if(probs.at(i).size() != size) {
-      G4cout << "Recoil state " << state << " has " << probs.at(i).size()
+      G4cout << "\033[1;31mRecoil state " << state << " has " << probs.at(i).size()
 	     << " probability splines points, while there are " << size
-	     << " thetaCM spline points! This is likely a mistake and could break things." << G4endl; 
+	     << " thetaCM spline points! This is likely a mistake and could break things.\033[m"
+	     << G4endl; 
     }
     
     rSplines.push_back(new G4DataInterpolation(&thetas[0],&(probs.at(i))[0],size,0,0));
@@ -585,11 +586,13 @@ void Excitation::BuildRecoilSplines() {
 
   if(!rConsidered) {
     if(rSplines.size() == rLevels.size()) {
-      G4cout << "All " << rSplines.size() << " recoil probability splines successfully built!" << G4endl;
+      G4cout << "All " << rSplines.size() << " recoil probability splines successfully built!"
+	     << G4endl;
     }
     else {
-      G4cout << "Created " << rSplines.size() << " recoil probability splines for " << rLevels.size()
-	     << " levels! The simulation might not behave properly!" << G4endl;
+      G4cout << "\033[1;31mCreated " << rSplines.size() << " recoil probability splines for "
+	     << rLevels.size()
+	     << " levels! The simulation might not behave properly!\033[m" << G4endl;
     }
   }
   else {
@@ -597,8 +600,8 @@ void Excitation::BuildRecoilSplines() {
       G4cout << "Both recoil probability splines successfully built!" << G4endl;
     }
     else {
-      G4cout << "Created " << rSplines.size() << " recoil probability splines instead of 2!"; 
-      G4cout << "The simulation might not behave properly!" << G4endl;
+      G4cout << "\033[1;31mCreated " << rSplines.size() << " recoil probability splines instead "
+	     << "of 2! The simulation might not behave properly!\033[m" << G4endl;
     }
   }
 

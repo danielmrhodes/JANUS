@@ -29,14 +29,15 @@ Gamma_Source::~Gamma_Source() {
 void Gamma_Source::BuildLevelScheme() {
 
   if(source_energy > 0.0*MeV) {
-    G4cout << "\nSimple isotropic gamma-ray of " << source_energy/keV << " keV will be emitted each event"
-	   << G4endl;
+    G4cout << "\nSimple isotropic gamma-ray of " << source_energy/keV
+	   << " keV will be emitted each event" << G4endl;
 
     return;
   }
 
   if(file_name == "") {
-    G4cout << "Neither the source level scheme file nor the source energy is set! The simulation will break..." << G4endl;
+    G4cout << "\033[1;31mNeither the source level scheme file nor the source energy is set!"
+	   << " The simulation will break now...\033[m" << G4endl;
 
     return;
   }
@@ -53,8 +54,8 @@ void Gamma_Source::BuildLevelScheme() {
   file.open(file_name.c_str(),std::ios::in);
   
   if(!file.is_open()) {
-    G4cout << "\nCould not open source level scheme file " << file_name << "! No levels will be built!"
-	   << G4endl;
+    G4cout << "\n\033[1;31mCould not open source level scheme file " << file_name
+	   << "! The simulation won't do anything...\033[m" << G4endl;
     return;
   }
 
@@ -102,20 +103,24 @@ void Gamma_Source::BuildLevelScheme() {
     G4int nbr;
     std::stringstream ss11(word);
     ss11 >> nbr;
-    
-    if(nbr == 0) {
-      G4cout << "Problem reading source level scheme file " << file_name
-	     << "! No decay branches declared for state " << state_index << G4endl;
-    }
-	
+
     G4ParticleDefinition* part = table->GetIon(82,208,energy);
-    part->SetPDGLifeTime(lifetime);
-    part->SetDecayTable(new G4DecayTable());
-    part->GetProcessManager()->SetParticleType(part);
-    part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
+    if(nbr) {
+      part->SetPDGLifeTime(lifetime);
+      part->SetDecayTable(new G4DecayTable());
+      part->GetProcessManager()->SetParticleType(part);
+      part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
+    }
+    else {
+      part->SetPDGLifeTime(-1.0);
+    }
 
     G4cout << " " << state_index << " " << energy/keV << " " << spin << " " << lifetime/ps << " "
-	   << prob << " " << nbr << G4endl;
+	   << prob << " " << nbr;
+
+    if(nbr == 0)
+      G4cout << " \033[1;36m Warning: State " << state_index << " has no decay branches.\033[m";
+    G4cout << G4endl;
     
     Polarized_Particle* ppart = new Polarized_Particle(part,82,208,spin,energy);
     for(int i=0;i<nbr;i++) {

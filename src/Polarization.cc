@@ -66,7 +66,7 @@ void Polarization::ReadTensorFile(G4String fn, std::vector<State>& states, std::
   std::ifstream file;
   file.open(fn.c_str(),std::ios::in);
   if(!file.is_open()) {
-    G4cout << "\nCould not open tensor file " << fn << "!!" << G4endl;
+    G4cout << "\n\033[1;31mCould not open tensor file " << fn << "!!\033[m" << G4endl;
     return;
   }
   
@@ -211,10 +211,11 @@ void Polarization::BuildProjectileTensors(G4int pZ, G4int pA, G4double pM, G4dou
       TensorComp comp = st.fTensor.at(j);
       
       if(comp.fVal.size() != size) {
-	G4cout << "Projectile state " << i << " statistical tensor component " <<  comp.fK
-	       << " " << comp.fKappa << " (index " << j << ") has" << comp.fVal.size()
+	G4cout << "\033[1;31mProjectile state " << i << " statistical tensor component "
+	       <<  comp.fK << " " << comp.fKappa << " (index " << j << ") has" << comp.fVal.size()
 	       << " polarization splines points, while there are " << size
-	       << " thetaCM spline points! This is likely a mistake and could break thins!\n"; 
+	       << " thetaCM spline points! This is likely a mistake and could break thins!\033[m"
+	       << G4endl; 
       }
 
       //apply Gk coefficients
@@ -233,8 +234,9 @@ void Polarization::BuildProjectileTensors(G4int pZ, G4int pA, G4double pM, G4dou
     G4cout << "All " << pTensors.size() << " statistical tensors built for the projectile!\n";
   }
   else {
-    G4cout << pTensors.size() << " statistical tensors were built for the projectile, which has "
-	   << levels.size() - 1 << " excited states! Make sure this was intentional." << G4endl;;
+    G4cout << "\033[1;36m Warning: Only" << pTensors.size()
+	   << " statistical tensors were built for the projectile, which has "
+	   << levels.size() - 1 << " excited states!\033[m" << G4endl;
   }
 
   return;
@@ -301,10 +303,11 @@ void Polarization::BuildRecoilTensors(G4double pM, G4double pEn, G4int rZ, G4int
       TensorComp comp = st.fTensor.at(j);
       
       if(comp.fVal.size() != size) {
-	G4cout << "Recoil state " << i << " statistical tensor component " <<  comp.fK
+	G4cout << "\033[1;31mRecoil state " << i << " statistical tensor component " <<  comp.fK
 	       << " " << comp.fKappa << " (index " << j << ") has" << comp.fVal.size()
 	       << " polarization splines points, while there are " << size
-	       << " thetaCM spline points! This is likely a mistake and could break things.\n"; 
+	       << " thetaCM spline points! This is likely a mistake and could break things."
+	       << "\033[m" << G4endl; 
       }
 
       //apply Gk coefficients
@@ -323,8 +326,9 @@ void Polarization::BuildRecoilTensors(G4double pM, G4double pEn, G4int rZ, G4int
     G4cout << "All " << rTensors.size() << " statistical tensors built for the recoil!\n";
   }
   else {
-    G4cout << rTensors.size() << " statistical tensors were built for the recoil, which has "
-	   << levels.size() - 1 << " excited states! Make sure this was intentional." << G4endl;;
+    G4cout << "\033[1;36mWarning: Only " << rTensors.size()
+	   << " statistical tensors were built for the recoil, which has " << levels.size() - 1
+	   << " excited states!\033[m" << G4endl;
   }
 
   return;
