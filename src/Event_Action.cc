@@ -5,15 +5,21 @@
 #include "G4SystemOfUnits.hh"
 #include "Data_Format.hh"
 
-Event_Action::Event_Action() {}
-Event_Action::~Event_Action() {}
+Event_Action::Event_Action() : nEvents(0), owc(false), fname("output.dat"), output(NULL) {
+
+  messenger = new Event_Action_Messenger(this);
+  
+}
+Event_Action::~Event_Action() {
+
+  delete messenger;
+  
+}
 
 void Event_Action::BeginOfEventAction(const G4Event* evt) {
 
-  int id = evt->GetEventID();
-  if(!(id%perEvt)) {
-    G4cout << "Event " << id << G4endl;
-  }
+  G4int id = evt->GetEventID();
+  G4cout << "Event " << id+1 << " (" << 100*(id+1)/nEvents << "%)\r" << std::flush;
 
   return;
 }
@@ -21,15 +27,15 @@ void Event_Action::BeginOfEventAction(const G4Event* evt) {
 void Event_Action::EndOfEventAction(const G4Event* evt) {
   
   JANUSData data;
-  int nB = 0;
-  int nS = 0;
+  G4int nB = 0;
+  G4int nS = 0;
   
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
-  for(int i=0;i<HCE->GetNumberOfCollections();i++) {
+  for(G4int i=0;i<HCE->GetNumberOfCollections();i++) {
     if(HCE->GetHC(i)->GetName() == "ionCollection") {
 
       Ion_Hit_Collection* iHC = (Ion_Hit_Collection*)HCE->GetHC(i);  
-      for(int j=0;j<iHC->entries();j++) {
+      for(G4int j=0;j<iHC->entries();j++) {
 
 	if(nB > 9) {
 	  G4cout << "Too many ion hits!" << G4endl;
@@ -50,7 +56,7 @@ void Event_Action::EndOfEventAction(const G4Event* evt) {
     else if(HCE->GetHC(i)->GetName() == "gammaCollection") {
 
       Gamma_Hit_Collection* gHC = (Gamma_Hit_Collection*)HCE->GetHC(i);
-      for(int j=0;j<gHC->entries();j++) {
+      for(G4int j=0;j<gHC->entries();j++) {
 
 	if(nS > 49) {
 	  G4cout << "Too many gamma hits!" << G4endl;
@@ -69,78 +75,20 @@ void Event_Action::EndOfEventAction(const G4Event* evt) {
     }
   }
   
-  if(nB > 0 || nS > 0) {
+  if(nB == 0 && nS == 0)
+    return;
 
-    Header header;
-    header.evtNum = evt->GetEventID();
-    header.nBdata = nB;
-    header.nSdata = nS;
+  if(owc && (nB == 0 || nS == 0))
+    return;
+    
+  Header header;
+  header.evtNum = evt->GetEventID();
+  header.nBdata = nB;
+  header.nSdata = nS;
   
-    fwrite(&header,header.bytes(),1,output);
-    fwrite(&data.bData,sizeof(Bambino2Data),nB,output);
-    fwrite(&data.sData,sizeof(SegaData),nS,output);
-
-  }
-  
-  return;
-}
-
-void Event_Action::SetPerEvent(const int nEvents) {
-
-  if(nEvents > 2000000) {
-    perEvt = 500000;
-  }
-  else if(nEvents > 1000000) {
-    perEvt = 200000;
-  }
-  else if(nEvents > 500000) {
-    perEvt = 100000;
-  }
-  else if(nEvents > 200000) {
-    perEvt = 50000;
-  }
-  else if(nEvents > 100000) {
-    perEvt = 20000;
-  }
-  else if(nEvents > 50000) {
-    perEvt = 10000;
-  }
-  else if(nEvents > 20000) {
-    perEvt = 5000;
-  }
-  else if(nEvents > 10000) {
-    perEvt = 2000;
-  }
-  else if(nEvents > 5000) {
-    perEvt = 1000;
-  }
-  else if(nEvents > 2000) {
-    perEvt = 500;
-  }
-  else if(nEvents > 1000) {
-    perEvt = 200;
-  }
-  else if(nEvents > 500) {
-    perEvt = 100;
-  }
-  else if(nEvents > 200) {
-    perEvt = 50;
-  }
-  else if(nEvents > 100) {
-    perEvt = 20;
-  }
-  else if(nEvents > 50) {
-    perEvt = 10;
-  }
-  else if(nEvents > 20) {
-    perEvt = 5;
-  }
-  else if(nEvents > 10) {
-    perEvt = 2;
-  }
-  else {
-    perEvt = 1;
-  }
+  fwrite(&header,header.bytes(),1,output);
+  fwrite(&data.bData,sizeof(Bambino2Data),nB,output);
+  fwrite(&data.sData,sizeof(SegaData),nS,output);
   
   return;
 }

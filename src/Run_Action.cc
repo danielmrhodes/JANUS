@@ -9,43 +9,31 @@
 #include "G4Run.hh"
 #include "G4SDManager.hh"
 
-Run_Action::Run_Action() : fname("output.dat"), output(NULL) {
-
-  messenger = new Run_Action_Messenger(this);
-    
-}
-
-Run_Action::~Run_Action() {
-
-  delete messenger;
-  
-}
+Run_Action::Run_Action() {}
+Run_Action::~Run_Action() {}
 
 void Run_Action::BeginOfRunAction(const G4Run* run) {
-  
-  output = fopen(fname.c_str(),"wb");
+ 
   int num = run->GetNumberOfEventToBeProcessed();
-
   G4RunManager* Rman = G4RunManager::GetRunManager();
 
   Primary_Generator* gen = (Primary_Generator*)Rman->GetUserPrimaryGeneratorAction();
   gen->Update();
-
+  Primary_Generator::MODE mode = gen->GetMode();
+  
   Tracking_Action* trkAct = (Tracking_Action*)Rman->GetUserTrackingAction();
-  trkAct->SetMode(gen->GetMode());
-
-  if(gen->IsSimpleSource()) {
+  trkAct->SetMode(mode);
+  if(gen->IsSimpleSource())
     trkAct->SetIsSimpleSource();
-  }
 
   Event_Action* evtAct = (Event_Action*)Rman->GetUserEventAction();
-  evtAct->SetOutputFile(output);
-  evtAct->SetPerEvent(num);
+  evtAct->SetOutputFile(fopen(evtAct->GetOutputFileName().c_str(),"wb"));
+  evtAct->SetNEvents(num);
 
   G4SDManager* SDman = G4SDManager::GetSDMpointer();
 
   G4cout << "\nStarting run!" << G4endl; 
-  switch(gen->GetMode()) {
+  switch(mode) {
     case Primary_Generator::MODE::Scattering: {
 
       IonSD* iSD = (IonSD*)SDman->FindSensitiveDetector("IonTracker");
@@ -87,9 +75,11 @@ void Run_Action::BeginOfRunAction(const G4Run* run) {
 
 void Run_Action::EndOfRunAction(const G4Run*) {
 
-  fclose(output);
+  G4RunManager* Rman = G4RunManager::GetRunManager();
+  Event_Action* evtAct = (Event_Action*)Rman->GetUserEventAction();
+  fclose(evtAct->GetOutputFile());
 
-  G4cout << "Run Complete!" << G4endl;
+  G4cout << "\nRun Complete!" << G4endl;
 
   return;
 }

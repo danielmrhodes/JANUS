@@ -40,11 +40,20 @@ The three simulation modes require different commands in their macro files. Howe
 <i>(optional geometry commands)</i>
 /Geometry/Update
 <i>(mode specific commands)</i>
-/Output/Filename output.dat
+<i>(optional output commands)</i>
 /run/beamOn nEvents
 </pre>
 
-The /Mode command must come first, and the parameter (mode) can be Source, Scattering, or Full. The /Geometry/Update command is mandatory. The /Output/Filename command sets the name of the output data file. Example macros for each mode are in the Examples/Macros folder.
+The /Mode command must come first, and the parameter (mode) can be Source, Scattering, or Full. The /Geometry/Update command is mandatory. Example macros for each mode are in the Examples/Macros folder.
+
+Output Commands
+-----------------
+The /Output commands are common across all modes; all /Output commands are optional.
+
+| Command | Description |
+| --- | --- |
+| /Output/Filename *string* | Set the name of the output data file (Default: output.dat) |
+| /Output/OnlyWriteCoincidences | Only write coincidence data to file. This can significantly reduce the size of the output file |
 
 Geometry Commands
 -----------------
@@ -66,7 +75,7 @@ The /Geometry commands are common across all modes. With the exception of /Geome
 | /Geometry/Target/Radius *double unit* | Set radius of target. (Default: 0.5 cm) |
 | /Geometry/Update | Update the simulation with your desired geometry. |
 
-Note that the target does **NOT** define the recoiling nucleus for the kinematics or excitation, it only defines "bulk" material properties of the target. If you do not call the /Construct commands for the silicon detectors or the target, they will not be in the simulation.
+Note that the /Geometry/Target/ commands do **NOT** define the recoiling nucleus for the kinematics or excitation, it only defines "bulk" material properties of the target. If you do not call the /Construct commands for the silicon detectors or the target, they will not be in the simulation.
 
 Source Mode Commands
 -----------------
