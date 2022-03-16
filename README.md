@@ -1,4 +1,4 @@
-This branch has been superseded by AngularDistribution
+This branch has been superseded by main
 ------------------------------------------------------
 
 JANUS
