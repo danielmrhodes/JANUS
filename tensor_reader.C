@@ -115,8 +115,8 @@ TGraph2D* tensor_reader(int index = 1, int k=0, int kappa=0, bool norm=true) {
   if(norm)
     g->SetTitle(Form("State %d Polarization Tensor Component %d %d; Energy (MeV); Theta (deg); Value",index,k,kappa));
   else
-  g->SetTitle(Form("State %d Statistical Tensor Component %d %d; Energy (MeV); Theta (deg); Value",
-		   index,k,kappa));
+    g->SetTitle(Form("State %d Statistical Tensor Component %d %d; Energy (MeV); Theta (deg); Value",
+		     index,k,kappa));
   
   g->SetMarkerStyle(20);
   g->SetMarkerSize(1.5);
