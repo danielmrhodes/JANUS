@@ -1,6 +1,5 @@
 //Change this, DO NOT include the ground state spin
-//std::vector<double> spins = {2.0,2.0,0.0,4.0,3.0,4.0,6.0,8.0,2.0,6.0}; //80Kr
-//std::vector<double> spins = {2.0,2.0,4.0,4.0,6.0,6.0,8.0,0.0,3.0}; //196Pt
+//Ordering must be the same as the level scheme file
 std::vector<double> spins = {2.0,4.0,2.0,0.0,4.0,3.0,6.0,5.0,8.0,2.0,6.0}; //106Cd
 //std::vector<double> spins = {2.0,4.0,2.0,6.0,4.0}; //48Ti
 
