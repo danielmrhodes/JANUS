@@ -1,106 +1,69 @@
 #ifndef Excitation_h
 #define Excitation_h 1
 
+#include <gsl/gsl_spline2d.h>
+
 #include "G4ParticleDefinition.hh"
+#include "Polarization.hh"
 #include "Polarized_Particle.hh"
 #include "Excitation_Messenger.hh"
-#include "Polarization.hh"
-#include "G4DataInterpolation.hh"
 
 class Excitation_Messenger;
 class Excitation {
 
 public:
    
-  Excitation();
+  Excitation(G4bool proj);
   ~Excitation();
 
-  void BuildLevelSchemes(G4int projZ, G4int projA, G4int recZ, G4int recA);
+  void BuildLevelScheme();
   void BuildProbabilities();
-  void BuildStatisticalTensors(G4int projZ, G4int projA, G4double beamEn, G4int recZ, G4int recA);
+  void BuildStatisticalTensors();
 
-  G4int ChooseProjectileState(const G4double thetaCM);
-  G4int ChooseRecoilState(const G4double thetaCM);
+  G4int ChooseState(G4double beamEn, G4double thetaCM);
+  G4double GetExcitation(G4int index);
 
-  G4ParticleDefinition* GetProjectileDefinition(G4int index) {return pLevels.at(index)->GetDefinition();}
-  G4ParticleDefinition* GetRecoilDefinition(G4int index) {return rLevels.at(index)->GetDefinition();}
-
-  std::vector<Polarized_Particle*> GetProjectileLevels() {return pLevels;}
-  std::vector<Polarized_Particle*> GetRecoilLevels() {return rLevels;}
-
-  G4double GetProjectileExcitation(G4int index);
-  G4double GetRecoilExcitation(G4int index);
-
-  void SetProjLSFile(G4String name) {pFN = name;}
-  void SetProjPrbFile(G4String name) {pPF = name;}
-
-  void FixProjState(G4int index) {pSelected = index;}
-  void OnlyConsiderProjState(G4int index) {pConsidered = index;}
-  void SetProjGSS(G4double gss) {pGSS = gss;}
-
-  void SetRecPrbFile(G4String name) {rPF = name;}
-  void SetRecLSFile(G4String name) {rFN = name;}
-
-  void FixRecState(G4int index) {rSelected = index;}
-  void OnlyConsiderRecState(G4int index) {rConsidered = index;}
-  void SetRecGSS(G4double gss) {rGSS = gss;}
-
-  void SetProjTensorFile(G4String fn) {polar->SetProjectileFile(fn);}
-  void SetRecTensorFile(G4String fn) {polar->SetRecoilFile(fn);}
-
-  void SetProjCalcGk(G4bool calc) {polar->SetProjCalcGk(calc);}
-  void SetRecCalcGk(G4bool calc) {polar->SetRecCalcGk(calc);}
-
-  void Polarize(G4int pIndex, G4int rIndex, G4double th, G4double ph);
+  void Polarize(G4int index, G4double en, G4double th, G4double ph);
   void Unpolarize();
 
-  void SetProjAverageJ(G4double avj) {polar->SetProjAverageJ(avj);}
-  void SetProjGamma(G4double gam) {polar->SetProjGamma(gam);}
-  void SetProjLambdaStar(G4double lam) {polar->SetProjLambdaStar(lam);}
-  void SetProjTauC(G4double tc) {polar->SetProjTauC(tc);}
-  void SetProjGFac(G4double gf) {polar->SetProjGFac(gf);}
-  void SetProjFieldCoef(G4double coef) {polar->SetProjFieldCoef(coef);}
-  void SetProjFieldExp(G4double ex) {polar->SetProjFieldExp(ex);}
+  G4ParticleDefinition* GetDefinition(G4int index) {return levels[index]->GetDefinition();}
+  std::vector<Polarized_Particle*> GetLevels() {return levels;}
 
-  void SetRecAverageJ(G4double avj) {polar->SetRecAverageJ(avj);}
-  void SetRecGamma(G4double gam) {polar->SetRecGamma(gam);}
-  void SetRecLambdaStar(G4double lam) {polar->SetRecLambdaStar(lam);}
-  void SetRecTauC(G4double tc) {polar->SetRecTauC(tc);}
-  void SetRecGFac(G4double gf) {polar->SetRecGFac(gf);}
-  void SetRecFieldCoef(G4double coef) {polar->SetRecFieldCoef(coef);}
-  void SetRecFieldExp(G4double ex) {polar->SetRecFieldExp(ex);}
+  void SetLSFile(G4String name) {lfn = name;}
+  void SetPrbFile(G4String name) {pfn = name;}
+
+  void FixState(G4int index) {selected = index;}
+  void OnlyConsiderState(G4int index) {considered = index;}
+  void SetGSS(G4double sp) {gss = sp;}
   
 private:
 
-  inline void BuildProjectileLS(G4int Z, G4int A);
-  inline void BuildRecoilLS(G4int Z, G4int A);
-
-  inline void BuildProjectileSplines();
-  inline void BuildRecoilSplines();
+  void ReadLevelSchemeFile(G4int Z, G4int A);
+  void ReadProbFile();
+  void Renormalize();
   
   Excitation_Messenger* messenger;
   Polarization* polar;
-
-  G4String pFN; //Projectile LS file name
-  G4String rFN; //Recoil LS file name
-
-  G4String pPF; //Projectile probabilities file name
-  G4String rPF; //Recoil probabilities file name
+  const G4bool proj;
   
-  std::vector<Polarized_Particle*> pLevels; //projectile states
-  std::vector<G4DataInterpolation*> pSplines; //projectile probability splines
+  G4String lfn; //Level scheme file name
+  G4String pfn; //Probabilities file name
   
-  G4int pSelected;
-  G4int pConsidered;
-  G4double pGSS;
-
-  std::vector<Polarized_Particle*> rLevels; //recoil states
-  std::vector<G4DataInterpolation*> rSplines; //recoil probability splines
+  //Energy-theta grid points
+  std::vector<G4double> energies;
+  std::vector<G4double> thetas;
+  std::vector<G4double> probs;
+  std::vector<gsl_spline2d*> interps;
   
-  G4int rSelected;
-  G4int rConsidered;
-  G4double rGSS;
+  std::vector<Polarized_Particle*> levels; //States
+  G4int selected;
+  G4int considered;
+  G4double gss;
 
+  //Stuff for 2D interpolation
+  gsl_interp_accel* xacc;
+  gsl_interp_accel* yacc;
+  
 };
 
 #endif

@@ -157,13 +157,13 @@ G4bool Reaction::KeepThetaCM(G4double thetaCM, G4double Ep, G4double Ex) {
     for(unsigned int i=0;i<good_LAB_thetas.size();i+=2) {
   
       if(
-	 //Check if projectile will scatter into desired  range
+	 //Check if projectile will scatter into desired range
          ((Theta_LAB(thetaCM,Ep,Ex) > good_LAB_thetas.at(i)) &&
           (Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)))
        
          ||
 	 
-         //Check if recoil will will scatter into desired  range
+         //Check if recoil will will scatter into desired range
          ((Recoil_Theta_LAB(thetaCM,Ep,Ex) > good_LAB_thetas.at(i)) &&
           (Recoil_Theta_LAB(thetaCM,Ep,Ex) < good_LAB_thetas.at(i+1)) &&
 	  (Recoil_KE_LAB(thetaCM,Ep,Ex) > recThresh))

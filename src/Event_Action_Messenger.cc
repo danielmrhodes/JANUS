@@ -31,7 +31,7 @@ void Event_Action_Messenger::SetNewValue(G4UIcommand* command, G4String newValue
   }
   else if(command == owc_cmd) {
     eventAction->OWC();
-    G4cout << "Only coincidence data will be written to file." << G4endl;
+    G4cout << "Only coincidence data will be written to output file." << G4endl;
   }
   
   return;

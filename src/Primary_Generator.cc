@@ -14,12 +14,13 @@
 
 Primary_Generator::Primary_Generator() {
 
-  messenger = new Primary_Generator_Messenger(this);
   gun = new G4ParticleGun(1);
+  messenger = new Primary_Generator_Messenger(this);
   
   reac = new Reaction();
   source = new Gamma_Source();
-  excite = new Excitation();
+  exciteP = new Excitation(true);
+  exciteR = new Excitation(false);
 
   projGS = NULL;
   recoilGS = NULL;
@@ -49,7 +50,8 @@ Primary_Generator::~Primary_Generator() {
   delete messenger;
   delete reac;
   delete source;
-  delete excite;
+  delete exciteP;
+  delete exciteR;
   
 }
 
@@ -114,7 +116,7 @@ void Primary_Generator::GenerateScatteringPrimaries(G4Event* evt) {
   //Randomize X and Y
   G4ThreeVector pos = G4ThreeVector(G4RandGauss::shoot(beam_X,sigma_X),
 				    G4RandGauss::shoot(beam_Y,sigma_Y),
-				    -(width/2.0) + depth); //reaction position
+				    -(width/2.0) + depth);
   //Outgoing vectors
   G4ThreeVector bdir = G4ThreeVector(0,0,1); //projectile direction
   bdir.setTheta(reac->Theta_LAB(th,en,deltaE)); //theta from kinematics
@@ -195,19 +197,19 @@ void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
   en -= dedx*depth;
 
   //Choose excited states
-  G4int pI = excite->ChooseProjectileState(th);
-  G4int rI = excite->ChooseRecoilState(th);
+  G4int pI = exciteP->ChooseState(en,th);
+  G4int rI = exciteR->ChooseState(en,th);
 
   //DelatE for inelastic scattering
   G4double ex = 0.0*MeV;
-  ex += excite->GetProjectileExcitation(pI);
-  ex += excite->GetRecoilExcitation(rI);
+  ex += exciteP->GetExcitation(pI);
+  ex += exciteR->GetExcitation(rI);
 
   //Reaction position
   //Randomize X and Y
   G4ThreeVector pos = G4ThreeVector(G4RandGauss::shoot(beam_X,sigma_X),
 				    G4RandGauss::shoot(beam_Y,sigma_Y),
-				    -(width/2.0) + depth); //reaction position
+				    -(width/2.0) + depth);
   
   //Outgoing vectors
   G4ThreeVector bdir = G4ThreeVector(0,0,1); //projectile direction
@@ -219,8 +221,11 @@ void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
   rdir.setPhi(bdir.phi()-pi); //Particles emerge back-to-back in LAB frame
 
   //Align excited states
-  excite->Unpolarize(); //remove old polarization
-  excite->Polarize(pI,rI,th,bdir.phi());
+  exciteP->Unpolarize(); //remove old polarization
+  exciteP->Polarize(pI,en,th,bdir.phi());
+
+  exciteR->Unpolarize(); //remove old polarization
+  exciteR->Polarize(rI,en,th,bdir.phi());
   
   //Randomize direction using angle distributions
   G4double ax = G4RandGauss::shoot(beam_AX,sigma_AX);
@@ -232,14 +237,14 @@ void Primary_Generator::GenerateFullPrimaries(G4Event* evt) {
   rdir.rotateY(ay);
   
   //Beam vertex
-  gun->SetParticleDefinition(excite->GetProjectileDefinition(pI));
+  gun->SetParticleDefinition(exciteP->GetDefinition(pI));
   gun->SetParticleEnergy(reac->KE_LAB(th,en,ex));
   gun->SetParticlePosition(pos);
   gun->SetParticleMomentumDirection(bdir);
   gun->GeneratePrimaryVertex(evt);
   
   //Recoil vertex
-  gun->SetParticleDefinition(excite->GetRecoilDefinition(rI));
+  gun->SetParticleDefinition(exciteR->GetDefinition(rI));
   gun->SetParticleEnergy(reac->Recoil_KE_LAB(th,en,ex));
   gun->SetParticlePosition(pos);
   gun->SetParticleMomentumDirection(rdir);
@@ -259,8 +264,8 @@ void Primary_Generator::Update() {
       
       projGS = table->GetIon(reac->GetBeamZ(),reac->GetBeamA(),0.0*MeV);
       recoilGS = table->GetIon(reac->GetRecoilZ(),reac->GetRecoilA(),0.0*MeV);
-      projGS->SetPDGStable(true);
-      recoilGS->SetPDGStable(true);
+      projGS->SetPDGLifeTime(-1.0);
+      recoilGS->SetPDGLifeTime(-1.0);
 
       UpdateReaction();
       
@@ -275,21 +280,19 @@ void Primary_Generator::Update() {
     }
 
     case MODE::Full: {
-
-      G4int bZ = reac->GetBeamZ();
-      G4int bA = reac->GetBeamA();
-      G4int rZ = reac->GetRecoilZ();
-      G4int rA = reac->GetRecoilA();
       
-      excite->BuildLevelSchemes(bZ,bA,rZ,rA);
-      excite->BuildProbabilities();
+      exciteP->BuildLevelScheme();
+      exciteR->BuildLevelScheme();
       
-      projGS = excite->GetProjectileDefinition(0);
-      recoilGS = excite->GetRecoilDefinition(0);
+      exciteP->BuildProbabilities();
+      exciteR->BuildProbabilities();
+      
+      projGS = exciteP->GetDefinition(0);
+      recoilGS = exciteR->GetDefinition(0);
       UpdateReaction();
 
-      G4double bEn = beam_En - 0.5*dedx*width;
-      excite->BuildStatisticalTensors(bZ,bA,bEn,rZ,rA);
+      exciteP->BuildStatisticalTensors();
+      exciteR->BuildStatisticalTensors();
       
       break;
     }
@@ -309,6 +312,7 @@ void Primary_Generator::UpdateReaction() {
     (Detector_Construction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
 
   if(con->GetTargetMaterial()) {
+    
     G4EmCalculator* calc = new G4EmCalculator();
     dedx = calc->ComputeTotalDEDX(beam_En,projGS,con->GetTargetMaterial());
     width = con->GetTargetThickness();
@@ -334,3 +338,69 @@ void Primary_Generator::SetMode(G4String md) {
   
 }
 
+G4int Primary_Generator::GetZ(G4bool proj) {
+
+  if(proj)
+    return reac->GetBeamZ();
+  
+  return reac->GetRecoilZ();
+  
+}
+
+G4int Primary_Generator::GetA(G4bool proj) {
+
+  if(proj)
+    return reac->GetBeamA();
+  
+  return reac->GetRecoilA();
+  
+}
+
+G4double Primary_Generator::GetMass(G4bool proj) {
+
+  if(proj)
+    return reac->GetBeamMass();
+  
+  return reac->GetRecoilMass();
+  
+}
+
+std::vector<G4double> Primary_Generator::GetExcitedStateLifetimes(G4bool proj) {
+
+  std::vector<G4double> times;
+  if(proj) {
+
+    for(unsigned int i=1;i<exciteP->GetLevels().size();i++)
+      times.push_back(exciteP->GetDefinition(i)->GetPDGLifeTime());
+
+  }
+  else {
+
+    for(unsigned int i=1;i<exciteR->GetLevels().size();i++)
+      times.push_back(exciteR->GetDefinition(i)->GetPDGLifeTime());
+    
+  }
+
+  return times;
+  
+}
+
+std::vector<G4double> Primary_Generator::GetExcitedStateSpins(G4bool proj) {
+
+  std::vector<G4double> spins;
+  if(proj) {
+
+    for(unsigned int i=1;i<exciteP->GetLevels().size();i++)
+      spins.push_back(exciteP->GetLevels().at(i)->GetSpin());
+
+  }
+  else {
+
+    for(unsigned int i=1;i<exciteR->GetLevels().size();i++)
+      spins.push_back(exciteR->GetLevels().at(i)->GetSpin());
+  
+  }
+
+  return spins;
+  
+}

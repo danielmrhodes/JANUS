@@ -41,6 +41,12 @@ public:
   
   G4String GetProjectileName() {return projGS->GetParticleName();}
   G4String GetRecoilName() {return recoilGS->GetParticleName();}
+
+  G4int GetZ(G4bool proj);
+  G4int GetA(G4bool proj);
+  G4double GetMass(G4bool proj);
+  std::vector<G4double> GetExcitedStateLifetimes(G4bool proj);
+  std::vector<G4double> GetExcitedStateSpins(G4bool proj);
   
   void Update();
   void GeneratePrimaries(G4Event* evt);
@@ -59,8 +65,9 @@ private:
   
   Reaction* reac;
   Gamma_Source* source;
-  Excitation* excite;
-
+  Excitation* exciteP;
+  Excitation* exciteR;
+  
   G4ParticleDefinition* projGS; //Projectile ground state
   G4ParticleDefinition* recoilGS; //Recoil ground state
 

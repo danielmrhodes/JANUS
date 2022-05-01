@@ -7,7 +7,8 @@ name := JANUS
 G4TARGET := $(name)
 G4EXLIB := true
 
-CPPFLAGS += -std=c++11 -g 
+CPPFLAGS += -std=c++11 -g
+EXTRALIBS += -lgsl -lgslcblas
 
 .PHONY: all
 all: lib bin

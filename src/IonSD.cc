@@ -67,8 +67,8 @@ void IonSD::ConsolidateHits() {
 
  label:
   
-  for(int i=0;i<HC->entries();i++) {
-    for(int j=i+1;j<HC->entries();j++) {
+  for(unsigned int i=0;i<HC->entries();i++) {
+    for(unsigned int j=i+1;j<HC->entries();j++) {
 
       Ion_Hit* hit1 = (Ion_Hit*)HC->GetHit(i);
       Ion_Hit* hit2 = (Ion_Hit*)HC->GetHit(j);
@@ -99,8 +99,8 @@ void IonSD::ConsolidateHits() {
 
 void IonSD::CombineRings() {
 
-  for(int i=0;i<HC->entries();i++) {
-    for(int j=i+1;j<HC->entries();j++) {
+  for(unsigned int i=0;i<HC->entries();i++) {
+    for(unsigned int j=i+1;j<HC->entries();j++) {
 
       Ion_Hit* hit1 = (Ion_Hit*)HC->GetHit(i);
       Ion_Hit* hit2 = (Ion_Hit*)HC->GetHit(j);

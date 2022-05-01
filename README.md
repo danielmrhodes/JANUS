@@ -1,3 +1,5 @@
+This is a developmental branch which should not be used yet.
+
 JANUS
 =================================================================================
 A GEANT4 simulation of low-energy Coulomb excitation experiments with SeGA-JANUS.
@@ -19,7 +21,7 @@ JANUS takes an input macro file and writes the output to a data file. To run the
 
 The ROOT file hist_file.root now contains many histograms and can be opened with any standard ROOT installation.
 
-The correlator is a small program compiled with ROOT libraries. To correctly sort the simulated data, the correlator.cc file needs to be edited and recompiled. Directly after the inlcude statements there are several variables which need to be changed to match the simulation input.
+The correlator is a small program compiled with ROOT libraries. To correctly sort the simulated data, the correlator.cc file needs to be edited and recompiled. Immediately after the inlcude statements there are several variables which need to be changed to match the simulation input.
 
 To recompile the correlator, simply
 
@@ -31,7 +33,7 @@ The JANUS simultation has three modes: Source, Scattering, and Full. Each mode h
 
 - Source: Simulates either a simple isotropic gamma-ray, or a user-definable gamma-ray cascade. No massive particles involved.
 - Scattering: Simulates two-body scattering events. No gamma-rays involved. 
-- Full: Simulates Coulomb Excitation events with user-definable level schemes, scattering-angle dependent excitation probabilities, and scattering-angle dependent alignment of the excited states..
+- Full: Simulates Coulomb Excitation events with user-definable level schemes, excitation probabilities, and alignment of the excited states. Both angle and energy dependence are accounted for.
 
 Macro Files
 -----------------
@@ -122,7 +124,7 @@ The Scattering mode commands are divided into two categories: /Beam and /Reactio
 
 The use of optional /Reaction commands is strongly recommended. Without these commands, the entire scattering angle range [0,pi] will be sampled according the Rutheford scattering distribution. This means roughly 10<sup>-4</sup> of your simulated events will result in a particle entering the silicon detectors.
 
-The optional /Reaction commands can be used together, so you can fully customize what scattering angles you simulate. The /Reaction/SendToX commands will overwrite any scattering angles defined via the /Reaction/AddThetaLAB command. To use these commands together, always call the /Reaction/SendToX command first.
+The optional /Reaction commands can be used together, so you can fully control what scattering angles you simulate. The /Reaction/SendToX commands will overwrite any scattering angles defined via the /Reaction/AddThetaLAB command. To use these commands together, always call the /Reaction/SendToX command first.
 
 There are no "safety checks" for these commands. For example, never do
 
@@ -175,7 +177,7 @@ The statistical tensors [1] and deorientation effect coefficients G<sub>k</sub> 
 
 Input Preparation
 -----------------
-The ROOT script MakeInput.C will make the probabilities file and statistical tensors file that can be given to JANUS. The script uses the Coulomb excitation code Cygnus [3] for the calculations. The Cygnus libraries must be loaded into the ROOT session before loading MakeInput.C, and the Cygnus nucleus file must already be created. See [3] for details.
+The ROOT script MakeInput.C will make the probabilities file and statistical tensors file that can be given to JANUS. You will need to edit the script with your particular reaction parameters. The script uses the Coulomb excitation code Cygnus [3] for the calculations. The Cygnus libraries must be loaded into the ROOT session before loading MakeInput.C, and the Cygnus nucleus file must already be created. See [3] for details.
 
 The level scheme file, for either a Source or Full simulation, must be created manually. The file has a different format depending on the simulation mode; these are described below.   
 
@@ -225,102 +227,13 @@ II<sub>N</sub> En<sub>N</sub> Sp<sub>N</sub> Tau<sub>N</sub> Pop<sub>2</sub> Nb<
 
 The Source level scheme file is the same the Full level schem file (above), but has one additional entry, Pop<sub>i</sub>, which comes before Nb<sub>i</sub>. This is the relative population of the state i. An example level scheme file (co60.lvl) for a Source simulation is in the Examples/LevelSchemes/Source folder.
 
-Probability File Format
------------------
-The probability files are text files which describe the scattering-angle dependent excitation probabilities of the excited states. They have the following format.
+Probability File and Statistical Tensor File
+----------------
+Use the script MakeInput.C to create these input files.
 
-<pre>
-theta<sub>1</sub> P<sub>0</sub>(theta<sub>1</sub>) P<sub>1</sub>(theta<sub>1</sub>) ... P<sub>N</sub>(theta<sub>1</sub>)
-theta<sub>2</sub> P<sub>0</sub>(theta<sub>2</sub>) P<sub>1</sub>(theta<sub>2</sub>) ... P<sub>N</sub>(theta<sub>2</sub>)
-...
-theta<sub>K</sub> P<sub>0</sub>(theta<sub>K</sub>) P<sub>1</sub>(theta<sub>K</sub>) ... P<sub>N</sub>(theta<sub>K</sub>)
-</pre>
-
-Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians. There is no limit on the number of theta spline points. P<sub>i</sub>(theta<sub>k</sub>) is the excitation probability of state i for the CoM scattering angle theta<sub>k</sub>. The scattering angles must be entered smallest to largest, and the probabilities must be entered in the order of the states 0 to N. The state indices are defined by the level scheme file, and all states must be included. Note that the ground state probabilities (index 0) must be included here. An example probabilities file is in the Examples/Probabilities folder.
-
-Statistical Tensor File Format
------------------
-The statistical tensor files are text files which contatin the components of the statistical tensor for each excited state at different scattering angles. They have the following format.
-
-<pre>
-Theta [CM]: theta<sub>1</sub> rad
-STATISTICAL TENSORS: LAB FRAME
-INDEX:	    KA:	     KAPPA:	RHOC:
-1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>1</sub>)
-1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>1</sub>)
-1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>1</sub>)
-1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>1</sub>)
-...
-1	    k<sup>(1)</sup><sub>max</sub>    k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>1</sub>)
-2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>1</sub>)
-2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>1</sub>)
-2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>1</sub>)
-2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>1</sub>)
-...
-2	    k<sup>(2)</sup><sub>max</sub>    k<sup>(2)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(2)</sup><sub>max</sub>k<sup>(2)</sup><sub>max</sub></sub>(theta<sub>1</sub>)
-...
-N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>1</sub>)
-N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>1</sub>)
-N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>1</sub>)
-N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>1</sub>)
-...
-N	    k<sup>(N)</sup><sub>max</sub>    k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>1</sub>)
-
-Theta [CM]: theta<sub>2</sub> rad
-STATISTICAL TENSORS: LAB FRAME
-INDEX:	    KA:	     KAPPA:	RHOC:
-1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>2</sub>)
-1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>2</sub>)
-1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>2</sub>)
-1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>2</sub>)
-...
-1	    k<sup>(1)</sup><sub>max</sub>    k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>2</sub>)
-2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>2</sub>)
-2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>2</sub>)
-2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>2</sub>)
-2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>2</sub>)
-...
-2	    k<sup>(2)</sup><sub>max</sub>    k<sup>(2)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(2)</sup><sub>max</sub>k<sup>(2)</sup><sub>max</sub></sub>(theta<sub>2</sub>)
-...
-N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>2</sub>)
-N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>2</sub>)
-N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>2</sub>)
-N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>2</sub>)
-...
-N	    k<sup>(N)</sup><sub>max</sub>    k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>2</sub>)
-...
-
-Theta [CM]: theta<sub>K</sub> rad
-STATISTICAL TENSORS: LAB FRAME
-INDEX:	    KA:	     KAPPA:	RHOC:
-1	    0	     0		rho<sup>(1)</sup><sub>00</sub>(theta<sub>K</sub>)
-1	    2	     0		rho<sup>(1)</sup><sub>20</sub>(theta<sub>K</sub>)
-1	    2	     1		rho<sup>(1)</sup><sub>21</sub>(theta<sub>K</sub>)
-1	    2	     2		rho<sup>(1)</sup><sub>22</sub>(theta<sub>K</sub>)
-...
-1	    k<sup>(1)</sup><sub>max</sub>    k<sup>(1)</sup><sub>max</sub>	rho<sup>(1)</sup><sub>k<sup>(1)</sup><sub>max</sub>k<sup>(1)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
-2	    0	     0		rho<sup>(2)</sup><sub>00</sub>(theta<sub>K</sub>)
-2	    2	     0		rho<sup>(2)</sup><sub>20</sub>(theta<sub>K</sub>)
-2	    2	     1		rho<sup>(2)</sup><sub>21</sub>(theta<sub>K</sub>)
-2	    2	     2		rho<sup>(2)</sup><sub>22</sub>(theta<sub>K</sub>)
-...
-2	    k<sup>(2)</sup><sub>max</sub>    k<sup>(2)</sup><sub>max</sub>	rho<sup>(2)</sup><sub>k<sup>(2)</sup><sub>max</sub>k<sup>(2)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
-...
-N	    0	     0		rho<sup>(N)</sup><sub>00</sub>(theta<sub>K</sub>)
-N	    2	     0		rho<sup>(N)</sup><sub>20</sub>(theta<sub>K</sub>)
-N	    2	     1		rho<sup>(N)</sup><sub>21</sub>(theta<sub>K</sub>)
-N	    2	     2		rho<sup>(N)</sup><sub>22</sub>(theta<sub>K</sub>)
-...
-N	    k<sup>(N)</sup><sub>max</sub>    k<sup>(N)</sup><sub>max</sub>	rho<sup>(N)</sup><sub>k<sup>(N)</sup><sub>max</sub>k<sup>(N)</sup><sub>max</sub></sub>(theta<sub>K</sub>)
-</pre>
-
-Here theta<sub>k</sub> is the center-of-mass frame scattering angle in radians, and these must be entered smallest to largest. There is no limit on the number of theta spline points, and they do not need to be the same as in the probabilities file. The INDEX column specifies the state index, defined by the level scheme file, and these must entered in order from 1 to N. The KA and KAPPA columns specify the component of the statistical tensor, and these must be entered in odometer ordering as shown (lowest k first, then lowest kappa first). The RHOC column lists the value of the component. The largest k for state i (k<sup>(i)</sup><sub>max</sub>) is given by the lesser number of 2J<sup>(i)</sup> and 6. Note that the ground state is not included in this file.
-
-The statistical tensor must be calculated in coordinate frame C as defined by [1]. This implies they are purely real and only have non-zero components for even k. Only positive kappa values should be inlcuded, with kappa running from 0 to k.
-
-*Not all excited states must be included, but currently you cannot "skip" a state. If you have 5 excited states, including tensors for states 1, 2, and 3 is fine. Including tensors for states 1, 2, and 4 is not.*
-
-*If the incoming particle trajectory is not parallel to the z-axis, which can be accomplished with optional /Beam commands, the statistical tensor will not be correct. Correcting this would require a rotation that is not yet implemented.*
+Notes
+----------------
+*If the incoming particle trajectory is not parallel to the z-axis, which can be accomplished with optional /Beam commands, the statistical tensor will not be correct. Correcting this requires a coordinate system rotation which is not yet implemented.*
 
 References
 -----------------

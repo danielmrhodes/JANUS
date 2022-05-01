@@ -108,16 +108,17 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   if(place_target) {
 
     //Target material (isotopically pure)
-    target_mat = new G4Material("target_mat",target_density,1); //Bulk material (1 component)
-    G4Element* target_ele = new G4Element("target_ele","target_symbol",1); //Element (1 isoptope)
-    G4Isotope* target_iso = new G4Isotope("target_iso",target_Z,target_N,target_mass); //The isotope
+    target_mat = new G4Material("target_mat",target_density,1); //Bulk material
+    G4Element* target_ele = new G4Element("target_ele","target_symbol",1); //Element
+    G4Isotope* target_iso = new G4Isotope("target_iso",target_Z,target_N,target_mass); //Isotope
     target_ele->AddIsotope(target_iso,1.0);
     target_mat->AddElement(target_ele,1.0);
   
     //Make the target
     G4Tubs* solid_target = new G4Tubs("Target_Sol",0*cm,target_radius,
 				      target_thickness/2.0,0.0*deg,360.0*deg);
-    G4LogicalVolume* logic_target = new G4LogicalVolume(solid_target,target_mat,"Target_Logical",0,0,uLim);
+    G4LogicalVolume* logic_target = new G4LogicalVolume(solid_target,target_mat,"Target_Logical",
+							0,0,uLim);
     logic_target->SetVisAttributes(vis1);
 						      
     new G4PVPlacement(0,G4ThreeVector(),logic_target,"Target",logic_world,false,0,check);
@@ -204,9 +205,8 @@ void Detector_Construction::Update() {
     volumes_placed = true;
     
   }
-  else {
+  else
     G4cout << "Geometry has already been updated. Cannot make additional changes." << G4endl;
-  }
 
   return;
 

@@ -1,443 +1,393 @@
 #include "Polarization.hh"
 #include "Reaction.hh"
+#include "Primary_Generator.hh"
 #include <fstream>
 
 #include "G4Clebsch.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
 #include "G4PhysicalConstants.hh"
+#include "G4RunManager.hh"
 
-Polarization::Polarization() {
-
-  offsets = {{0,0},{2,1},{4,4},{6,9}};
+Polarization::Polarization(G4bool prj) : proj(prj) {
   
-  pFN = "";
-  rFN = "";
-
-  pCalcGk = true;
-  rCalcGk = true;
-
-  G4complex val;
-  val.real(1.0);
-  val.imag(0.0);
+  messenger = new Polarization_Messenger(this,proj);
   
-  unpolarized.emplace_back();
-  unpolarized.at(0).push_back(val);
+  fn = "";
+  calcGk = true;
+  
+  unpolarized.resize(1);
+  unpolarized[0].push_back(1.0);
 
-  //deorientation effect model parameters for the projectile
+  //deorientation effect model parameters
   //default values
-  Avji_P = 3.0;
-  Gam_P = 0.02;
-  Xlamb_P = 0.0345;
-  TimeC_P = 3.5;
-  Gfac_P = -1.0; //default is Z/A, which is assigned later
-  Field_P = 6.0*std::pow(10.0,-6.0);
-  Power_P = 0.6;
+  Avji = 3.0;
+  Gam = 0.02;
+  Xlamb = 0.0345;
+  TimeC = 3.5;
+  Gfac = -1.0; //default is Z/A, which is assigned later
+  Field = 6.0*std::pow(10.0,-6.0);
+  Power = 0.6;
 
-  //deorientation effect model parameters for the recoil
-  //default values
-  Avji_R = Avji_P;
-  Gam_R = Gam_P;
-  Xlamb_R = Xlamb_P;
-  TimeC_R = TimeC_P;
-  Gfac_R = -1.0; //default is Z/A, which is assigned later
-  Field_R = Field_P;
-  Power_R = Power_P;
+  xacc = gsl_interp_accel_alloc();
+  yacc = gsl_interp_accel_alloc();
   
 }
 
-Polarization::~Polarization() {}
+Polarization::~Polarization() {
 
-void Polarization::BuildStatisticalTensors(G4int pZ, G4int pA, G4double pEn, G4int rZ, G4int rA,
-					   std::vector<Polarized_Particle*> pLevels,
-					   std::vector<Polarized_Particle*> rLevels) {
+  delete messenger;
+  for(unsigned int i=0;i<interps.size();i++)
+    gsl_spline2d_free(interps.at(i));
   
-  G4double pM = pLevels.at(0)->GetDefinition()->GetPDGMass();
-  G4double rM = rLevels.at(0)->GetDefinition()->GetPDGMass();
+  gsl_interp_accel_free(xacc);
+  gsl_interp_accel_free(yacc);
   
-  BuildProjectileTensors(pZ,pA,pM,pEn,rM,pLevels);
-  BuildRecoilTensors(pM,pEn,rZ,rA,rM,rLevels);
-  
-  return;
 }
 
-void Polarization::ReadTensorFile(G4String fn, std::vector<State>& states, std::vector<double>& thetas) {
+G4int Polarization::MaxK(G4double spin) {
 
+  G4int twoJ = G4int(2.0*spin + 0.01);
+  if(twoJ >= 6)
+    return 6;
+  
+  return twoJ;
+  
+}
+
+G4int Polarization::NumComps(G4double spin) {
+  
+  G4int num = 0;
+  for(G4int k=0;k<=MaxK(spin);k+=2)
+    num += k + 1;
+
+  return num;
+}
+
+G4int Polarization::GetOffset(G4int index, G4int k, G4int kappa) {
+  
+  G4int offset = 0;
+  for(G4int i=0;i<index-1;i++)
+    offset += NumComps(spins[i]);
+
+  for(G4int i=0;i<k;i+=2)
+    offset += i + 1;
+
+  offset += kappa;
+  
+  return offset;
+}
+
+void Polarization::ReadTensorFile() {
+
+  G4String nuc;
+  if(proj)
+    nuc = "projectile";
+  else
+    nuc = "recoil";
+  
+  thetas.clear();
+  energies.clear();
+  values.clear();
+  
   std::ifstream file;
   file.open(fn.c_str(),std::ios::in);
+
   if(!file.is_open()) {
-    G4cout << "\n\033[1;31mCould not open tensor file " << fn << "!!\033[m" << G4endl;
+    G4cout << " \033[1;31mCould not open " << nuc << " statistical tensor file " << fn
+	   << "! No polarization will occur! \033[m" << G4endl;
+    spins.clear();
     return;
   }
   
-  std::string line, word;
+  std::string line;
+  std::getline(file,line);
+
+  G4double en;
+  std::stringstream ss1(line);
+
+  while(ss1 >> en)
+    energies.push_back(en);
+
+  std::getline(file,line);
+
+  G4double th;
+  std::stringstream ss2(line);
+
+  while(ss2 >> th)
+    thetas.push_back(th);
+
+  G4int numE = energies.size();
+  G4int numT = thetas.size();
+  G4int indexE = 0;
+  G4int indexT = 0;
+
+  for(auto sp : spins) 
+    values.resize(values.size() + numE*numT*NumComps(sp));
+  
+  std::getline(file,line);
   while(std::getline(file,line)) {
 
-    std::stringstream ls(line);
-    ls >> word;
-    ls >> word;
-    ls >> word;
-
-    G4double theta;
-    std::stringstream ss(word);
-    ss >> theta;
-
-    thetas.push_back(theta);
-    
-    std::getline(file,line);
-    std::getline(file,line);
-    while(std::getline(file,line)) {
-
-      if(line.empty()) {
-	break;
-      }
-	
-      std::stringstream ls1(line);
-
-      ls1 >> word; //index
-      unsigned int index;
-      std::stringstream ss1(word);
-      ss1 >> index;
-
-      if(states.size() < index) {
-	states.emplace_back();
-	states.back().fStateIndex = (int)index;
-	states.back().fMaxK = 0;
-	   
-	states.back().fTensor.emplace_back();
-	states.back().fTensor.back().fK = 0;
-	states.back().fTensor.back().fKappa = 0;
-      }
-
-      ls1 >> word; //k
-      G4int k;
-      std::stringstream ss2(word);
-      ss2 >> k;
-
-      if(!(states.at(index-1).HasK(k))) { //new k value
-
-	if(k > states.at(index-1).fMaxK) {
-	  states.at(index-1).fMaxK = k;
-	}
-    
-	states.at(index-1).fTensor.emplace_back();
-	states.at(index-1).fTensor.back().fK = k;
-	states.at(index-1).fTensor.back().fKappa = 0;
-	
-      }
-
-      ls1 >> word; //kappa
-      G4int kappa;
-      std::stringstream ss3(word);
-      ss3 >> kappa;
-
-      if(!(states.at(index-1).HasKKappa(k,kappa))) { //new kappa value (for current k)
-    
-	states.at(index-1).fTensor.emplace_back();
-	states.at(index-1).fTensor.back().fK = k;
-	states.at(index-1).fTensor.back().fKappa = kappa;
-	
+    if(line.empty()) {
+      
+      indexT++;
+      if(indexT == numT) {
+	indexE++;
+	indexT = 0;
+	std::getline(file,line);
       }
       
-      ls1 >> word; //value
-      G4double val;
-      std::stringstream ss4(word);
-      ss4 >> val;
+      continue;
+    }
 
-      int iindex = states.at(index-1).Index(k,kappa);
-      states.at(index-1).fTensor.at(iindex).fVal.push_back(val);
-	
-    } //End second while(getline()) (1 ThetaCM Block)
+    G4int index, k, kappa;
+    G4double spin, val;
     
-  } //End first while(getline()) (All ThetaCM Blocks)
+    std::stringstream ss3(line);
+    ss3 >> index >> spin >> k >> kappa >> val;
+
+    G4int offset = GetOffset(index,k,kappa)*numE*numT;
+    values.at(offset + indexT*numE + indexE) = val;
+ 
+  }
   
   return;
+  
 }
 
-void Polarization::BuildProjectileTensors(G4int pZ, G4int pA, G4double pM, G4double pEn, G4double rM,
-					  std::vector<Polarized_Particle*> levels) {
+void Polarization::BuildStatisticalTensors() {
 
-  if(levels.size() == 1) {
+  G4String nuc;
+  if(proj)
+    nuc = "projectile";
+  else
+    nuc = "recoil";
+  
+  if(fn == "") {
+    G4cout << "\nNo " << nuc << " polarization\n";
     return;
   }
+  G4cout << "\nBuilding " << nuc << " statistical tensors from " << fn  << "\n";
 
-  if(pFN == "") {
-    G4cout << "\nNo projectile polarization\n";
-    return;
-  }
-  
-  std::vector<State> states;
-  std::vector<double> thetas;
-  ReadTensorFile(pFN,states,thetas);
+  SetSpins();
+  ReadTensorFile();
+  ApplyGk();
 
-  if(states.size()) {
-    
-    G4cout << "\nBuilding projectile statistical tensors from " << pFN << "\n";
-    if(pCalcGk) {
-      G4cout << " Gk coefficients will be applied\n";
-    }
-    else {
-      G4cout << " No Gk coefficients\n";
-    }
-    
-  }
+  G4int numE = energies.size();
+  G4int numT = thetas.size();
+  G4int numS = spins.size();
+  G4int numV = values.size();
 
-  for(unsigned int i=0;i<states.size();i++) {
-    pMaxK.push_back(states.at(i).fMaxK);
-  }
-  
-  const unsigned int size = thetas.size();
-  for(unsigned int i=0;i<states.size();i++) {
-
-    pTensors.emplace_back();
-    State st = states.at(i);
-
-    G4int spin = levels.at(i+1)->GetSpin();
-    G4double time = levels.at(i+1)->GetDefinition()->GetPDGLifeTime();
-
-    //Calculate and store Gk coefficients for one level at all ThetaCM values
-    std::vector< std::array<G4double,7> > Gks;
-    if(pCalcGk) {
-      for(unsigned int l=0;l<size;l++) {
-      
-	G4double beta = Reaction::Beta_LAB(thetas.at(l),pEn,pM,rM,0.0*MeV);
-	Gks.push_back(GKK(pZ,pA,beta,spin,time/ps,false));
-      
-      }
-    }
-    
-    for(unsigned int j=0;j<st.fTensor.size();j++) {
-
-      TensorComp comp = st.fTensor.at(j);
-      
-      if(comp.fVal.size() != size) {
-	G4cout << "\033[1;31mProjectile state " << i << " statistical tensor component "
-	       <<  comp.fK << " " << comp.fKappa << " (index " << j << ") has" << comp.fVal.size()
-	       << " polarization splines points, while there are " << size
-	       << " thetaCM spline points! This is likely a mistake and could break thins!\033[m"
-	       << G4endl; 
-      }
-
-      //apply Gk coefficients
-      if(pCalcGk) {
-	for(unsigned int l=0;l<comp.fVal.size();l++) {
-	  comp.fVal.at(l) *= Gks.at(l).at(comp.fK);
-	}
-      }
-
-      pTensors.at(i).push_back(new G4DataInterpolation(&thetas[0],&(comp.fVal)[0],size,0,0));
-      
-    }
-  }
-
-  if(pTensors.size() == levels.size() - 1) {
-    G4cout << "All " << pTensors.size() << " statistical tensors built for the projectile!\n";
-  }
+  if(numE && numT && numS && numV)
+    G4cout << "Done!\n";
   else {
-    G4cout << "\033[1;36m Warning: Only" << pTensors.size()
-	   << " statistical tensors were built for the projectile, which has "
-	   << levels.size() - 1 << " excited states!\033[m" << G4endl;
-  }
-
-  return;
-  
-}
-
-void Polarization::BuildRecoilTensors(G4double pM, G4double pEn, G4int rZ, G4int rA, G4double rM,
-				      std::vector<Polarized_Particle*> levels) {
-
-  if(levels.size() == 1) {
+    G4cout << "\033[1;31mFailed :( No polarization for the " << nuc << "\033[m\n";
+    spins.clear();
     return;
   }
   
-  if(rFN == "") {
-    G4cout << "\nNo recoil polarization\n";
-    return;
-  }
-  
-  std::vector<State> states;
-  std::vector<double> thetas;
-  ReadTensorFile(rFN,states,thetas);
+  for(G4int i=0;i<numS;i++) {
 
-  if(states.size()) {
-    
-    G4cout << "\nBuilding recoil statistical tensors from " << rFN << "\n";
-    if(rCalcGk) {
-      G4cout << " Gk coefficients will be applied\n";
-    }
-    else {
-      G4cout << " No Gk coefficients\n";
-    }
-    
-  }
-  
-  for(unsigned int i=0;i<states.size();i++) {
-    rMaxK.push_back(states.at(i).fMaxK);
-  }
-
-  const unsigned int size = thetas.size();
-  for(unsigned int i=0;i<states.size();i++) {
-
-    rTensors.emplace_back();
-    State st = states.at(i);
-
-    G4int spin = levels.at(i+1)->GetSpin();
-    G4double time = levels.at(i+1)->GetDefinition()->GetPDGLifeTime();
-
-    //Calculate and store Gk coefficients for one level at all ThetaCM values
-    std::vector< std::array<G4double,7> > Gks;
-    if(rCalcGk) {
-      for(unsigned int l=0;l<size;l++) {
+    G4double sp = spins.at(i);
+    for(G4int k=0;k<=MaxK(sp);k+=2) {
       
-	G4double beta = Reaction::Recoil_Beta_LAB(thetas.at(l),pEn,pM,rM,0.0*MeV);
-	Gks.push_back(GKK(rZ,rA,beta,spin,time/ps,true));
-	//Gks.back().at(2) *= 0.5;
-	//Gks.back().at(4) *= 0.5;
-	//Gks.back().at(6) *= 0.5;
+      for(G4int kp=0;kp<=k;kp++) {
+
+	interps.push_back(gsl_spline2d_alloc(gsl_interp2d_bicubic,numE,numT));  
+
+	G4int offset = GetOffset(i+1,k,kp)*numE*numT;
+	gsl_spline2d_init(interps.back(),&energies[0],&thetas[0],&values[offset],numE,numT);
 	
       }
     }
     
-    for(unsigned int j=0;j<st.fTensor.size();j++) {
-
-      TensorComp comp = st.fTensor.at(j);
-      
-      if(comp.fVal.size() != size) {
-	G4cout << "\033[1;31mRecoil state " << i << " statistical tensor component " <<  comp.fK
-	       << " " << comp.fKappa << " (index " << j << ") has" << comp.fVal.size()
-	       << " polarization splines points, while there are " << size
-	       << " thetaCM spline points! This is likely a mistake and could break things."
-	       << "\033[m" << G4endl; 
-      }
-
-      //apply Gk coefficients
-      if(rCalcGk) {
-	for(unsigned int l=0;l<comp.fVal.size();l++) {
-	  comp.fVal.at(l) *= Gks.at(l).at(comp.fK);
-	}
-      }
-      
-      rTensors.at(i).push_back(new G4DataInterpolation(&thetas[0],&(comp.fVal)[0],size,0,0));
-      
-    }
   }
   
-  if(rTensors.size() == levels.size() - 1) {
-    G4cout << "All " << rTensors.size() << " statistical tensors built for the recoil!\n";
-  }
+  return;
+  
+}
+
+void Polarization::SetSpins() {
+
+  G4RunManager* Rman = G4RunManager::GetRunManager();
+  Primary_Generator* gen = (Primary_Generator*)Rman->GetUserPrimaryGeneratorAction();
+  std::vector<G4double> sps = gen->GetExcitedStateSpins(proj);
+  
+  spins.clear();
+  for(auto sp : sps)
+    spins.push_back(sp);
+  
+  return;
+}
+
+void Polarization::ApplyGk() {
+
+  if(calcGk)
+    G4cout << " Gk coefficients will be applied\n";
   else {
-    G4cout << "\033[1;36mWarning: Only " << rTensors.size()
-	   << " statistical tensors were built for the recoil, which has " << levels.size() - 1
-	   << " excited states!\033[m" << G4endl;
+    G4cout << " No Gk coefficients\n";
+    return;
+  }
+
+  G4RunManager* Rman = G4RunManager::GetRunManager();
+  Primary_Generator* gen = (Primary_Generator*)Rman->GetUserPrimaryGeneratorAction();
+  
+  G4int Z = gen->GetZ(proj);
+  G4int A = gen->GetA(proj);
+  std::vector<G4double> times = gen->GetExcitedStateLifetimes(proj);
+  G4double beam_mass = gen->GetMass(true);
+  G4double targ_mass = gen->GetMass(false);
+  
+  if(Gfac < 0.0)
+    Gfac = G4double(Z)/G4double(A);
+  
+  G4int numE = energies.size();
+  G4int numT = thetas.size();
+  G4int numS = spins.size();
+
+  for(G4int i=0;i<numS;i++) {
+
+    G4double sp = spins.at(i);
+    for(G4int j=0;j<numE;j++) {
+
+      G4double en = energies.at(j);
+      for(G4int l=0;l<numT;l++) {
+	    
+	G4double th = thetas.at(l);
+	G4double beta;
+	if(proj)
+	  beta = Reaction::Beta_LAB(th,en,beam_mass,targ_mass,0.0*MeV);
+	else
+	  beta = Reaction::Recoil_Beta_LAB(th,en,beam_mass,targ_mass,0.0*MeV);
+	    
+	std::array<G4double,7> Gks = GKK(Z,beta,sp,times.at(i)/ps);
+	for(G4int k=0;k<=MaxK(sp);k+=2) {
+
+	  for(G4int kp=0;kp<=k;kp++) {
+
+	    G4int offset = GetOffset(i+1,k,kp)*numE*numT;
+	    values.at(offset + l*numE + j) *= Gks.at(k);
+
+	  }
+	}
+      }
+    }
   }
 
   return;
   
 }
 
-std::vector< std::vector<G4complex> > Polarization::GetProjectilePolarization(const G4int state,
-									      const G4double th,
-									      const G4double ph) {
+void Polarization::Clean() {
 
-  if((unsigned int)state >= pTensors.size()) {
+  if(!polarization.empty()) {
+    for(auto& pol : polarization) {
+      pol.clear();
+    }
+    polarization.clear();
+  }
+  
+  return;
+}
+
+std::vector< std::vector<G4complex> >& Polarization::GetPolarization(G4int state, G4double en,
+								     G4double th, G4double ph) {
+
+  if((unsigned int)state >= spins.size())
     return unpolarized;
+
+  Clean();
+  
+  G4int numE = energies.size();
+  G4int numT = thetas.size();
+  if(en < energies[0]) {
+
+    static G4int counter = 0;
+    if(counter < 5)
+      G4cout << "\033[1;36mYou need to go to a lower energy when making the "
+	     << "polarization input file (E = " << en << ", min = " << energies[0] << ")\033[m"
+	     << G4endl;
+    counter++;
+    
+    en = energies[0];
+  }
+  else if(en > energies[numE-1]) {
+
+    static G4int counter = 0;
+    if(counter < 5)
+      G4cout << "\033[1;36mYou need to go to a higher energy when making the "
+	     << "polarization input file (E = " << en << ", max = " << energies[numE-1] << ")\033[m"
+	     << G4endl;
+    counter++;
+    
+    en = energies[numE-1];
   }
 
+  if(th < thetas[0]) {
+
+    static G4int counter = 0;
+    if(counter < 5)
+      G4cout << "\033[1;36mYou need to go to a lower theta when making the "
+	     << "polarization input file (th = " << th << ", min = " << thetas[0] << ")\033[m"
+	     << G4endl;
+    counter++;
+    
+    th = thetas[0]; 
+  }
+  else if(th > thetas[numT-1]) {
+
+    static G4int counter = 0;
+    if(counter < 5)
+      G4cout << "\033[1;36mYou need to go to a higher theta when making the "
+	     << "polarization input file (th = " << th << ", max = " << thetas[numT-1] << ")\033[m"
+	     << G4endl;
+    counter++;
+    
+    th = thetas[numT-1];
+  }
+  
+  G4int maxK = MaxK(spins[state-1]);
+  polarization.resize(maxK+1);
+  
   G4complex imp;
   imp.real(0.0);
   
-  std::vector<G4DataInterpolation*> tensor = pTensors.at(state-1);
-  G4int maxK = pMaxK.at(state-1);
+  for(G4int k=0;k<=maxK;k++) {
 
-  std::vector< std::vector<G4complex> > polar;
-  for(G4int k=0;k<maxK+1;k++) {
-
-    polar.emplace_back();
-    if(k%2) {
+    if(k%2)
       continue;
-    }
 
-    G4int off = offsets[k];
-    for(G4int kp=0;kp<k+1;kp++) {
-
+    polarization[k].resize(k+1);
+    for(G4int kp=0;kp<=k;kp++) {
+      
       G4complex val;
-      val.real(tensor.at(off + kp)->CubicSplineInterpolation(th));
-      val.imag(0);
+      val.imag(0.0);
 
+      G4int index = GetOffset(state,k,kp);
+      val.real(gsl_spline2d_eval(interps[index],en,th,xacc,yacc));
+      
       imp.imag(kp*ph);
-      polar.at(k).push_back(std::exp(-imp)*val);
+      polarization[k][kp] = std::exp(-imp)*val;
       
     }
   }
 
-  G4complex p00 = polar[0][0];
-  for(G4int k=0;k<maxK+1;k++) {
+  G4complex p00 = polarization[0][0];
+  for(G4int k=0;k<=maxK;k++) {
 
-    if(k%2) {
+    if(k%2)
       continue;
-    }
    
-    for(G4int kp=0;kp<k+1;kp++) {
-      polar[k][kp] /= p00;
-    }
+    for(G4int kp=0;kp<=k;kp++)
+      polarization[k][kp] /= p00;
+    
   }
   
-  return polar;
+  return polarization;
   
 }
 
-std::vector< std::vector<G4complex> > Polarization::GetRecoilPolarization(const G4int state,
-									  const G4double th,
-									  const G4double ph) {
-
-  if((unsigned int)state >= rTensors.size()) {
-    return unpolarized;
-  }
-
-  G4complex imp;
-  imp.real(0.0);
-  
-  std::vector<G4DataInterpolation*> tensor = rTensors.at(state-1);
-  G4int maxK = rMaxK.at(state-1);
-
-  std::vector< std::vector<G4complex> > polar;
-  for(G4int k=0;k<maxK+1;k++) {
-
-    polar.emplace_back();
-    if(k%2) {
-      continue;
-    }
-
-    G4int off = offsets[k];
-    for(G4int kp=0;kp<k+1;kp++) {
-
-      G4complex val;
-      val.real(tensor.at(off + kp)->CubicSplineInterpolation(th));
-      val.imag(0);
-
-      imp.imag(kp*ph);
-      polar.at(k).push_back(std::exp(-imp)*val);
-      
-    }
-  }
-
-  G4complex p00 = polar[0][0];
-  for(G4int k=0;k<maxK+1;k++) {
-
-    if(k%2) {
-      continue;
-    }
-   
-    for(G4int kp=0;kp<k+1;kp++) {
-      polar[k][kp] /= p00;
-    }
-  }
-  
-  return polar;
-  
-}
-
-void Polarization::Print(const std::vector< std::vector<G4complex> > polar) const {
+void Polarization::Print(const std::vector< std::vector<G4complex> >& polar) {
 
   G4cout << " P = [ {";
   size_t kk = polar.size();
@@ -456,11 +406,11 @@ void Polarization::Print(const std::vector< std::vector<G4complex> > polar) cons
   return;
 }
 
-std::array<G4double,7> Polarization::GKK(const G4int iz, const G4int ia, const G4double beta,
-					 const G4double spin, const G4double time, const G4bool rec) {
+std::array<G4double,7> Polarization::GKK(const G4int iz, const G4double beta,
+					 const G4double spin, const G4double time) {
 
-  //model parameters
   /*
+  //model parameters
   const G4double Avji = 3.0; // Average atomic spin
   const G4double Gam = 0.02; // FWHM of frequency distribution
   const G4double Xlamb = 0.0345; //Fluctuating state to static state transition rate
@@ -469,41 +419,6 @@ std::array<G4double,7> Polarization::GKK(const G4int iz, const G4int ia, const G
   const G4double Field = 6.0*std::pow(10.0,-6.0); //Hyperfine field coefficient (600 T)
   const G4double Power = 0.6; //Hyperfine field exponent
   */
-
-  G4double Avji;
-  G4double Gam;
-  G4double Xlamb;
-  G4double TimeC;
-  G4double Gfac = iz/G4double(ia);
-  G4double Field;
-  G4double  Power;
-
-  if(rec) {
-    Avji = Avji_R;
-    Gam = Gam_R;
-    Xlamb = Xlamb_R;
-    TimeC = TimeC_R;
-
-    if(Gfac_R > 0.0) {
-      Gfac = Gfac_R;
-    }
-    
-    Field = Field_R;
-    Power = Power_R;
-  }
-  else {
-    Avji = Avji_P;
-    Gam = Gam_P;
-    Xlamb = Xlamb_P;
-    TimeC = TimeC_P;
-
-    if(Gfac_P > 0.0) {
-      Gfac = Gfac_P;
-    }
-    
-    Field = Field_P;
-    Power = Power_P;
-  }
   
   G4int  inq, ifq;
   G4double qcen, dq, xnor;
@@ -636,8 +551,8 @@ void Polarization::XSTATIC(const G4int iz, const G4double beta, G4int& id, G4int
   qcen = iz*std::pow(h,0.6);
   dq = std::sqrt(qcen*(1.0-h))/2.0;
 
-  iu = (G4int)(qcen + 3.0*dq + 0.5);
-  id = (G4int)(qcen - 3.0*dq - 0.5);
+  iu = G4int(qcen + 3.0*dq + 0.5);
+  id = G4int(qcen - 3.0*dq - 0.5);
 
   if(iu > iz) {
     iu = iz;

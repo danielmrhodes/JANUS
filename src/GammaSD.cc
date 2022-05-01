@@ -41,8 +41,8 @@ void GammaSD::EndOfEvent(G4HCofThisEvent* HCE) {
   
  label:
 
-  for(int i=0;i<HC->entries();i++) {
-    for(int j=i+1;j<HC->entries();j++) {
+  for(unsigned int i=0;i<HC->entries();i++) {
+    for(unsigned int j=i+1;j<HC->entries();j++) {
 
       Gamma_Hit* hit1 = (Gamma_Hit*)HC->GetHit(i);
       Gamma_Hit* hit2 = (Gamma_Hit*)HC->GetHit(j);
@@ -61,7 +61,7 @@ void GammaSD::EndOfEvent(G4HCofThisEvent* HCE) {
   }
 
   G4double cores[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-  for(int i=0;i<HC->entries();i++) {
+  for(unsigned int i=0;i<HC->entries();i++) {
     
     Gamma_Hit* hit = (Gamma_Hit*)HC->GetHit(i);	
     cores[hit->GetDetector()-1] += hit->GetEdep();

@@ -63,46 +63,18 @@ void Gamma_Source::BuildLevelScheme() {
   
   std::string line, word;
   while(std::getline(file,line)) {
-      
-    std::stringstream linestream1(line);
-    linestream1 >> word;
 
-    G4int state_index;
-    std::stringstream ss(word);
-    ss >> state_index;
+    G4int state_index, nbr;
+    G4double energy, spin, lifetime, prob;
 
-    linestream1 >> word;
+    std::stringstream ss1(line);
+    ss1 >> state_index >> energy >> spin >> lifetime >> prob >> nbr;
 
-    G4double energy;
-    std::stringstream ss1(word);
-    ss1 >> energy;
     energy *= keV;
-    
-    linestream1 >> word;
-    
-    G4double spin;
-    std::stringstream ss2(word);
-    ss2 >> spin;
-
-    linestream1 >> word;
-
-    G4double lifetime;
-    std::stringstream ss3(word);
-    ss3 >> lifetime;
     lifetime *= ps;
 
-    linestream1 >> word;
-
-    G4double prob;
-    std::stringstream ss4(word);
-    ss4 >> prob;
-    probs.push_back(prob);
-
-    linestream1 >> word;
-
-    G4int nbr;
-    std::stringstream ss11(word);
-    ss11 >> nbr;
+    G4cout << " " << state_index << " " << energy/keV << " " << spin << " " << lifetime/ps << " "
+	   << prob << " " << nbr;
 
     G4ParticleDefinition* part = table->GetIon(82,208,energy);
     if(nbr) {
@@ -112,59 +84,23 @@ void Gamma_Source::BuildLevelScheme() {
       part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
     }
     else {
+      G4cout << " \033[1;36m Warning: State " << state_index << " has no decay branches.\033[m";
       part->SetPDGLifeTime(-1.0);
     }
-
-    G4cout << " " << state_index << " " << energy/keV << " " << spin << " " << lifetime/ps << " "
-	   << prob << " " << nbr;
-
-    if(nbr == 0)
-      G4cout << " \033[1;36m Warning: State " << state_index << " has no decay branches.\033[m";
     G4cout << G4endl;
     
     Polarized_Particle* ppart = new Polarized_Particle(part,82,208,spin,energy);
     for(int i=0;i<nbr;i++) {
 
+      G4int index, L0, Lp;
+      G4double BR, del, cc;
+      
       std::getline(file,line);
-      std::stringstream linestream2(line);
+      std::stringstream ss2(line);
+      ss2 >> index >> BR >> L0 >> Lp >> del >> cc;
       
-      linestream2 >> word;
-
-      G4int index;
-      std::stringstream ss5(word);
-      ss5 >> index;
-
-      linestream2 >> word;
-      
-      G4double BR;
-      std::stringstream ss6(word);
-      ss6 >> BR;
-
-      linestream2 >> word;
-
-      G4int L0;
-      std::stringstream ss7(word);
-      ss7 >> L0;
-
-      linestream2 >> word;
-
-      G4int Lp;
-      std::stringstream ss8(word);
-      ss8 >> Lp;
-
-      linestream2 >> word;
-
-      G4double del;
-      std::stringstream ss9(word);
-      ss9 >> del;
-
-      linestream2 >> word;
-      
-      G4double cc;
-      std::stringstream ss10(word);
-      ss10 >> cc;
-
-      G4cout << "  " << index << " " << BR << " " << L0 << " " << Lp << " " << del << " " << cc << G4endl;
+      G4cout << "  " << index << " " << BR << " " << L0 << " " << Lp << " " << del << " " << cc
+	     << G4endl;
       
       part->GetDecayTable()->Insert(new Gamma_Decay(ppart,levels.at(index),BR,L0,Lp,del,cc));
       
@@ -178,22 +114,18 @@ void Gamma_Source::BuildLevelScheme() {
     
   }
 
-  if(levels.size()-1 == probs.size()) {
+  if(levels.size()-1 == probs.size())
     G4cout << levels.size()-1  << " excited states built for the source!" << G4endl;
-  }
-  else {
+  else
     G4cout << "There are " << levels.size()-1 << " excited states but " << probs.size()
 	   << " population probabilities!" << G4endl;
-  }
 
   G4double sum = 0.0;
-  for(unsigned int i=0;i<probs.size();i++) {
-    sum += probs.at(i);
-  }
+  for(auto p : probs)
+    sum += p;
 
-  for(unsigned int i=0;i<probs.size();i++) {
+  for(unsigned int i=0;i<probs.size();i++)
     probs.at(i) /= sum;
-  }
   
   return;
   
@@ -205,7 +137,7 @@ G4int Gamma_Source::ChooseState() {
   G4double num = G4UniformRand();
 
   for(unsigned int i=0;i<probs.size();i++) {
-    sumBR += probs.at(i);
+    sumBR += probs[i];
     if(num < sumBR) {
       return i+1;
     }
@@ -216,9 +148,8 @@ G4int Gamma_Source::ChooseState() {
 
 void Gamma_Source::Unpolarize() {
 
-  for(auto lvl : levels) {
+  for(auto& lvl : levels)
     lvl->Unpolarize();
-  }
   
   return;
 }

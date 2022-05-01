@@ -35,7 +35,7 @@ void Event_Action::EndOfEventAction(const G4Event* evt) {
     if(HCE->GetHC(i)->GetName() == "ionCollection") {
 
       Ion_Hit_Collection* iHC = (Ion_Hit_Collection*)HCE->GetHC(i);  
-      for(G4int j=0;j<iHC->entries();j++) {
+      for(unsigned int j=0;j<iHC->entries();j++) {
 
 	if(nB > 9) {
 	  G4cout << "Too many ion hits!" << G4endl;
@@ -56,7 +56,7 @@ void Event_Action::EndOfEventAction(const G4Event* evt) {
     else if(HCE->GetHC(i)->GetName() == "gammaCollection") {
 
       Gamma_Hit_Collection* gHC = (Gamma_Hit_Collection*)HCE->GetHC(i);
-      for(G4int j=0;j<gHC->entries();j++) {
+      for(unsigned int j=0;j<gHC->entries();j++) {
 
 	if(nS > 49) {
 	  G4cout << "Too many gamma hits!" << G4endl;

@@ -9,9 +9,8 @@
 #include "G4UnitsTable.hh"
 #include "G4HadronicException.hh"
 
-Gamma_Decay::Gamma_Decay(Polarized_Particle* Parent, Polarized_Particle* daughter, G4double BR, G4int L0,
-			 G4int Lp, G4double del, G4double cc) : Gamma_Decay(Parent->GetDefinition(),
-									    daughter->GetDefinition(),BR) {
+Gamma_Decay::Gamma_Decay(Polarized_Particle* Parent, Polarized_Particle* daughter, G4double BR,
+			 G4int L0, G4int Lp, G4double del, G4double cc) : Gamma_Decay(Parent->GetDefinition(), daughter->GetDefinition(),BR) {
 
   trans = new G4PolarizationTransition();
   
@@ -27,8 +26,8 @@ Gamma_Decay::Gamma_Decay(Polarized_Particle* Parent, Polarized_Particle* daughte
 }
 
 Gamma_Decay::Gamma_Decay(G4ParticleDefinition* Parent, G4ParticleDefinition* daughter,
-			 G4double BR) : G4VDecayChannel("Phase Space",Parent->GetParticleName(),BR,2,
-							daughter->GetParticleName(),"gamma"),
+			 G4double BR) : G4VDecayChannel("Phase Space",Parent->GetParticleName(),
+							BR,2,daughter->GetParticleName(),"gamma"),
 					theDaughterMasses(0) {
 
   SetParent(Parent);
@@ -67,7 +66,7 @@ G4DecayProducts* Gamma_Decay::DecayIt(G4double) {
 
   //calculate daughter momentum
   daughtermomentum = Pmx(parentmass,daughtermass[0],daughtermass[1]);
-
+  
   G4double costheta;
   G4double phi;
   trans->SampleGammaTransition(pParent->GetNuclearPolarization(),pParent->TwoJ(),
