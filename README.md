@@ -177,9 +177,9 @@ Input Preparation
 -----------------
 The ROOT script MakeInput.C will make the probabilities file and statistical tensors file that can be given to JANUS. You will need to edit the script with your particular reaction parameters. The script uses the Coulomb excitation code Cygnus [3] for the calculations. The Cygnus libraries must be loaded into the ROOT session before loading MakeInput.C, and the Cygnus nucleus file must already be created. See [3] for details.
 
-The level scheme file, for either a Source or Full simulation, must be created manually. The file has a different format depending on the simulation mode; these are described below.
+You can inspect the probabilities and statistical tensors calculated for the various states using the scripts prob_reader.C and tensor_reader.C. You must edit the tensor_reader.C file with the excited state spins for the nucleus your looking at.
 
-You can inspect the probabilities and statistical tensors calculated for the various states using the scripts prob_reader.C and tensor_reader.C. You must edit the tensor_reader.C with the excited state spins for the nucleus your looking at.
+The level scheme file, for either a Source or Full simulation, must be created manually. The file has a different format depending on the simulation mode; these are described below.
 
 Full Mode Level Scheme File Format
 -----------------
