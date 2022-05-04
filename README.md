@@ -23,7 +23,7 @@ The correlator is a small program compiled with ROOT libraries. To compile the c
 
 - ./make_correlator.sh
 
-If you want the Doppler correction to worky, the correlator.cc file needs to be edited and recompiled. Immediately after the inlcude statements there are several variables which need to be changed to match the simulation input.
+If you want the Doppler correction to work, the correlator.cc file needs to be edited and recompiled. Immediately after the inlcude statements there are several variables which need to be changed to match the simulation input.
 
 Functionality
 -----------------
