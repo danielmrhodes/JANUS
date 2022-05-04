@@ -19,11 +19,11 @@ JANUS takes an input macro file and writes the output to a data file. To run the
 
 The ROOT file hist_file.root now contains many histograms and can be opened with any standard ROOT installation.
 
-The correlator is a small program compiled with ROOT libraries. To correctly sort the simulated data, the correlator.cc file needs to be edited and recompiled. Immediately after the inlcude statements there are several variables which need to be changed to match the simulation input.
-
-To recompile the correlator, simply
+The correlator is a small program compiled with ROOT libraries. To compile the correlator, simply
 
 - ./make_correlator.sh
+
+If you want the Doppler correction to worky, the correlator.cc file needs to be edited and recompiled. Immediately after the inlcude statements there are several variables which need to be changed to match the simulation input.
 
 Functionality
 -----------------
@@ -31,7 +31,7 @@ The JANUS simultation has three modes: Source, Scattering, and Full. Each mode h
 
 - Source: Simulates either a simple isotropic gamma-ray, or a user-definable gamma-ray cascade. No massive particles involved.
 - Scattering: Simulates two-body scattering events. No gamma-rays involved. 
-- Full: Simulates Coulomb Excitation events with user-definable level schemes, excitation probabilities, and alignment of the excited states. Both angle and energy dependence are accounted for.
+- Full: Simulates Coulomb excitation events with user-definable level schemes, excitation probabilities, and statistical tensors. Both the angle and energy dependence of Coulbomb excitation are accounted for with these inputs.
 
 Macro Files
 -----------------
@@ -151,8 +151,8 @@ For the Full CoulEx simulation, all Scattering mode commands still apply. Additi
 | Command | Description |
 | --- | --- |
 | /Excitation/Projectile/LevelScheme *string* | Name of the file to be read-in which defines the projectile level scheme. |
-| /Excitation/Projectile/Probabilities *string* | Name of the file to be read-in which defines the angle-dependent excitation probabilities for the projectile. |
-| /Excitation/Projectile/StatisticalTensors *string* | Name of the file to be read-in which contains the statistical tensors for the projectile to determine the angle-dependent nuclear alignment. |
+| /Excitation/Projectile/Probabilities *string* | Name of the file to be read-in which defines the angle and energy dependence of the excitation probabilities for the projectile. |
+| /Excitation/Projectile/StatisticalTensors *string* | Name of the file to be read-in which defines the angle and energy dependence of the statistical tensors for the projectile. |
 | /Excitation/Projectile/OnlyConsiderState *int* | Turn off gamma decays from all states except this one. This requires a level scheme file and a probabilities file. |
 | /Excitation/Projectile/PopulateState *int* | Choose one state to populate in the projectile, irrespective of scattering angle. This only requires a level scheme file (the probabilities file will simply be ignored). |
 | /Excitation/Projectile/GroundStateSpin *double* | Set the spin of the projectile ground state. The spin must be integer or half-integer. (Default: 0.0) |
