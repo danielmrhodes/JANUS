@@ -6,7 +6,7 @@ A GEANT4 simulation of low-energy Coulomb excitation experiments with SeGA-JANUS
 Requirements
 ------------------
 - JANUS has been tested on both GEANT4 v10.04.02 and v10.07.00. It *should* compile on any version of GEANT4 after v10.04.02.
-- The gsl libraries are required
+- The GSL libraries are required
 - In order to use the file correlator.cc to sort and histogram the simulated data, a ROOT installation is required. ROOT is also required to use the scripts prob_reader.C and tensor_reader.C.
 
 
