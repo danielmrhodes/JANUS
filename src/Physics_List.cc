@@ -17,7 +17,7 @@
 
 #include "G4ionIonisation.hh"
 #include "G4IonParametrisedLossModel.hh"
-//#include "G4NuclearStopping.hh"
+#include "G4NuclearStopping.hh"
 //#include "G4hMultipleScattering.hh"
 
 #include "G4eIonisation.hh"
@@ -82,21 +82,6 @@ void Physics_List::ConstructProcess() {
   
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
 
-  //Generic ion
-  /*
-  ph->RegisterProcess(new G4ionIonisation(),G4GenericIon::Definition());
-  ph->RegisterProcess(new G4StepLimiter(),G4GenericIon::Definition());
-  //ph->RegisterProcess(new G4hMultipleScattering("ionmsc"),G4GenericIon::Definition());
-  */
-  
-  //Gamma
-  /*
-  ph->RegisterProcess(new G4PhotoElectricEffect(),G4Gamma::Definition());
-  ph->RegisterProcess(new G4ComptonScattering(),G4Gamma::Definition());
-  ph->RegisterProcess(new G4GammaConversion(),G4Gamma::Definition());
-  ph->RegisterProcess(new G4RayleighScattering(),G4Gamma::Definition());
-  */
-
   //Electron
   ph->RegisterProcess(new G4eIonisation(),G4Electron::Definition());
   ph->RegisterProcess(new G4eBremsstrahlung(),G4Electron::Definition());
@@ -109,24 +94,23 @@ void Physics_List::ConstructProcess() {
   ph->RegisterProcess(new G4eplusAnnihilation(),G4Positron::Definition());
   
   //Generic Ion
-  //G4NuclearStopping* inuc = new G4NuclearStopping();
+  G4NuclearStopping* inuc = new G4NuclearStopping();
   
   G4ionIonisation* ionIoni = new G4ionIonisation();
-  //ionIoni->SetEmModel(new G4IonParametrisedLossModel());
-  //ionIoni->SetStepFunction(0.1, 1*um);
+  ionIoni->SetEmModel(new G4IonParametrisedLossModel());
+  ionIoni->SetStepFunction(0.1,1*um);
 
   //ph->RegisterProcess(new G4hMultipleScattering("ionmsc"),G4GenericIon::Definition());
   ph->RegisterProcess(ionIoni,G4GenericIon::Definition());
-  //ph->RegisterProcess(inuc,G4GenericIon::Definition());
+  ph->RegisterProcess(inuc,G4GenericIon::Definition());
   ph->RegisterProcess(new G4StepLimiter(),G4GenericIon::Definition());
 
-  //inuc->SetMaxKinEnergy(MeV);
+  inuc->SetMaxKinEnergy(MeV);
   
   //Gamma
   G4PhotoElectricEffect* pe = new G4PhotoElectricEffect();
   pe->SetEmModel(new G4LivermorePhotoElectricModel());
   ph->RegisterProcess(pe,G4Gamma::Definition());
-  //G4VEmModel* theLivermorePEModel = new G4LivermorePhotoElectricModel();
 
   // Compton scattering
   G4ComptonScattering* cs = new G4ComptonScattering;
