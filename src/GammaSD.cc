@@ -83,10 +83,6 @@ void GammaSD::EndOfEvent(G4HCofThisEvent* HCE) {
 
       G4bool broken = false;
       for(auto it = idMap.begin();it != idMap.end();++it) {
-	
-	if(std::find(detMap[i+1].begin(),detMap[i+1].end(),it->first) == detMap[i+1].end()) {
-	  continue;
-	}
 
 	broken = false;
 	for(unsigned int id : detMap[i+1]) {
@@ -95,9 +91,8 @@ void GammaSD::EndOfEvent(G4HCofThisEvent* HCE) {
 	    break;
 	  }
 	}
-	if(broken) {
-	  break;
-	}
+	if(broken)
+	  continue;
 
 	G4double diff = enMap[it->first] - cores[i];
 	if(diff*diff < (0.01*keV)*(0.01*keV)) {
