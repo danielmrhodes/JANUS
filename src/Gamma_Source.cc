@@ -72,6 +72,7 @@ void Gamma_Source::BuildLevelScheme() {
 
     energy *= keV;
     lifetime *= ps;
+    probs.push_back(prob);
 
     G4cout << " " << state_index << " " << energy/keV << " " << spin << " " << lifetime/ps << " "
 	   << prob << " " << nbr;
@@ -102,7 +103,7 @@ void Gamma_Source::BuildLevelScheme() {
       G4cout << "  " << index << " " << BR << " " << L0 << " " << Lp << " " << del << " " << cc
 	     << G4endl;
       
-      part->GetDecayTable()->Insert(new Gamma_Decay(ppart,levels.at(index),BR,L0,Lp,del,cc));
+      part->GetDecayTable()->Insert(new Gamma_Decay(ppart,levels.at(index),BR,L0,Lp,del,cc,true));
       
     }
 

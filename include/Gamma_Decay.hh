@@ -11,10 +11,13 @@ class Gamma_Decay : public G4VDecayChannel {
 public:
 
   Gamma_Decay(Polarized_Particle* Parent, Polarized_Particle* daughter, G4double BR, G4int L0, G4int Lp,
-	      G4double del, G4double cc);
+	      G4double del, G4double cc, G4bool emit);
   ~Gamma_Decay();
 
   G4DecayProducts* DecayIt(G4double);
+
+  Polarized_Particle* GetDaughter() {return pDaughter;}
+  G4double GetDaughterExcitation() {return pDaughter->GetNuclearPolarization()->GetExcitationEnergy();}
   
   static G4double Pmx(G4double e, G4double p1, G4double p2);
   
@@ -35,6 +38,8 @@ private:
   G4double delta;
 
   G4double convCoef;
+
+  G4bool emit_gamma;
   
 };
 

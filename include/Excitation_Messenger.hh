@@ -7,6 +7,7 @@
 #include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithABool.hh"
+#include "G4UIcmdWithoutParameter.hh"
 
 class Excitation;
 class Excitation_Messenger : public G4UImessenger {
@@ -32,6 +33,7 @@ private:
   G4UIcmdWithAnInteger* pSel_cmd; //Selected state to populate every event
   G4UIcmdWithAnInteger* pCon_cmd; //Only consider this excited state
   G4UIcmdWithADouble* pGSS_cmd; //Ground state spin
+  G4UIcmdWithoutParameter* sCon_cmd; //
   
 };
 

@@ -35,12 +35,15 @@ public:
   void FixState(G4int index) {selected = index;}
   void OnlyConsiderState(G4int index) {considered = index;}
   void SetGSS(G4double sp) {gss = sp;}
+  void SimpleConsidered() {simple_considered = true;}
   
 private:
 
   void ReadLevelSchemeFile(G4int Z, G4int A);
   void ReadProbFile();
   void Renormalize();
+  void RenormalizeSimple();
+  G4bool CanFeedConsidered(G4int index);
   
   Excitation_Messenger* messenger;
   Polarization* polar;
@@ -59,6 +62,7 @@ private:
   G4int selected;
   G4int considered;
   G4double gss;
+  G4bool simple_considered;
 
   //Stuff for 2D interpolation
   gsl_interp_accel* xacc;

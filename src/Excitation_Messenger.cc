@@ -48,8 +48,8 @@ Excitation_Messenger::Excitation_Messenger(Excitation* exc, G4bool prj) : excita
   pCon_cmd = new G4UIcmdWithAnInteger(cmd_name,this);
   pCon_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
 
-  guidance = "Only allow one excited state to be populated in the " + nuc
-    + ", but use realistic (rescaled) probabilities";
+  guidance = "Only allow one excited state to emit gamma-rays in the " + nuc
+    + ". Rescale excitation probabilities";
   pCon_cmd->SetGuidance(guidance);
 
   //Ground state spin
@@ -59,7 +59,14 @@ Excitation_Messenger::Excitation_Messenger(Excitation* exc, G4bool prj) : excita
 
   guidance = "Set spin of the " + nuc + "  ground state";
   pGSS_cmd->SetGuidance(guidance);
-  
+
+  cmd_name = path + "NoFeeding";
+  sCon_cmd = new G4UIcmdWithoutParameter(cmd_name,this);
+  sCon_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
+
+  guidance = "Turn off feeding to the considered state in the " + nuc
+    + ". Rescale excitation probabilities";
+  sCon_cmd->SetGuidance(guidance);
 }
 
 Excitation_Messenger::~Excitation_Messenger() {
@@ -72,6 +79,7 @@ Excitation_Messenger::~Excitation_Messenger() {
   delete pSel_cmd;
   delete pCon_cmd;
   delete pGSS_cmd;
+  delete sCon_cmd;
   
 }
 
@@ -107,6 +115,11 @@ void Excitation_Messenger::SetNewValue(G4UIcommand* command, G4String newValue) 
   else if(command == pGSS_cmd) {
     excitation->SetGSS(pGSS_cmd->GetNewDoubleValue(newValue));
     G4cout << "Setting ground state spin of the " << nuc << " to " << newValue << G4endl;
+  }
+
+  else if(command == sCon_cmd) {
+    excitation->SimpleConsidered();
+    G4cout << "Will not include feeding to the " << nuc << " considered state" << G4endl;
   }
 
   return;

@@ -23,6 +23,7 @@ Excitation::Excitation(G4bool prj) : proj(prj) {
   selected = -1;
   considered = 0;
   gss = 0.0;
+  simple_considered = false;
   
   xacc = gsl_interp_accel_alloc();
   yacc = gsl_interp_accel_alloc();
@@ -121,13 +122,13 @@ void Excitation::ReadLevelSchemeFile(G4int Z, G4int A) {
 	   << " " << nbr;
     
     G4ParticleDefinition* part = table->GetIon(Z,A,energy);
-    if((!considered || state_index == considered) && nbr) {
+    if(nbr) {
       part->SetPDGLifeTime(lifetime);
       part->SetDecayTable(new G4DecayTable());
       part->GetProcessManager()->SetParticleType(part);
       part->GetProcessManager()->AddProcess(new G4Decay(),0,-1,0);
     }
-    if(!nbr) {
+    else {
       G4cout << " \033[1;36m Warning: " << nuc << " state " << state_index
 	     << " has no decay branches.\033[m";
       part->SetPDGLifeTime(-1.0);
@@ -146,9 +147,12 @@ void Excitation::ReadLevelSchemeFile(G4int Z, G4int A) {
 
       G4cout << "  " << index << " " << BR << " " << L0 << " " << Lp << " " << del << " " << cc
 	     << G4endl;
-      
+
+      bool emit_gamma = false;
       if(!considered || state_index == considered)
-	part->GetDecayTable()->Insert(new Gamma_Decay(ppart,levels.at(index),BR,L0,Lp,del,cc));
+	emit_gamma = true;
+      
+      part->GetDecayTable()->Insert(new Gamma_Decay(ppart,levels.at(index),BR,L0,Lp,del,cc,emit_gamma));
       
     }
 
@@ -175,7 +179,12 @@ void Excitation::BuildProbabilities() {
     nuc = "recoil";
   
   if(selected > -1) {
-    G4cout << "\n" << nuc << " state " << selected << " will always be populated" << G4endl;
+    G4cout << "\nState " << selected << " will always be populated in the " << nuc << G4endl;
+    return;
+  }
+
+  if(pfn == "") {
+    G4cout << "\nNo " << nuc << " probabilities." << G4endl;
     return;
   }
   
@@ -183,8 +192,12 @@ void Excitation::BuildProbabilities() {
   ReadProbFile();
   
   if(considered) {
-    G4cout << " Renormalizing for " << nuc << " considered state " << considered << "..." << G4endl;
-    Renormalize();    
+    G4cout << " Renormalizing for " << nuc << " considered state " << considered << G4endl;
+
+    if(simple_considered)
+      RenormalizeSimple();
+    else
+      Renormalize();
   }
     
   G4int numE = energies.size();
@@ -197,7 +210,7 @@ void Excitation::BuildProbabilities() {
     gsl_spline2d_init(interps.back(),&energies[0],&thetas[0],&probs[i*numE*numT],numE,numT);
   }
   
-  if(!considered)
+  if(!simple_considered)
     if(numP == numS*numE*numT)
       G4cout << "All " << nuc << " excitation probability grids successfully built!" << G4endl;
     else
@@ -286,13 +299,13 @@ void Excitation::ReadProbFile() {
   return;
 }
 
-void Excitation::Renormalize() {
+void Excitation::RenormalizeSimple() {
 
   G4String nuc;
   if(proj)
-    nuc = "projectile";
+    nuc = "Projectile";
   else
-    nuc = "recoil";
+    nuc = "Recoil";
   
   G4int numE = energies.size();
   G4int numT = thetas.size();
@@ -314,9 +327,6 @@ void Excitation::Renormalize() {
   for(unsigned int i=0;i<tmp1.size();i++)
     tmp1.at(i) /= max;
   
-  G4cout << nuc << " state " << considered << " excitation probabilites rescaled by " << 1.0/max
-	 << G4endl;
-  
   std::vector<G4double> tmp0;
   for(auto p : tmp1)
     tmp0.push_back(1.0-p);
@@ -326,8 +336,133 @@ void Excitation::Renormalize() {
 
   for(auto p : tmp1)
     probs.push_back(p);
+
+  G4cout << " Feeding is not included. " << nuc << " state " << considered
+	 << " excitation probabilites rescaled by " << 1.0/max << G4endl;
   
   return;
+}
+
+
+void Excitation::Renormalize() {
+
+  G4int numS = levels.size();
+  G4int numE = energies.size();
+  G4int numT = thetas.size();
+
+  std::vector<G4int> feeders;
+  for(G4int i=0;i<numS;i++) {
+    
+    if(CanFeedConsidered(i) || i == considered) {
+      feeders.push_back(i);
+      continue;
+    }
+    
+    for(G4int j=0;j<numE;j++)
+      for(G4int k=0;k<numT;k++)
+	probs.at(i*numE*numT + j*numT + k) = 0.0;
+    
+  }
+
+  std::vector<G4double> sum_probs;
+  sum_probs.resize(numE*numT);
+  std::fill(sum_probs.begin(),sum_probs.end(),0.0);
+  
+  for(G4int i=0;i<(G4int)feeders.size();i++)
+    for(G4int j=0;j<numE;j++)
+      for(G4int k=0;k<numT;k++)
+	sum_probs.at(j*numT + k) += probs.at(feeders.at(i)*numE*numT + j*numT + k);
+
+  G4double max = 0.0;
+  for(auto p : sum_probs)
+    if(p > max)
+      max = p;
+
+  for(G4int i=0;i<(G4int)probs.size();i++)
+    probs.at(i) /= max;
+
+  for(G4int i=0;i<(G4int)sum_probs.size();i++)
+    sum_probs.at(i) /= max;
+
+  for(G4int j=0;j<numE;j++)
+      for(G4int k=0;k<numT;k++)
+	probs.at(j*numT + k) = 1.0 - sum_probs.at(j*numT + k);
+  
+  G4cout << " Found " << feeders.size() - 1 << " possible feeder(s) of state " << considered << " (";
+  for(G4int i=0;i<(G4int)feeders.size();i++) {
+
+    if(feeders.at(i) == considered)
+      continue;
+    
+    G4cout << feeders.at(i);
+    if(i < (G4int)feeders.size()-1)
+      G4cout << " ";
+    
+  }
+  G4cout << "). Probabilities rescaled by " << 1.0/max << G4endl;
+  
+  return;
+}
+
+G4bool Excitation::CanFeedConsidered(G4int index) {
+
+  G4double con_exc = GetExcitation(considered);
+  if(GetExcitation(index) < con_exc)
+    return false;
+
+  G4ParticleDefinition* def = GetDefinition(index);
+  G4DecayTable* tab = def->GetDecayTable();
+  if(!tab)
+    return false;
+
+  G4ParticleDefinition* cdef = GetDefinition(considered);
+  std::vector<G4ParticleDefinition*> daughters;
+  for(G4int i=0;i<tab->entries();i++) {
+    
+    if(tab->GetDecayChannel(i)->GetKinematicsName() != "GammaDecay")
+      continue;
+
+    Gamma_Decay* dec = (Gamma_Decay*)tab->GetDecayChannel(i);
+    if(dec->GetDaughterExcitation() < con_exc)
+      continue;
+
+    G4ParticleDefinition* ddef = dec->GetDaughter()->GetDefinition();
+    if(ddef == cdef)
+      return true;
+
+    daughters.push_back(ddef);
+  }
+
+  while(daughters.size()) {
+    
+    std::vector<G4ParticleDefinition*> further_daughters;
+    for(G4int i=0;i<(G4int)daughters.size();i++) {
+
+      G4ParticleDefinition* ddef = daughters.at(i);
+      G4DecayTable* dtab = ddef->GetDecayTable();
+      if(!dtab)
+	continue;
+      
+      for(G4int j=0;j<dtab->entries();j++) {
+
+	if(dtab->GetDecayChannel(j)->GetKinematicsName() != "GammaDecay")
+	  continue;
+
+	Gamma_Decay* ddec = (Gamma_Decay*)dtab->GetDecayChannel(j);
+	if(ddec->GetDaughterExcitation() < con_exc)
+	  continue;
+
+	G4ParticleDefinition* gdef = ddec->GetDaughter()->GetDefinition();
+	if(gdef == cdef)
+	  return true;
+
+	further_daughters.push_back(gdef);
+      }
+    }
+    daughters = further_daughters;
+  }
+    
+  return false;
 }
 
 G4int Excitation::ChooseState(G4double en, G4double th) {
@@ -415,7 +550,7 @@ G4int Excitation::ChooseState(G4double en, G4double th) {
     }
   }
 
-  if(considered && index)
+  if(simple_considered && index)
     return considered;
   
   return index;
