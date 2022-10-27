@@ -64,13 +64,13 @@ void Primary_Generator::GeneratePrimaries(G4Event* evt) {
       GenerateScatteringPrimaries(evt);
 
       /*
-      G4ThreeVector bdir = G4RandomDirection();
-      G4ThreeVector pos = G4ThreeVector(-0.51*mm,1.04*mm,0.0);
+      //isotropic particle
+      G4ThreeVector dir = G4RandomDirection();
+      G4ThreeVector pos = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
       
-      //Beam vertex
       gun->SetParticleDefinition(projGS);
-      gun->SetParticleEnergy(200.0*MeV);
-      gun->SetParticleMomentumDirection(bdir);
+      gun->SetParticleEnergy(300.0*MeV);
+      gun->SetParticleMomentumDirection(dir);
       gun->SetParticlePosition(pos);
       gun->GeneratePrimaryVertex(evt);
       */

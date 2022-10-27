@@ -248,7 +248,7 @@ void Detector_Construction::SetTarget(G4String target) {
 void Detector_Construction::PrintTarget() {
 
   G4cout << "\t Z: " << target_Z << "\n\t N: " << target_N
-	 << "\n\t Mass: " << G4BestUnit(target_mass,"Mass")
+	 << "\n\t Molar Mass: " << G4BestUnit(target_mass,"Mass")
 	 <<  "\n\t Density: "<< G4BestUnit(target_density,"Volumic Mass")
 	 << "\n\t Thickness: " << G4BestUnit(target_thickness,"Length")
 	 << "\n\t Radius: " << G4BestUnit(target_radius,"Length")
