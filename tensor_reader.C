@@ -101,6 +101,27 @@ void ReadTensorFile(std::string fn, std::vector<double>& energies, std::vector<d
 
 TGraph2D* tensor_reader(int index = 1, int k=0, int kappa=0, bool norm=true) {
 
+  if(!index) {
+    std::cout << "index must be larger than 0" << std::endl;
+    return NULL;
+  }
+  
+  if(k%2) {
+    std::cout << "k should be even" << std::endl;
+    return NULL;
+  }
+  
+  if(k > MaxK(spins.at(index-1))) {
+    std::cout << "max k is " << MaxK(spins.at(index-1)) << " for state " << index
+	      << std::endl;
+    return NULL;
+  }
+
+  if(kappa > k) {
+    std::cout << "kappa can't be larger than k" << std::endl;
+    return NULL;
+  }
+  
   std::string file_name = "tensors.ten";
   std::vector<double> energies;
   std::vector<double> thetas;
