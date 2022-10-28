@@ -154,7 +154,8 @@ For the Full CoulEx simulation, all Scattering mode commands still apply. Additi
 | /Excitation/Projectile/Probabilities *string* | Name of the file to be read-in which defines the angle and energy dependence of the excitation probabilities for the projectile. |
 | /Excitation/Projectile/StatisticalTensors *string* | Name of the file to be read-in which defines the angle and energy dependence of the statistical tensors for the projectile. |
 | /Excitation/Projectile/OnlyConsiderState *int* | Turn off gamma decays from all states except this one. This requires a level scheme file and a probabilities file. |
-| /Excitation/Projectile/PopulateState *int* | Choose one state to populate in the projectile, irrespective of scattering angle. This only requires a level scheme file (the probabilities file will simply be ignored). |
+| /Excitation/Projectile/NoFeeding | Turn off feeding to the state selected by the /OnlyConsiderState command. |
+| /Excitation/Projectile/PopulateState *int* | Choose one state to populate in the projectile, irrespective of scattering angle and beam energy. This only requires a level scheme file (the probabilities file will simply be ignored). |
 | /Excitation/Projectile/GroundStateSpin *double* | Set the spin of the projectile ground state. The spin must be integer or half-integer. (Default: 0.0) |
 | /DeorientationEffect/Projectile/CalculateGk *bool* | Control whether the deorientation effect coefficients G<sub>k</sub> will be calculated for the projectile. These attenuate the nuclear alignment induced after CoulEx, and are only used if the statistical tensors file is provided. (Default: true) |
 | /DeorientationEffect/Projectile/AverageJ *double* | Set the average atomic spin in the projectile for the deorentation effect two-state model (Default: 3.0) |
