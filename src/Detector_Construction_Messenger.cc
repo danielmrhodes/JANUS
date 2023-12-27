@@ -65,8 +65,8 @@ Detector_Construction_Messenger::Detector_Construction_Messenger(Detector_Constr
   
   target_cmd = new G4UIcmdWithAString("/Geometry/Target/StandardTarget",this);
   target_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);
-  target_cmd->SetCandidates("48Ti Ti48 208Pb Pb208 196Pt Pt196");
-  target_cmd->SetGuidance("Construct a standard target: 208Pb, 48Ti, or 196Pt");
+  target_cmd->SetCandidates("48Ti Ti48 48ti ti48 208Pb Pb208 208pb pb208 196Pt Pt196 196pt pt196 110Pd Pd110 110pd pd110");
+  target_cmd->SetGuidance("Construct a standard target: 208Pb, 48Ti, 196Pt, or 110Pd");
 
   print_targ_cmd = new G4UIcmdWithoutParameter("/Geometry/Target/Print",this);
   print_targ_cmd->AvailableForStates(G4ApplicationState::G4State_Idle);

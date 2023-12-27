@@ -11,7 +11,7 @@ class Bambino2 {
 
 public:
 
-  Bambino2();
+  Bambino2(G4bool make_sensitive);
   ~Bambino2();
 
   void Placement(G4LogicalVolume* world, G4double USoff, G4double DSoff);

@@ -59,9 +59,15 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   Primary_Generator* gen = (Primary_Generator*)Rman->GetUserPrimaryGeneratorAction();
 
   G4bool sens_SeGA = false;
+  G4bool sens_Bam2 = false;
   G4UserLimits* uLim = NULL;
   switch(gen->GetMode()) {
     case Primary_Generator::MODE::Scattering: {
+
+      place_silicon = true;
+      place_target = true;
+
+      sens_Bam2 = true;
       
       break;
   
@@ -74,9 +80,14 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
     }
     case Primary_Generator::MODE::Full: {
 
-      uLim = new G4UserLimits(0.05*target_thickness);
+      place_silicon = true;
+      place_target = true;
 
+      sens_Bam2 = true;
       sens_SeGA = true;
+      
+      uLim = new G4UserLimits(0.05*target_thickness);
+      
       break;
 
     }
@@ -99,12 +110,28 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   if(place_silicon) {
 
     //Make Bambino2
-    Bambino2* bam = new Bambino2();
+    Bambino2* bam = new Bambino2(sens_Bam2);
     bam->Placement(logic_world,US_Offset,DS_Offset);  
 
   }
-  
+
   G4bool check = false;
+  G4NistManager* nist = G4NistManager::Instance();
+  
+  ///
+  /*
+  //Mock-up coverage of SPICE
+  G4Material* mat = nist->FindOrBuildMaterial("G4_Pb");
+  G4Tubs* spiceS = new G4Tubs("SpiceS",2.5*cm,3.5*cm,0.5*cm,0.0*deg,360.0*deg);
+
+  G4LogicalVolume* spiceL = new G4LogicalVolume(spiceS,mat,"SpiceL",0,0);
+  spiceL->SetVisAttributes(vis1);
+  
+  new G4PVPlacement(0,G4ThreeVector(0.2*cm,0.5*cm,DS_Offset - 1.1*cm),spiceL,"Spice",logic_world,
+		    false,0,check);
+  */  
+  ///
+  
   if(place_target) {
 
     //Target material (isotopically pure)
@@ -119,15 +146,14 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
 				      target_thickness/2.0,0.0*deg,360.0*deg);
     G4LogicalVolume* logic_target = new G4LogicalVolume(solid_target,target_mat,"Target_Logical",
 							0,0,uLim);
-    logic_target->SetVisAttributes(vis1);
-						      
+    logic_target->SetVisAttributes(vis1);					      
     new G4PVPlacement(0,G4ThreeVector(),logic_target,"Target",logic_world,false,0,check);
     
   }
   
   //Beam tube and fram material (aluminium)
-  G4Material* Al = new G4Material("Aluminum",13,26.98*g/mole,2.7*g/cm3);
-
+  G4Material* Al = nist->FindOrBuildMaterial("G4_Al");
+  
   //Make the beam tube
   G4Tubs* solid_BT = new G4Tubs("BT_Sol",7.366*cm,7.62*cm,44*cm,0*deg,360*deg);
   G4LogicalVolume* logic_BT = new G4LogicalVolume(solid_BT,Al,"BT_Logical");
@@ -138,17 +164,23 @@ G4VPhysicalVolume* Detector_Construction::PlaceVolumes() {
   G4Tubs* tub = new G4Tubs("tubs",0*cm,33*cm,1.0*cm,0*deg,360*deg);
   G4SubtractionSolid* solid_face = new G4SubtractionSolid("face_Sol",solid_plate,tub);
   G4LogicalVolume* logic_face = new G4LogicalVolume(solid_face,Al,"face_Logical");
-  new G4PVPlacement(0,G4ThreeVector(0,0,8*cm+SeGA_Offset),logic_face,"face1",logic_world,false,0,check);
-  new G4PVPlacement(0,G4ThreeVector(0,0,-8*cm+SeGA_Offset),logic_face,"face2",logic_world,false,0,check);
+  new G4PVPlacement(0,G4ThreeVector(0,0,8*cm+SeGA_Offset),logic_face,"face1",logic_world,false,
+		    0,check);
+  new G4PVPlacement(0,G4ThreeVector(0,0,-8*cm+SeGA_Offset),logic_face,"face2",logic_world,false,
+		    0,check);
 
   G4RotationMatrix* Rot = new G4RotationMatrix();
   Rot->rotateX(90*deg);
   
   G4LogicalVolume* logic_plate = new G4LogicalVolume(solid_plate,Al,"plate_Logical");
-  new G4PVPlacement(Rot,G4ThreeVector(0,-0.65*m,SeGA_Offset),logic_plate,"plate1",logic_world,false,0,check);
-  new G4PVPlacement(Rot,G4ThreeVector(0,-0.75*m,SeGA_Offset),logic_plate,"plate2",logic_world,false,0,check);
-  new G4PVPlacement(Rot,G4ThreeVector(0,-0.85*m,SeGA_Offset),logic_plate,"plate3",logic_world,false,0,check);
-  new G4PVPlacement(Rot,G4ThreeVector(0,-0.95*m,SeGA_Offset),logic_plate,"plate4",logic_world,false,0,check);
+  new G4PVPlacement(Rot,G4ThreeVector(0,-0.65*m,SeGA_Offset),logic_plate,"plate1",logic_world,false,
+		    0,check);
+  new G4PVPlacement(Rot,G4ThreeVector(0,-0.75*m,SeGA_Offset),logic_plate,"plate2",logic_world,false,
+		    0,check);
+  new G4PVPlacement(Rot,G4ThreeVector(0,-0.85*m,SeGA_Offset),logic_plate,"plate3",logic_world,false,
+		    0,check);
+  new G4PVPlacement(Rot,G4ThreeVector(0,-0.95*m,SeGA_Offset),logic_plate,"plate4",logic_world,false,
+		    0,check);
 
   G4Box* solid_arm = new G4Box("arm_Sol",0.635*cm,0.65*m,4*cm);
   G4LogicalVolume* logic_arm = new G4LogicalVolume(solid_arm,Al,"arm_Logical");
@@ -213,9 +245,8 @@ void Detector_Construction::Update() {
 }
 
 void Detector_Construction::SetTarget(G4String target) {
-
-  //Need to get exact parameters for every target...
-  if(target == "48Ti" || target == "Ti48") {
+  
+  if(target == "48Ti" || target == "Ti48" || target == "ti48" || target == "48ti") {
     target_Z = 22;
     target_N = 26;
     target_density = 4.515*g/cm3;
@@ -223,7 +254,7 @@ void Detector_Construction::SetTarget(G4String target) {
     target_thickness = 2.20*um;
     target_radius = 0.5*cm;
   }
-  else if(target == "208Pb" || target == "Pb208") {
+  else if(target == "208Pb" || target == "Pb208" || target == "pb208" || target == "208pb") {
     target_Z = 82;
     target_N = 126;
     target_density = 11.382*g/cm3;
@@ -231,7 +262,7 @@ void Detector_Construction::SetTarget(G4String target) {
     target_thickness = 882*nm;
     target_radius = 0.5*cm;
   }
-  else if(target == "196Pt" || target == "Pt196") {
+  else if(target == "196Pt" || target == "Pt196" || target == "pt196" || target == "196pt") {
     target_Z = 78;
     target_N = 118;
     target_density = 21.547*g/cm3;
@@ -239,6 +270,16 @@ void Detector_Construction::SetTarget(G4String target) {
     target_thickness = 738*nm;
     target_radius = 0.5*cm;
   }
+  else if(target == "110Pd" || target == "Pd110" || target == "pd110" || target == "110pd") {
+    target_Z = 46;
+    target_N = 64;
+    target_density = 12.417*g/cm3;
+    target_mass = 109.905*g/mole;
+    target_thickness = 805*nm;
+    target_radius = 0.5*cm;
+  }
+  else
+    G4cout << "\033[1;31mUnrecognized target " << target << ". Defaulting to Pb208\033[m" << G4endl;
 
   PrintTarget();
   

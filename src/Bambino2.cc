@@ -8,7 +8,7 @@
 #include "G4Box.hh"
 #include "G4SubtractionSolid.hh"
 
-Bambino2::Bambino2() {
+Bambino2::Bambino2(G4bool make_sensitive) {
 
   innerRadius=1.1*cm;
   outerRadius=3.5*cm;
@@ -18,8 +18,11 @@ Bambino2::Bambino2() {
   nSectors=32;
 
   //Sensitive Detector
-  TrackerIon = new IonSD("IonTracker");; 
-  G4SDManager::GetSDMpointer()->AddNewDetector(TrackerIon);
+  TrackerIon = NULL;
+  if(make_sensitive) {
+    TrackerIon = new IonSD("IonTracker"); 
+    G4SDManager::GetSDMpointer()->AddNewDetector(TrackerIon);
+  }
   
 }
 
@@ -39,9 +42,12 @@ void Bambino2::Placement(G4LogicalVolume* world, G4double USoff, G4double DSoff)
   vis4->SetVisibility(true);
   vis4->SetForceSolid(true);
 
+  G4NistManager* nist = G4NistManager::Instance();
+  
   //Bambino2 material
-  G4Material* mat = new G4Material("Si",14,28.0855*g/mole,2.329*g/cm3);
-
+  //G4Material* mat = new G4Material("Si",14,28.0855*g/mole,2.329*g/cm3);
+  G4Material* mat = nist->FindOrBuildMaterial("G4_Si");
+    
   //Radial and angular spacing
   G4double dr = (outerRadius - innerRadius)/(double)nRings;
   G4double dphi = 2.0*pi/(double)nSectors;
@@ -94,14 +100,14 @@ void Bambino2::Placement(G4LogicalVolume* world, G4double USoff, G4double DSoff)
   }
 
   //Fill inner radius with lead to remove weird Si events
-  G4Material* lead = new G4Material("Pb",82,207.2*g/mole,10.678*g/cm3);
+  G4Material* lead = nist->FindOrBuildMaterial("G4_Pb");
   G4Tubs* lead_diskS = new G4Tubs("LeadDiskS",0.0*mm,innerRadius,thickness/2.0,0.0*deg,360.0*deg);
   G4LogicalVolume* lead_diskL = new G4LogicalVolume(lead_diskS,lead,"LeadDiskL");
   new G4PVPlacement(0,G4ThreeVector(0,0,DSoff),lead_diskL,"LeadDisk1",world,false,1,check);
   new G4PVPlacement(0,G4ThreeVector(0,0,-USoff),lead_diskL,"LeadDisk0",world,false,0,check);
    
   //Plastic material for holders and connectors
-  G4Material* delrin = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYOXYMETHYLENE");
+  G4Material* delrin = nist->FindOrBuildMaterial("G4_POLYOXYMETHYLENE");
 
   //Make pcb holder
   G4double xy = outerRadius + 1.5*cm;

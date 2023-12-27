@@ -77,7 +77,7 @@ The /Geometry commands are common across all modes. With the exception of /Geome
 | /Geometry/Target/Radius *double unit* | Set radius of target. (Default: 0.5 cm) |
 | /Geometry/Update | Update the simulation with your desired geometry. |
 
-Note that the /Geometry/Target/ commands do **NOT** define the recoiling nucleus for the kinematics or excitation, it only defines "bulk" material properties of the target. If you do not call the /Construct commands for the silicon detectors or the target, they will not be in the simulation.
+Note that the /Geometry/Target/ commands do **NOT** define the recoiling nucleus for the kinematics or excitation, it only defines "bulk" material properties of the target. The two /Construct commands are only applicable for a Source simulation; they control whether the silicon detectors and target will be included. They are included automatically for a Scattering or Full simulation. 
 
 Source Mode Commands
 -----------------

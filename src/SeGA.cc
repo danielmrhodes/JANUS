@@ -241,9 +241,8 @@ void SeGA::PlaceDetector(G4LogicalVolume* expHall_log, G4int detNum, G4double Zo
 
 void SeGA::Placement(G4LogicalVolume* expHall_log, G4double ZOff) {
 
-  for(G4int i=0;i<16;i++) {
+  for(G4int i=0;i<16;i++)
     PlaceDetector(expHall_log,i,ZOff); 
-  }
   
   return;
 
